@@ -1,0 +1,28 @@
+{
+  "name": "ChatMessage",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "string",
+      "description": "Nome visualizzato del mittente"
+    },
+    "avatar_color": {
+      "type": "string",
+      "default": "#ccff00",
+      "description": "Colore dell'avatar generato dal username"
+    },
+    "message": {
+      "type": "string",
+      "description": "Testo del messaggio"
+    },
+    "channel": {
+      "type": "string",
+      "default": "generale",
+      "description": "Canale della chat community"
+    }
+  },
+  "required": [
+    "username",
+    "message"
+  ]
+}

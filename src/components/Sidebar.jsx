@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Home, Star, Clock3, Flame, Trophy, Gift, Sparkles, Gamepad2,
-  MonitorPlay, Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight,
+  MonitorPlay, Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
 } from "lucide-react";
 
 const NAV_MAIN = [
@@ -12,6 +12,7 @@ const NAV_MAIN = [
   { id: "recent", label: "Giocati di recente", icon: Flame, to: "/", match: null },
   { id: "challenges", label: "Sfide", icon: Trophy, to: "/", match: null, badge: "39" },
   { id: "promotions", label: "Promozioni", icon: Gift, to: "/", match: null },
+  { id: "community", label: "Community Chat", icon: MessageCircle, to: "/community", match: "path:/community" },
 ];
 
 const NAV_CATS = [

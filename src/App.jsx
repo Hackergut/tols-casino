@@ -18,6 +18,11 @@ import GamePlay from '@/pages/GamePlay';
 import Affiliate from '@/pages/Affiliate';
 import Admin from '@/pages/Admin';
 import Vip from '@/pages/Vip';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import ForgotPassword from '@/pages/ForgotPassword';
+import ResetPassword from '@/pages/ResetPassword';
+import Community from '@/pages/Community';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -47,13 +52,19 @@ const AuthenticatedApp = () => {
   return (
     <WalletProvider>
       <Routes>
-        {/* Add your page Route elements here */}
+        {/* Auth routes (pubbliche, senza layout) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        {/* App routes (con layout) */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/game/:slug" element={<GamePlayWrapper />} />
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/vip" element={<Vip />} />
+          <Route path="/community" element={<Community />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
