@@ -22,8 +22,13 @@ export default function GameCard({ game }) {
       <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
         <p className="text-white text-sm font-bold truncate">{game.name}</p>
       </div>
+      {game.provider && (
+        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-black/70 backdrop-blur text-[10px] font-bold text-white/80 max-w-[70%] truncate">
+          {game.provider}
+        </div>
+      )}
       {!game.playable && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 backdrop-blur text-[10px] font-bold text-white/70">
+        <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-black/60 backdrop-blur text-[10px] font-bold text-white/70">
           <Lock className="w-2.5 h-2.5" /> SOON
         </div>
       )}
