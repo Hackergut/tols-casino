@@ -1,0 +1,49 @@
+{
+  "name": "Bet",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "string"
+    },
+    "game_name": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "multiplier": {
+      "type": "number",
+      "default": 0
+    },
+    "payout": {
+      "type": "number",
+      "default": 0
+    },
+    "result": {
+      "type": "string",
+      "enum": [
+        "win",
+        "lose"
+      ],
+      "default": "lose"
+    },
+    "client_seed": {
+      "type": "string"
+    },
+    "server_seed_hash": {
+      "type": "string"
+    },
+    "nonce": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "game_id",
+    "amount"
+  ]
+}

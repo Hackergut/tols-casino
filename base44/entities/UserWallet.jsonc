@@ -1,0 +1,27 @@
+{
+  "name": "UserWallet",
+  "type": "object",
+  "properties": {
+    "balance": {
+      "type": "number",
+      "default": 1000
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "vip_level": {
+      "type": "number",
+      "default": 1
+    },
+    "xp": {
+      "type": "number",
+      "default": 0
+    },
+    "total_wagered": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": []
+}
