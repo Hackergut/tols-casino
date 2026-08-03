@@ -10,7 +10,7 @@ export const NAV_MAIN = [
   { id: "favorites", label: "Favorites", icon: Star, to: "/", match: null },
   { id: "latest", label: "Latest releases", icon: Clock3, to: "/?cat=slots", match: "cat:slots" },
   { id: "recent", label: "Recently played", icon: Flame, to: "/", match: null },
-  { id: "challenges", label: "Challenges", icon: Trophy, to: "/", match: null, badge: "39" },
+  { id: "challenges", label: "Tournaments", icon: Trophy, to: "/tournaments", match: "path:/tournaments", badge: "4" },
   { id: "promotions", label: "Promotions", icon: Gift, to: "/", match: null },
   { id: "community", label: "Community Chat", icon: MessageCircle, to: "/community", match: "path:/community" },
 ];

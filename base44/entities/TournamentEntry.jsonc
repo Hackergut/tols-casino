@@ -1,0 +1,32 @@
+{
+  "name": "TournamentEntry",
+  "type": "object",
+  "properties": {
+    "tournament_id": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "wagered": {
+      "type": "number",
+      "default": 0
+    },
+    "wins": {
+      "type": "number",
+      "default": 0
+    },
+    "biggest_win": {
+      "type": "number",
+      "default": 0
+    },
+    "rank": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "tournament_id",
+    "username"
+  ]
+}

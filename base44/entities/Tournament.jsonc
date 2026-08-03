@@ -1,0 +1,59 @@
+{
+  "name": "Tournament",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "game": {
+      "type": "string",
+      "default": "all",
+      "description": "Game slug or 'all' for any game"
+    },
+    "prize_pool": {
+      "type": "number",
+      "default": 0
+    },
+    "entry_fee": {
+      "type": "number",
+      "default": 0
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "upcoming",
+        "active",
+        "ended"
+      ],
+      "default": "upcoming"
+    },
+    "participants_count": {
+      "type": "number",
+      "default": 0
+    },
+    "max_participants": {
+      "type": "number",
+      "default": 0
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    }
+  },
+  "required": [
+    "name",
+    "prize_pool"
+  ]
+}
