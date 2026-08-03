@@ -1,19 +1,22 @@
 import React from "react";
-import { Sparkles, Cherry, Video, Spade, Search } from "lucide-react";
+import { Sparkles, Cherry, Video, Spade, Search, House } from "lucide-react";
 import { CATEGORIES } from "@/lib/games";
 
 const ICONS = { Sparkles, Cherry, Video, Spade };
 
 export default function SubNav({ active, onChange }) {
   return (
-    <nav className="sticky top-16 z-40 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center gap-1 sm:gap-2 h-12 overflow-x-auto scrollbar-hide">
+    <nav className="sticky top-16 z-40 bg-[#0d0d0d]/95 backdrop-blur-md border-b border-white/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center gap-1.5 sm:gap-2 h-14 overflow-x-auto scrollbar-hide">
         <button
           onClick={() => onChange("home")}
-          className={`flex items-center gap-2 px-3 sm:px-4 h-9 rounded-full text-sm font-semibold whitespace-nowrap transition ${
-            active === "home" ? "bg-white/10 text-white" : "text-white/50 hover:text-white"
+          className={`flex items-center gap-2 px-3.5 sm:px-4 h-10 rounded-full text-sm font-bold whitespace-nowrap transition border ${
+            active === "home"
+              ? "bg-lime/15 border-lime/30 text-lime"
+              : "border-transparent text-white/60 hover:text-white hover:bg-white/5"
           }`}
         >
+          <House className="w-[18px] h-[18px]" />
           Sala Principal
         </button>
         {CATEGORIES.map((c) => {
@@ -23,18 +26,20 @@ export default function SubNav({ active, onChange }) {
             <button
               key={c.id}
               onClick={() => onChange(c.id)}
-              className={`flex items-center gap-2 px-3 sm:px-4 h-9 rounded-full text-sm font-semibold whitespace-nowrap transition ${
-                isActive ? "bg-white/10 text-white" : "text-white/50 hover:text-white"
+              className={`flex items-center gap-2 px-3.5 sm:px-4 h-10 rounded-full text-sm font-bold whitespace-nowrap transition border ${
+                isActive
+                  ? "bg-lime/15 border-lime/30 text-lime"
+                  : "border-transparent text-white/60 hover:text-white hover:bg-white/5"
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-[18px] h-[18px]" />
               {c.label}
             </button>
           );
         })}
-        <div className="ml-auto flex items-center gap-2 px-3 h-9 rounded-full bg-[#1a1a1a] border border-white/5 shrink-0">
-          <Search className="w-4 h-4 text-white/40" />
-          <input placeholder="Cerca" className="bg-transparent outline-none text-sm text-white/70 placeholder-white/40 w-20 sm:w-32" />
+        <div className="ml-auto flex items-center gap-2 px-3 h-10 rounded-full bg-[#1a1a1a] border border-white/5 shrink-0 focus-within:border-lime/30">
+          <Search className="w-4 h-4 text-white/50" />
+          <input placeholder="Cerca" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/40 w-20 sm:w-32" />
         </div>
       </div>
     </nav>

@@ -5,7 +5,7 @@ import {
   MonitorPlay, Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
 } from "lucide-react";
 
-const NAV_MAIN = [
+export const NAV_MAIN = [
   { id: "lobby", label: "Lobby", icon: Home, to: "/", match: "lobby" },
   { id: "favorites", label: "Preferiti", icon: Star, to: "/", match: null },
   { id: "latest", label: "Ultime uscite", icon: Clock3, to: "/?cat=slots", match: "cat:slots" },
@@ -15,19 +15,19 @@ const NAV_MAIN = [
   { id: "community", label: "Community Chat", icon: MessageCircle, to: "/community", match: "path:/community" },
 ];
 
-const NAV_CATS = [
+export const NAV_CATS = [
   { id: "originals", label: "Originali", icon: Sparkles, to: "/?cat=originals", match: "cat:originals" },
   { id: "slots", label: "Slot", icon: Gamepad2, to: "/?cat=slots", match: "cat:slots" },
   { id: "live", label: "Live Dealers", icon: MonitorPlay, to: "/?cat=live", match: "cat:live" },
   { id: "table", label: "Giochi da Tavolo", icon: Spade, to: "/?cat=table", match: "cat:table" },
 ];
 
-const NAV_GAMES = [
+export const NAV_GAMES = [
   { id: "roulette", label: "Roulette", icon: Disc3, to: "/game/roulette", match: "path:/game/roulette" },
   { id: "baccarat", label: "Baccarat", icon: Spade, to: "/game/baccarat", match: "path:/game/baccarat" },
 ];
 
-const NAV_BOTTOM = [
+export const NAV_BOTTOM = [
   { id: "vip", label: "VIP", icon: Crown, to: "/vip", match: "path:/vip" },
   { id: "affiliate", label: "Affiliati", icon: Users, to: "/affiliate", match: "path:/affiliate" },
   { id: "blog", label: "Blog", icon: Newspaper, to: "/", match: null },
