@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet } from "lucide-react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useWallet } from "@/components/WalletProvider";
+import WithdrawalPanel from "@/components/WithdrawalPanel";
 
 export default function Header() {
   const { wallet } = useWallet();
   const [open, setOpen] = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -39,11 +41,20 @@ export default function Header() {
           <button className="hidden sm:flex items-center gap-1.5 h-10 px-5 rounded-full font-bold text-sm bg-lime text-black hover:opacity-90 transition">
             <Plus className="w-4 h-4" /> Sign up
           </button>
-          <div className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-full bg-[#1a1a1a] border border-white/5">
-            <DollarSign className="w-4 h-4 text-lime" />
-            <span className="text-sm font-semibold text-white tabular-nums">
-              {wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
-            </span>
+          <div className="flex items-center gap-0">
+            <div className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-[#1a1a1a] border border-white/5 border-r-0">
+              <DollarSign className="w-4 h-4 text-lime" />
+              <span className="text-sm font-semibold text-white tabular-nums">
+                {wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
+              </span>
+            </div>
+            <button
+              onClick={() => setShowWithdraw(true)}
+              title="Preleva vincite"
+              className="flex items-center justify-center h-10 px-3 rounded-r-full bg-[#1a1a1a] border border-white/5 hover:border-lime/40 hover:text-lime text-white/50 transition"
+            >
+              <ArrowDownToLine className="w-4 h-4" />
+            </button>
           </div>
           <div className="relative" ref={menuRef}>
             <button
@@ -59,6 +70,9 @@ export default function Header() {
                 <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Users className="w-4 h-4" /> Pannello Affiliati
                 </Link>
+                <button onClick={() => { setOpen(false); setShowWithdraw(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                  <ArrowDownToLine className="w-4 h-4" /> Preleva vincite
+                </button>
                 <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Wallet className="w-4 h-4" /> Il mio Wallet
                 </Link>
@@ -71,6 +85,7 @@ export default function Header() {
           </div>
         </div>
       </div>
+      {showWithdraw && <WithdrawalPanel onClose={() => setShowWithdraw(false)} />}
     </header>
   );
 }

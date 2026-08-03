@@ -70,7 +70,42 @@ export function WalletProvider({ children }) {
     } catch (e) { /* ignore */ }
   }, [wallet]);
 
-  const value = { wallet, loading, updateBalance, recordBet, reload: loadWallet };
+  const requestWithdrawal = useCallback(async ({ amount, wallet_address, chain }) => {
+    if (!wallet) throw new Error("Wallet non disponibile");
+    const amt = +Number(amount).toFixed(2);
+    if (!amt || amt <= 0) throw new Error("Importo non valido");
+    if (!wallet_address || wallet_address.length < 8) throw new Error("Indirizzo wallet non valido");
+    if (amt > wallet.balance) throw new Error(`Saldo insufficiente. Disponibile: ${wallet.balance} ${wallet.currency}`);
+
+    const balanceBefore = +wallet.balance.toFixed(2);
+    const balanceAfter = +(balanceBefore - amt).toFixed(2);
+
+    // create withdrawal record (auth users) or local stub (guest)
+    let record;
+    if (wallet.id !== "guest") {
+      record = await base44.entities.Withdrawal.create({
+        amount: amt,
+        currency: wallet.currency,
+        wallet_address,
+        chain,
+        status: "pending",
+        balance_before: balanceBefore,
+        balance_after: balanceAfter,
+      });
+    } else {
+      record = { id: "local_" + Date.now(), amount: amt, currency: wallet.currency, wallet_address, chain, status: "pending", balance_before: balanceBefore, balance_after: balanceAfter, created_date: new Date().toISOString() };
+      const hist = JSON.parse(localStorage.getItem("tols_withdrawals") || "[]");
+      hist.unshift(record);
+      localStorage.setItem("tols_withdrawals", JSON.stringify(hist));
+    }
+
+    // deduct balance immediately (held until processed)
+    await updateBalance(-amt, 0);
+
+    return record;
+  }, [wallet, updateBalance]);
+
+  const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 }

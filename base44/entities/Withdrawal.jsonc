@@ -1,0 +1,58 @@
+{
+  "name": "Withdrawal",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "description": "Importo richiesto in prelievo"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "wallet_address": {
+      "type": "string",
+      "description": "Indirizzo wallet crypto di destinazione"
+    },
+    "chain": {
+      "type": "string",
+      "enum": [
+        "solana",
+        "polygon",
+        "ethereum"
+      ],
+      "default": "solana"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "tx_hash": {
+      "type": "string",
+      "default": ""
+    },
+    "balance_before": {
+      "type": "number",
+      "default": 0
+    },
+    "balance_after": {
+      "type": "number",
+      "default": 0
+    },
+    "processed_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "amount",
+    "wallet_address",
+    "chain"
+  ]
+}
