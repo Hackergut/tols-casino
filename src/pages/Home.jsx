@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import SubNav from "@/components/SubNav";
 import HeroBanners from "@/components/HeroBanners";
 import GameGrid from "@/components/GameGrid";
+import TolsGamesSection from "@/components/TolsGamesSection";
 import ProviderFilter from "@/components/ProviderFilter";
 import GameCard from "@/components/GameCard";
 import { GAMES, PROVIDERS } from "@/lib/games";
@@ -24,7 +25,7 @@ export default function Home() {
       <SubNav active={active} onChange={setActive} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-8">
         <HeroBanners />
-        <GameGrid title="TOLS GAMES" />
+        <TolsGamesSection />
         {active === "home" && (
           <>
             <GameGrid title="Originali" filter="originals" />

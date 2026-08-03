@@ -9,6 +9,7 @@ export const GAMES = [
   { id: "wheel", name: "Wheel Tols", slug: "wheel", category: "originals", playable: true, image: "https://media.base44.com/images/public/user_6a6d2ae9b2386fa15db72587/38f6da734_IMG_1870.png", accent: "#ccff00" },
   { id: "roulette", name: "Roulette Tols", slug: "roulette", category: "table", playable: true, image: "https://media.base44.com/images/public/user_6a6d2ae9b2386fa15db72587/38f6da734_IMG_1870.png", accent: "#ccff00" },
   { id: "baccarat", name: "Baccarat Tols", slug: "baccarat", category: "table", playable: true, image: "https://media.base44.com/images/public/user_6a6d2ae9b2386fa15db72587/6d589a05c_IMG_1871.png", accent: "#ccff00" },
+  { id: "chicken-tols", name: "Chicken Tols", slug: "chicken-tols", category: "originals", playable: false, image: null, accent: "#ccff00" },
   // ── Hacksaw Gaming (immagini ufficiali www-live.hacksawgaming.com) ──
   { id: "supreme-zeus", name: "Supreme Zeus", slug: "supreme-zeus", category: "slots", provider: "Hacksaw Gaming", playable: true, rtp: 96.39, volatility: "Alta", image: "https://www-live.hacksawgaming.com/casino_thumbnails/2458.jpg", accent: "#0b48a8" },
   { id: "marlin-masters-og", name: "Marlin Masters OG", slug: "marlin-masters-og", category: "slots", provider: "Hacksaw Gaming", playable: true, rtp: 96.31, volatility: "Media", image: "https://www-live.hacksawgaming.com/casino_thumbnails/2378.jpg", accent: "#1a6a8a" },
