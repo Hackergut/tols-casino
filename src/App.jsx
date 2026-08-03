@@ -16,6 +16,7 @@ import Home from '@/pages/Home';
 import GamePlay from '@/pages/GamePlay';
 import Affiliate from '@/pages/Affiliate';
 import Admin from '@/pages/Admin';
+import Vip from '@/pages/Vip';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -50,6 +51,7 @@ const AuthenticatedApp = () => {
         <Route path="/game/:slug" element={<GamePlayWrapper />} />
         <Route path="/affiliate" element={<Affiliate />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/vip" element={<Vip />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </WalletProvider>

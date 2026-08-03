@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield } from "lucide-react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import WithdrawalPanel from "@/components/WithdrawalPanel";
 
 export default function Header() {
-  const { wallet } = useWallet();
+  const { wallet, vipTier } = useWallet();
   const [open, setOpen] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -44,6 +44,15 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+          <Link
+            to="/vip"
+            title={`Livello VIP: ${vipTier?.name}`}
+            className="hidden sm:flex items-center gap-1.5 h-10 px-3 rounded-full border transition hover:opacity-90"
+            style={{ borderColor: `${vipTier?.color || "#ccff00"}55`, color: vipTier?.color || "#ccff00" }}
+          >
+            <Crown className="w-4 h-4" />
+            <span className="text-sm font-bold">{vipTier?.name}</span>
+          </Link>
           <button className="hidden sm:flex items-center gap-1.5 h-10 px-5 rounded-full font-bold text-sm bg-lime text-black hover:opacity-90 transition">
             <Plus className="w-4 h-4" /> Sign up
           </button>
@@ -73,6 +82,9 @@ export default function Header() {
             </button>
             {open && (
               <div className="absolute right-0 top-12 w-56 rounded-xl border border-white/10 bg-[#1a1a1a] shadow-2xl py-2 z-50">
+                <Link to="/vip" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                  <Crown className="w-4 h-4" /> Livello VIP
+                </Link>
                 <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Users className="w-4 h-4" /> Pannello Affiliati
                 </Link>

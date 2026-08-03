@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
+import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
 
 const WalletContext = createContext(null);
 
@@ -38,28 +39,34 @@ export function WalletProvider({ children }) {
   }, [loadWallet]);
 
   const updateBalance = useCallback(async (delta, wagered = 0) => {
-    setWallet((prev) => {
-      if (!prev) return prev;
-      const next = {
-        ...prev,
-        balance: Math.max(0, +(prev.balance + delta).toFixed(2)),
-        xp: Math.round(prev.xp + Math.abs(wagered)),
-        total_wagered: +(prev.total_wagered + Math.abs(wagered)).toFixed(2),
-      };
-      if (prev.id === "guest") {
-        localStorage.setItem("tols_wallet", JSON.stringify(next));
-      }
-      return next;
-    });
-    if (wallet && wallet.id !== "guest") {
+    if (!wallet) return { bonus: 0, promoted: false };
+    const newWagered = +(wallet.total_wagered + Math.abs(wagered)).toFixed(2);
+    const oldTier = tierForWagered(wallet.total_wagered);
+    const t = tierForWagered(newWagered);
+    const promoted = t.level > oldTier.level;
+    const bonus = promoted ? t.level_up_bonus : 0;
+    const newBalance = Math.max(0, +(wallet.balance + delta + bonus).toFixed(2));
+    const next = {
+      ...wallet,
+      balance: newBalance,
+      xp: Math.round(wallet.xp + Math.abs(wagered)),
+      total_wagered: newWagered,
+      vip_level: Math.max(wallet.vip_level || 1, t.level),
+    };
+    setWallet(next);
+    if (wallet.id === "guest") {
+      localStorage.setItem("tols_wallet", JSON.stringify(next));
+    } else {
       try {
         await base44.entities.UserWallet.update(wallet.id, {
-          balance: +(wallet.balance + delta).toFixed(2),
-          xp: Math.round(wallet.xp + Math.abs(wagered)),
-          total_wagered: +(wallet.total_wagered + Math.abs(wagered)).toFixed(2),
+          balance: newBalance,
+          xp: next.xp,
+          total_wagered: newWagered,
+          vip_level: next.vip_level,
         });
       } catch (e) { /* ignore */ }
     }
+    return { bonus, promoted, tier: t };
   }, [wallet]);
 
   const recordBet = useCallback(async (bet) => {
@@ -105,7 +112,8 @@ export function WalletProvider({ children }) {
     return record;
   }, [wallet, updateBalance]);
 
-  const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet };
+  const vipTier = wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0];
+  const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 }
