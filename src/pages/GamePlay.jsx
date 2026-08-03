@@ -11,8 +11,8 @@ import LimboGame from "@/components/games/LimboGame";
 import WheelGame from "@/components/games/WheelGame";
 import CoinflipGame from "@/components/games/CoinflipGame";
 import KenoGame from "@/components/games/KenoGame";
-import SlotGame from "@/components/games/SlotGame";
 import RouletteGame from "@/components/games/RouletteGame";
+import RealSlotPlayer from "@/components/RealSlotPlayer";
 import BaccaratGame from "@/components/games/BaccaratGame";
 
 const GAMES_MAP = {
@@ -82,7 +82,7 @@ export default function GamePlay({ slug }) {
               )}
             </div>
             {isSlot ? (
-              <SlotGame key={game.slug + mode} game={game} mode={mode} />
+              <RealSlotPlayer key={game.slug + mode} game={game} mode={mode} />
             ) : Game ? (
               <Game />
             ) : null}

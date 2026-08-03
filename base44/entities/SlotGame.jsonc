@@ -1,0 +1,50 @@
+{
+  "name": "SlotGame",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "Slug univoco usato nell'URL"
+    },
+    "name": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string",
+      "default": ""
+    },
+    "rtp": {
+      "type": "number",
+      "default": 0
+    },
+    "volatility": {
+      "type": "string",
+      "default": ""
+    },
+    "external_id": {
+      "type": "string",
+      "default": "",
+      "description": "ID gioco nell'aggregatore (popolato dalla sync)"
+    },
+    "has_demo": {
+      "type": "boolean",
+      "default": true
+    },
+    "has_real": {
+      "type": "boolean",
+      "default": false
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "slug",
+    "name",
+    "provider"
+  ]
+}
