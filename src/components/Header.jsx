@@ -1,10 +1,20 @@
-import React, { useState } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus } from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useWallet } from "@/components/WalletProvider";
 
 export default function Header() {
   const { wallet } = useWallet();
   const [open, setOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-white/5">
@@ -35,14 +45,30 @@ export default function Header() {
               {wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
             </span>
           </div>
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-full bg-[#1a1a1a] border border-white/5 hover:border-white/20 transition"
-          >
-            <User className="w-4 h-4 text-white/80" />
-            <span className="hidden sm:inline text-sm font-semibold text-white/80">Profile</span>
-            <ChevronDown className="w-3.5 h-3.5 text-white/50" />
-          </button>
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setOpen((o) => !o)}
+              className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-full bg-[#1a1a1a] border border-white/5 hover:border-white/20 transition"
+            >
+              <User className="w-4 h-4 text-white/80" />
+              <span className="hidden sm:inline text-sm font-semibold text-white/80">Profile</span>
+              <ChevronDown className="w-3.5 h-3.5 text-white/50" />
+            </button>
+            {open && (
+              <div className="absolute right-0 top-12 w-56 rounded-xl border border-white/10 bg-[#1a1a1a] shadow-2xl py-2 z-50">
+                <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                  <Users className="w-4 h-4" /> Pannello Affiliati
+                </Link>
+                <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                  <Wallet className="w-4 h-4" /> Il mio Wallet
+                </Link>
+                <div className="border-t border-white/5 my-1" />
+                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:bg-white/5 transition">
+                  <User className="w-4 h-4" /> Impostazioni
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

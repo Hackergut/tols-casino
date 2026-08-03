@@ -14,6 +14,7 @@ import ScrollToTop from './components/ScrollToTop';
 import { WalletProvider } from '@/components/WalletProvider';
 import Home from '@/pages/Home';
 import GamePlay from '@/pages/GamePlay';
+import Affiliate from '@/pages/Affiliate';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -46,6 +47,7 @@ const AuthenticatedApp = () => {
         {/* Add your page Route elements here */}
         <Route path="/" element={<Home />} />
         <Route path="/game/:slug" element={<GamePlayWrapper />} />
+        <Route path="/affiliate" element={<Affiliate />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </WalletProvider>

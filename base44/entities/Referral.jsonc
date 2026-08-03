@@ -1,0 +1,41 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "player_alias": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "deposited"
+      ],
+      "default": "active"
+    },
+    "total_wagered": {
+      "type": "number",
+      "default": 0
+    },
+    "total_payout": {
+      "type": "number",
+      "default": 0
+    },
+    "net_loss": {
+      "type": "number",
+      "default": 0
+    },
+    "commission_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "signup_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "player_alias"
+  ]
+}

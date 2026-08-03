@@ -1,0 +1,57 @@
+{
+  "name": "Affiliate",
+  "type": "object",
+  "properties": {
+    "referral_code": {
+      "type": "string"
+    },
+    "commission_plan": {
+      "type": "string",
+      "enum": [
+        "revshare",
+        "cpa",
+        "hybrid"
+      ],
+      "default": "revshare"
+    },
+    "commission_rate": {
+      "type": "number",
+      "default": 25
+    },
+    "cpa_amount": {
+      "type": "number",
+      "default": 50
+    },
+    "total_clicks": {
+      "type": "number",
+      "default": 0
+    },
+    "total_referrals": {
+      "type": "number",
+      "default": 0
+    },
+    "total_wagered": {
+      "type": "number",
+      "default": 0
+    },
+    "total_commission": {
+      "type": "number",
+      "default": 0
+    },
+    "pending_commission": {
+      "type": "number",
+      "default": 0
+    },
+    "paid_commission": {
+      "type": "number",
+      "default": 0
+    },
+    "payout_address": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "required": [
+    "referral_code"
+  ]
+}
