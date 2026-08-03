@@ -123,10 +123,10 @@ export const GAMES = [
   { id: "rise-of-olympus", name: "Rise of Olympus", slug: "rise-of-olympus", category: "slots", provider: "Play'n GO", playable: true, rtp: 96.50, volatility: "Alta", accent: "#6a4ac4" },
   { id: "fire-joker", name: "Fire Joker", slug: "fire-joker", category: "slots", provider: "Play'n GO", playable: true, rtp: 96.15, volatility: "Alta", accent: "#ff6a2a" },
   // ── NetEnt ──
-  { id: "starburst", name: "Starburst", slug: "starburst", category: "slots", provider: "NetEnt", playable: true, rtp: 96.09, volatility: "Bassa", accent: "#4f8aff" },
-  { id: "gonzo-quest", name: "Gonzo's Quest", slug: "gonzo-quest", category: "slots", provider: "NetEnt", playable: true, rtp: 95.97, volatility: "Media", accent: "#c4a01a" },
-  { id: "dead-alive-2", name: "Dead or Alive 2", slug: "dead-alive-2", category: "slots", provider: "NetEnt", playable: true, rtp: 96.82, volatility: "Alta", accent: "#8a4a1a" },
-  { id: "bloodsuckers", name: "Blood Suckers", slug: "bloodsuckers", category: "slots", provider: "NetEnt", playable: true, rtp: 98.00, volatility: "Bassa", accent: "#8a1a1a" },
+  { id: "starburst", name: "Starburst", slug: "starburst", category: "slots", provider: "NetEnt", playable: true, rtp: 96.09, volatility: "Bassa", image: "https://fan-cdn.nolimitcity.com/starburst_ne_fansite_splashpost_2560x820_72f766d837.jpg", accent: "#4f8aff" },
+  { id: "gonzo-quest", name: "Gonzo's Quest", slug: "gonzo-quest", category: "slots", provider: "NetEnt", playable: true, rtp: 95.97, volatility: "Media", image: "https://fan-cdn.nolimitcity.com/gonzos_quest_ne_fansite_splashpost_2560x820px_f2768e9202.jpg", accent: "#c4a01a" },
+  { id: "dead-alive-2", name: "Dead or Alive 2", slug: "dead-alive-2", category: "slots", provider: "NetEnt", playable: true, rtp: 96.82, volatility: "Alta", image: "https://fan-cdn.nolimitcity.com/dead_or_alive_2_ne_fansite_splashpost_2560x820px_870a5e759f.jpg", accent: "#8a4a1a" },
+  { id: "bloodsuckers", name: "Blood Suckers", slug: "bloodsuckers", category: "slots", provider: "NetEnt", playable: true, rtp: 98.00, volatility: "Bassa", image: "https://fan-cdn.nolimitcity.com/bloodsuckers_ne_fansite_splashpost_2560x820px_453e3689fa.jpg", accent: "#8a1a1a" },
   // ── Big Time Gaming ──
   { id: "bonanza", name: "Bonanza Megaways", slug: "bonanza", category: "slots", provider: "Big Time Gaming", playable: true, rtp: 96.00, volatility: "Alta", accent: "#c4a01a" },
   { id: "danger-high-voltage", name: "Danger High Voltage", slug: "danger-high-voltage", category: "slots", provider: "Big Time Gaming", playable: true, rtp: 96.22, volatility: "Alta", accent: "#ff4f2a" },
