@@ -1,0 +1,305 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { base44 } from "@/api/base44Client";
+import Header from "@/components/Header";
+import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban } from "lucide-react";
+import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
+
+export default function Admin() {
+  const [authed, setAuthed] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [bets, setBets] = useState([]);
+  const [withdrawals, setWithdrawals] = useState([]);
+  const [wallets, setWallets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(async () => {
+    try {
+      const user = await base44.auth.me();
+      if (!user || user.role !== "admin") {
+        setAuthed(false);
+        setLoading(false);
+        return;
+      }
+      setAuthed(true);
+
+      const [betList, walletList, withdrawalList, userList] = await Promise.all([
+        base44.entities.Bet.list("-created_date", 200),
+        base44.entities.UserWallet.list("-updated_date", 100),
+        base44.entities.Withdrawal.list("-created_date", 50),
+        base44.entities.User.list(),
+      ]);
+
+      setBets(betList || []);
+      setWallets(walletList || []);
+      setWithdrawals(withdrawalList || []);
+      setUsers(userList || []);
+
+      // aggregate KPIs
+      const totalWagered = (betList || []).reduce((s, b) => s + (b.amount || 0), 0);
+      const totalPayout = (betList || []).reduce((s, b) => s + (b.payout || 0), 0);
+      const houseGross = totalWagered - totalPayout;
+      const totalBalance = (walletList || []).reduce((s, w) => s + (w.balance || 0), 0);
+      const totalPlayerWagered = (walletList || []).reduce((s, w) => s + (w.total_wagered || 0), 0);
+      const wins = (betList || []).filter((b) => b.result === "win").length;
+      const losses = (betList || []).filter((b) => b.result === "lose").length;
+      const winRate = betList.length ? (wins / betList.length * 100).toFixed(1) : "0.0";
+
+      const pendingWithdrawals = (withdrawalList || []).filter((w) => w.status === "pending");
+      const pendingAmount = pendingWithdrawals.reduce((s, w) => s + (w.amount || 0), 0);
+
+      // hourly volume series (last 12 buckets)
+      const now = Date.now();
+      const buckets = Array.from({ length: 12 }, (_, i) => {
+        const start = now - (11 - i) * 60 * 60 * 1000;
+        return { hour: new Date(start).getHours() + ":00", wagered: 0, payout: 0, count: 0 };
+      });
+      (betList || []).forEach((b) => {
+        const t = new Date(b.created_date).getTime();
+        const idx = 11 - Math.floor((now - t) / (60 * 60 * 1000));
+        if (idx >= 0 && idx < 12) {
+          buckets[idx].wagered += b.amount || 0;
+          buckets[idx].payout += b.payout || 0;
+          buckets[idx].count += 1;
+        }
+      });
+      const series = buckets.map((b) => ({ ...b, wagered: +b.wagered.toFixed(2), payout: +b.payout.toFixed(2) }));
+
+      // top games by volume
+      const gameMap = {};
+      (betList || []).forEach((b) => {
+        const name = b.game_name || b.game_id || "unknown";
+        if (!gameMap[name]) gameMap[name] = { name, wagered: 0, count: 0, payout: 0 };
+        gameMap[name].wagered += b.amount || 0;
+        gameMap[name].payout += b.payout || 0;
+        gameMap[name].count += 1;
+      });
+      const topGames = Object.values(gameMap).sort((a, b) => b.wagered - a.wagered).slice(0, 6).map((g) => ({ ...g, wagered: +g.wagered.toFixed(2), payout: +g.payout.toFixed(2) }));
+
+      setStats({
+        totalWagered: +totalWagered.toFixed(2),
+        totalPayout: +totalPayout.toFixed(2),
+        houseGross: +houseGross.toFixed(2),
+        houseEdge: totalWagered ? ((houseGross / totalWagered) * 100).toFixed(2) : "0.00",
+        totalBalance: +totalBalance.toFixed(2),
+        totalPlayerWagered: +totalPlayerWagered.toFixed(2),
+        wins, losses, winRate,
+        betCount: (betList || []).length,
+        activeUsers: users.length,
+        walletCount: (walletList || []).length,
+        pendingWithdrawals: pendingWithdrawals.length,
+        pendingAmount: +pendingAmount.toFixed(2),
+        series, topGames,
+      });
+      setLoading(false);
+    } catch (e) {
+      setAuthed(false);
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+    const id = setInterval(load, 15000);
+    return () => clearInterval(id);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (authed === false) {
+    return (
+      <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center p-6">
+        <div className="text-center max-w-sm">
+          <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+            <Ban className="w-8 h-8 text-red-400" />
+          </div>
+          <h1 className="text-xl font-black text-white">Accesso negato</h1>
+          <p className="text-sm text-white/40 mt-2">Il pannello admin è riservato agli amministratori della piattaforma.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0d0d0d]">
+      <Header />
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
+        {/* Title */}
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-lime/10 flex items-center justify-center glow-lime">
+              <Shield className="w-6 h-6 text-lime" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight text-white">Admin <span className="text-lime">Dashboard</span></h1>
+              <p className="text-xs text-white/40">Monitoraggio real-time · aggiornamento ogni 15s</p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime/10 border border-lime/30 text-xs font-bold text-lime">
+            <span className="w-2 h-2 rounded-full bg-lime animate-pulse" /> LIVE
+          </span>
+        </div>
+
+        {/* KPI grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <Kpi icon={<DollarSign />} label="Volume scommesse" value={stats.totalWagered.toLocaleString()} sub="USDT totali" accent />
+          <Kpi icon={<TrendingUp />} label="House edge" value={`${stats.houseEdge}%`} sub={`Netto casa: ${stats.houseGross.toLocaleString()}`} />
+          <Kpi icon={<Wallet />} label="Saldo wallet" value={stats.totalBalance.toLocaleString()} sub={`${stats.walletCount} wallet`} />
+          <Kpi icon={<Users />} label="Utenti attivi" value={stats.activeUsers} sub={`${stats.betCount} scommesse`} />
+        </div>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <MiniKpi label="Payout totale" value={stats.totalPayout.toLocaleString()} />
+          <MiniKpi label="Win rate" value={`${stats.winRate}%`} sub={`${stats.wins}W / ${stats.losses}L`} />
+          <MiniKpi label="Prelievi in attesa" value={stats.pendingWithdrawals} sub={`${stats.pendingAmount} USDT`} warn={stats.pendingWithdrawals > 0} />
+          <MiniKpi label="Volume giocatori" value={stats.totalPlayerWagered.toLocaleString()} />
+        </div>
+
+        {/* Charts */}
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-[#111] p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-white flex items-center gap-2"><Activity className="w-4 h-4 text-lime" /> Volume scommesse (12h)</h3>
+              <span className="text-xs text-white/40">USDT per ora</span>
+            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <AreaChart data={stats.series}>
+                <defs>
+                  <linearGradient id="gwagered" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ccff00" stopOpacity={0.6} />
+                    <stop offset="100%" stopColor="#ccff00" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="hour" stroke="#555" tick={{ fontSize: 11 }} />
+                <YAxis stroke="#555" tick={{ fontSize: 11 }} width={48} />
+                <Tooltip contentStyle={{ background: "#0d0d0d", border: "1px solid #333", borderRadius: 12, fontSize: 12 }} labelStyle={{ color: "#ccff00" }} />
+                <Area type="monotone" dataKey="wagered" stroke="#ccff00" strokeWidth={2} fill="url(#gwagered)" name="Scommesse" />
+                <Line type="monotone" dataKey="payout" stroke="#888" strokeWidth={1.5} dot={false} name="Payout" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+            <h3 className="font-bold text-white mb-4">Top giochi per volume</h3>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={stats.topGames} layout="vertical" margin={{ left: 20, right: 20 }}>
+                <XAxis type="number" stroke="#555" tick={{ fontSize: 10 }} />
+                <YAxis type="category" dataKey="name" stroke="#888" tick={{ fontSize: 11 }} width={70} />
+                <Tooltip contentStyle={{ background: "#0d0d0d", border: "1px solid #333", borderRadius: 12, fontSize: 12 }} labelStyle={{ color: "#ccff00" }} cursor={{ fill: "#1a1a1a" }} />
+                <Bar dataKey="wagered" fill="#ccff00" radius={[0, 6, 6, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Tables */}
+        <div className="grid lg:grid-cols-2 gap-4">
+          {/* Recent bets */}
+          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+            <h3 className="font-bold text-white mb-3">Scommesse recenti</h3>
+            <div className="space-y-2 max-h-72 overflow-y-auto scrollbar-hide">
+              {bets.slice(0, 12).map((b) => (
+                <div key={b.id} className="flex items-center justify-between rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-1.5 h-1.5 rounded-full ${b.result === "win" ? "bg-lime" : "bg-red-400"}`} />
+                    <span className="text-sm font-semibold text-white">{b.game_name || b.game_id}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm font-bold text-white">{Number(b.amount).toFixed(2)}</span>
+                    <span className={`text-xs ml-2 ${b.result === "win" ? "text-lime" : "text-red-400"}`}>
+                      {b.result === "win" ? `+${(b.payout - b.amount).toFixed(2)}` : `-${b.amount}`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {!bets.length && <p className="text-sm text-white/30 text-center py-6">Nessuna scommessa</p>}
+            </div>
+          </div>
+
+          {/* Pending withdrawals */}
+          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+            <h3 className="font-bold text-white mb-3 flex items-center gap-2">
+              <ArrowDownToLine className="w-4 h-4 text-lime" /> Prelievi in attesa
+            </h3>
+            <div className="space-y-2 max-h-72 overflow-y-auto scrollbar-hide">
+              {withdrawals.filter((w) => w.status === "pending").map((w) => (
+                <div key={w.id} className="flex items-center justify-between rounded-lg bg-[#0d0d0d] border border-yellow-500/20 px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-bold text-white">{Number(w.amount).toFixed(2)} {w.currency}</p>
+                    <p className="text-xs text-white/40 font-mono truncate max-w-[160px]">{w.wallet_address}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs font-bold text-yellow-300 uppercase">{w.chain}</span>
+                    <p className="text-xs text-white/30 mt-0.5 flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(w.created_date).toLocaleTimeString()}</p>
+                  </div>
+                </div>
+              ))}
+              {!withdrawals.filter((w) => w.status === "pending").length && <p className="text-sm text-white/30 text-center py-6">Nessun prelievo in attesa</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* Top wallets */}
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <h3 className="font-bold text-white mb-3">Wallet per saldo</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs text-white/40 uppercase border-b border-white/5">
+                  <th className="py-2 px-2">Wallet</th>
+                  <th className="py-2 px-2 text-right">Saldo</th>
+                  <th className="py-2 px-2 text-right">Scommesso tot.</th>
+                  <th className="py-2 px-2 text-right">XP</th>
+                  <th className="py-2 px-2 text-right">VIP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...wallets].sort((a, b) => (b.balance || 0) - (a.balance || 0)).slice(0, 10).map((w) => (
+                  <tr key={w.id} className="border-b border-white/5 hover:bg-white/5">
+                    <td className="py-2 px-2 font-mono text-white/60 text-xs">{w.id.slice(0, 8)}…</td>
+                    <td className="py-2 px-2 text-right font-bold text-lime">{Number(w.balance).toLocaleString(undefined, { maximumFractionDigits: 2 })}</td>
+                    <td className="py-2 px-2 text-right text-white/70">{Number(w.total_wagered).toLocaleString()}</td>
+                    <td className="py-2 px-2 text-right text-white/50">{w.xp || 0}</td>
+                    <td className="py-2 px-2 text-right"><span className="px-2 py-0.5 rounded-full bg-white/5 text-xs font-bold text-white">L{w.vip_level || 1}</span></td>
+                  </tr>
+                ))}
+                {!wallets.length && (
+                  <tr><td colSpan={5} className="py-6 text-center text-white/30">Nessun wallet</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function Kpi({ icon, label, value, sub, accent }) {
+  return (
+    <div className={`rounded-2xl border p-4 sm:p-5 ${accent ? "border-lime/30 bg-gradient-to-br from-lime/10 to-[#111]" : "border-white/10 bg-[#111]"}`}>
+      <div className="flex items-center gap-2 text-white/50 text-xs font-semibold uppercase tracking-wide">
+        <span className={accent ? "text-lime" : "text-white/40"}>{React.cloneElement(icon, { className: "w-4 h-4" })}</span>
+        {label}
+      </div>
+      <p className={`text-2xl sm:text-3xl font-black mt-2 ${accent ? "text-lime" : "text-white"}`}>{value}</p>
+      <p className="text-xs text-white/40 mt-1">{sub}</p>
+    </div>
+  );
+}
+
+function MiniKpi({ label, value, sub, warn }) {
+  return (
+    <div className={`rounded-xl border p-3 ${warn ? "border-yellow-500/30 bg-yellow-500/5" : "border-white/10 bg-[#111]"}`}>
+      <p className="text-xs text-white/40 uppercase tracking-wide">{label}</p>
+      <p className={`text-xl font-black mt-1 ${warn ? "text-yellow-300" : "text-white"}`}>{value}</p>
+      {sub && <p className="text-xs text-white/30 mt-0.5">{sub}</p>}
+    </div>
+  );
+}

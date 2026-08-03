@@ -15,6 +15,7 @@ import { WalletProvider } from '@/components/WalletProvider';
 import Home from '@/pages/Home';
 import GamePlay from '@/pages/GamePlay';
 import Affiliate from '@/pages/Affiliate';
+import Admin from '@/pages/Admin';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -48,6 +49,7 @@ const AuthenticatedApp = () => {
         <Route path="/" element={<Home />} />
         <Route path="/game/:slug" element={<GamePlayWrapper />} />
         <Route path="/affiliate" element={<Affiliate />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </WalletProvider>

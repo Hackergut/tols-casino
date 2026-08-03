@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine } from "lucide-react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
+import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import WithdrawalPanel from "@/components/WithdrawalPanel";
 
@@ -8,7 +9,12 @@ export default function Header() {
   const { wallet } = useWallet();
   const [open, setOpen] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    base44.auth.me().then((u) => u && u.role === "admin" && setIsAdmin(true)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const handler = (e) => {
@@ -76,6 +82,14 @@ export default function Header() {
                 <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Wallet className="w-4 h-4" /> Il mio Wallet
                 </Link>
+                {isAdmin && (
+                  <>
+                    <div className="border-t border-white/5 my-1" />
+                    <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-lime hover:bg-lime/10 transition">
+                      <Shield className="w-4 h-4" /> Admin Dashboard
+                    </Link>
+                  </>
+                )}
                 <div className="border-t border-white/5 my-1" />
                 <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:bg-white/5 transition">
                   <User className="w-4 h-4" /> Impostazioni
