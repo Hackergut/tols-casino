@@ -94,7 +94,7 @@ export default function Header({ onMenu }) {
                 <button onClick={() => { setOpen(false); setShowWithdraw(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <ArrowDownToLine className="w-4 h-4" /> Preleva vincite
                 </button>
-                <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                <Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Wallet className="w-4 h-4" /> Il mio Wallet
                 </Link>
                 {isAdmin && (

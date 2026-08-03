@@ -23,6 +23,7 @@ import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import Community from '@/pages/Community';
+import Wallet from '@/pages/Wallet';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -65,6 +66,7 @@ const AuthenticatedApp = () => {
           <Route path="/admin" element={<Admin />} />
           <Route path="/vip" element={<Vip />} />
           <Route path="/community" element={<Community />} />
+          <Route path="/wallet" element={<Wallet />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
