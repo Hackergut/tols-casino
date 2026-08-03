@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import CookieNotice from "@/components/CookieNotice";
 import SupportButton from "@/components/SupportButton";
 import OnboardingTour from "@/components/OnboardingTour";
+import { useSwipe } from "@/hooks/useSwipe";
 
 export default function Layout() {
   const [mobileNav, setMobileNav] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const handler = () => setIsMobile(mq.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Swipe da bordo sinistro → apre il drawer; swipe a sinistra → chiude
+  useSwipe({ edge: 26, onSwipeRight: () => setMobileNav(true), disabled: !isMobile || mobileNav });
+  useSwipe({ onSwipeLeft: () => setMobileNav(false), disabled: !mobileNav, guardInteractive: false });
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">

@@ -37,6 +37,7 @@ export default function GameGrid({ title = "TOLS GAMES", filter }) {
 
       <div
         ref={scroller}
+        data-no-swipe
         className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-hide snap-x"
       >
         {games.map((g) => (

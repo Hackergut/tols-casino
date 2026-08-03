@@ -6,7 +6,10 @@ import GameGrid from "@/components/GameGrid";
 import TolsGamesSection from "@/components/TolsGamesSection";
 import ProviderFilter from "@/components/ProviderFilter";
 import GameCard from "@/components/GameCard";
-import { GAMES, PROVIDERS } from "@/lib/games";
+import { GAMES, PROVIDERS, CATEGORIES } from "@/lib/games";
+import { useSwipe } from "@/hooks/useSwipe";
+
+const CAT_ORDER = ["home", ...CATEGORIES.map((c) => c.id)];
 
 export default function Home() {
   const [params, setParams] = useSearchParams();
@@ -15,6 +18,13 @@ export default function Home() {
   const [provider, setProvider] = useState("all");
 
   const slotGames = useMemo(() => GAMES.filter((g) => g.category === "slots"), []);
+
+  const goCat = (dir) => {
+    const i = CAT_ORDER.indexOf(active);
+    const ni = Math.max(0, Math.min(CAT_ORDER.length - 1, i + dir));
+    setActive(CAT_ORDER[ni]);
+  };
+  useSwipe({ onSwipeLeft: () => goCat(1), onSwipeRight: () => goCat(-1), threshold: 70 });
   const filteredSlots = useMemo(
     () => (provider === "all" ? slotGames : slotGames.filter((g) => g.provider === provider)),
     [slotGames, provider]
