@@ -4,6 +4,7 @@ import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import CookieNotice from "@/components/CookieNotice";
 import SupportButton from "@/components/SupportButton";
+import OnboardingTour from "@/components/OnboardingTour";
 
 export default function Layout() {
   const [mobileNav, setMobileNav] = useState(false);
@@ -32,6 +33,7 @@ export default function Layout() {
 
       <CookieNotice />
       <SupportButton />
+      <OnboardingTour />
     </div>
   );
 }
