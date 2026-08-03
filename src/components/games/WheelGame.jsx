@@ -76,13 +76,13 @@ export default function WheelGame() {
         </div>
         {last && !spinning && (
           <p className="mt-6 text-lg font-bold">
-            Risultato: <span className={last.mul >= 1 ? "text-lime" : "text-red-400"}>{last.label}</span>
+            Result: <span className={last.mul >= 1 ? "text-lime" : "text-red-400"}>{last.label}</span>
           </p>
         )}
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={spinning} betLabel={spinning ? "Girando..." : "Spin"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={spinning} betLabel={spinning ? "Spinning..." : "Spin"} />
       </div>
     </div>
   );

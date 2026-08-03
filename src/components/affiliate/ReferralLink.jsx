@@ -18,20 +18,20 @@ export default function ReferralLink({ code }) {
           <Link2 className="w-4.5 h-4.5 text-lime" />
         </div>
         <div>
-          <h3 className="font-bold text-white">Il tuo link di referral</h3>
-          <p className="text-xs text-white/40">Condividilo per invitare nuovi giocatori</p>
+          <h3 className="font-bold text-white">Your referral link</h3>
+          <p className="text-xs text-white/40">Share it to invite new players</p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-4">
         <span className="text-sm text-white/50 truncate flex-1 font-mono">{link}</span>
         <button onClick={copy} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime text-black text-xs font-bold hover:opacity-90 transition">
-          {copied ? <><Check className="w-3.5 h-3.5" /> Copiato</> : <><Copy className="w-3.5 h-3.5" /> Copia</>}
+          {copied ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
         </button>
       </div>
 
       <div className="mt-3 flex items-center gap-3">
-        <span className="text-xs text-white/40">Codice:</span>
+        <span className="text-xs text-white/40">Code:</span>
         <span className="font-mono font-bold text-lime tracking-wider">{code}</span>
       </div>
 

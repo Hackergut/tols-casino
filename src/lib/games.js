@@ -155,10 +155,10 @@ export const PROVIDERS = [
 ];
 
 export const CATEGORIES = [
-  { id: "originals", label: "Originali", icon: "Sparkles" },
-  { id: "slots", label: "Slot", icon: "Cherry" },
-  { id: "live", label: "Casinò dal vivo", icon: "Video" },
-  { id: "table", label: "Giochi da Tavolo", icon: "Spade" },
+  { id: "originals", label: "Originals", icon: "Sparkles" },
+  { id: "slots", label: "Slots", icon: "Cherry" },
+  { id: "live", label: "Live Casino", icon: "Video" },
+  { id: "table", label: "Table Games", icon: "Spade" },
 ];
 
 export function getGame(slug) {

@@ -96,19 +96,19 @@ export default function MinesGame() {
         </div>
         {active && revealed.length > 0 && (
           <div className="mt-6 text-center">
-            <p className="text-sm text-white/50">Payout attuale: <span className="text-lime font-bold">{(amount * currentMul).toFixed(2)} USDT</span> ({currentMul.toFixed(2)}x)</p>
+            <p className="text-sm text-white/50">Current payout: <span className="text-lime font-bold">{(amount * currentMul).toFixed(2)} USDT</span> ({currentMul.toFixed(2)}x)</p>
             <button onClick={cashout} className="mt-3 px-8 py-3 rounded-xl bg-lime text-black font-black hover:opacity-90 transition">
               Cashout {(amount * currentMul).toFixed(2)}
             </button>
           </div>
         )}
-        {!active && <div className="mt-6 text-center text-sm text-white/40">Imposta le mine e premi "Inizia"</div>}
+        {!active && <div className="mt-6 text-center text-sm text-white/40">Set the mines and press "Start"</div>}
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={start} disabled={active} betLabel={active ? "IN GIOCO" : "Inizia"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={start} disabled={active} betLabel={active ? "IN PROGRESS" : "Start"} />
         <div>
-          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Numero di mine ({mines})</label>
+          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Number of mines ({mines})</label>
           <input
             type="range"
             min="1"
@@ -119,7 +119,7 @@ export default function MinesGame() {
           />
           <div className="flex justify-between text-xs text-white/40 mt-1"><span>1</span><span>24</span></div>
         </div>
-        {active && <div className="text-center text-xs text-white/50">Prossima tile: <span className="text-lime font-bold">{nextMul.toFixed(2)}x</span></div>}
+        {active && <div className="text-center text-xs text-white/50">Next tile: <span className="text-lime font-bold">{nextMul.toFixed(2)}x</span></div>}
       </div>
     </div>
   );

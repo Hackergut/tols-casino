@@ -202,7 +202,7 @@ export default function SlotGame({ game, mode }) {
         <div className="flex items-center justify-between mt-4 px-1">
           <div className="flex items-center gap-3">
             <div className="text-sm text-white/50">
-              Saldo:{" "}
+              Balance:{" "}
               <span className="font-black text-white tabular-nums">
                 {balance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
               </span>{" "}
@@ -213,13 +213,13 @@ export default function SlotGame({ game, mode }) {
                 onClick={reloadDemo}
                 className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 transition"
               >
-                ↻ Ricarica demo
+                ↻ Reload demo
               </button>
             )}
           </div>
           {wins.length > 0 && (
             <div className="text-sm font-bold" style={{ color: accent }}>
-              {wins.length} linea{wins.length > 1 ? "e" : ""} vincente{wins.length > 1 ? "s" : ""}
+              {wins.length} winning line{wins.length > 1 ? "s" : ""}
             </div>
           )}
         </div>
@@ -229,7 +229,7 @@ export default function SlotGame({ game, mode }) {
       <div className="space-y-4">
         <div className="rounded-2xl border border-white/10 bg-[#111] p-5 space-y-4">
           <div>
-            <label className="text-xs font-semibold text-white/50 mb-1.5 block">Importo scommessa</label>
+            <label className="text-xs font-semibold text-white/50 mb-1.5 block">Bet amount</label>
             <div className="flex items-center gap-2 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 px-3">
               <span className="font-bold text-sm" style={{ color: accent }}>$</span>
               <input
@@ -263,17 +263,17 @@ export default function SlotGame({ game, mode }) {
             style={{ background: accent, boxShadow: `0 0 24px -4px ${accent}80` }}
           >
             {spinning ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Zap className="w-5 h-5" />}
-            {spinning ? "GIRANDO..." : "SPIN"}
+            {spinning ? "SPINNING..." : "SPIN"}
           </button>
 
           <div className="text-center text-xs text-white/30">
-            Vincita massima: 100x · 5 linee di pagamento
+            Max win: 100x · 5 paylines
           </div>
         </div>
 
         {/* Paytable */}
         <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-          <h3 className="text-xs font-bold text-white/50 uppercase tracking-wider mb-3">Tabella pagamenti</h3>
+          <h3 className="text-xs font-bold text-white/50 uppercase tracking-wider mb-3">Paytable</h3>
           <div className="grid grid-cols-2 gap-2">
             {SYMBOLS.map((s) => (
               <div key={s.id} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5">

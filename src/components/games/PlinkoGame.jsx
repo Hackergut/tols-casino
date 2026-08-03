@@ -68,15 +68,15 @@ export default function PlinkoGame() {
         </div>
         {lastBucket !== null && (
           <p className="mt-4 text-sm font-bold text-white/60">
-            Risultato: <span className="text-lime">{riskMul[risk][lastBucket].toFixed(2)}x</span>
+            Result: <span className="text-lime">{riskMul[risk][lastBucket].toFixed(2)}x</span>
           </p>
         )}
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} betLabel="Lancia palla" />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} betLabel="Drop ball" />
         <div>
-          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Rischio</label>
+          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Risk</label>
           <div className="flex gap-2">
             {["low", "medium", "high"].map((r) => (
               <button
@@ -84,7 +84,7 @@ export default function PlinkoGame() {
                 onClick={() => setRisk(r)}
                 className={`flex-1 h-11 rounded-xl text-sm font-bold capitalize ${risk === r ? "bg-lime text-black" : "bg-[#1a1a1a] text-white/60 border border-white/10"}`}
               >
-                {r === "low" ? "Basso" : r === "medium" ? "Medio" : "Alto"}
+                {r === "low" ? "Low" : r === "medium" ? "Medium" : "High"}
               </button>
             ))}
           </div>

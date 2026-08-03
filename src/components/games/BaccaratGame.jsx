@@ -155,7 +155,7 @@ export default function BaccaratGame() {
                 result.outcome === "tie" ? "border-yellow-400/40 bg-yellow-400/10 text-yellow-300" :
                 (bet === result.outcome) ? "border-lime/40 bg-lime/10 text-lime" : "border-red-500/30 bg-red-500/5 text-red-400"
               }`}>
-                {result.outcome === "tie" ? "PAREGGIO" : result.outcome === "player" ? "VINCE PLAYER" : "VINCE BANKER"}
+                {result.outcome === "tie" ? "TIE" : result.outcome === "player" ? "PLAYER WINS" : "BANKER WINS"}
                 <span className="block text-sm font-bold mt-0.5 opacity-80">
                   {result.net >= 0 ? `+${result.net.toFixed(2)}` : result.net.toFixed(2)} USDT
                 </span>
@@ -166,9 +166,9 @@ export default function BaccaratGame() {
 
         {/* History */}
         <div className="rounded-2xl border border-white/10 bg-[#111] p-4">
-          <div className="text-xs font-semibold text-white/50 mb-2">Storico mani</div>
+          <div className="text-xs font-semibold text-white/50 mb-2">Hand history</div>
           <div className="flex gap-1.5 flex-wrap">
-            {history.length === 0 && <span className="text-xs text-white/30">Nessuna mano giocata</span>}
+            {history.length === 0 && <span className="text-xs text-white/30">No hands played</span>}
             {history.map((h, i) => (
               <span key={i} className={`text-xs font-bold px-2.5 py-1 rounded-full ${
                 h.outcome === "player" ? "bg-blue-500/20 text-blue-300" :
@@ -182,13 +182,13 @@ export default function BaccaratGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={dealing} betLabel={dealing ? "Distribuzione..." : "Dai le carte"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={dealing} betLabel={dealing ? "Dealing..." : "Deal"} />
         <div>
-          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Punta su</label>
+          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Bet on</label>
           <div className="grid grid-cols-3 gap-2">
             {[
               { id: "player", label: "Player", mul: "1:1" },
-              { id: "tie", label: "Pareggio", mul: "8:1" },
+              { id: "tie", label: "Tie", mul: "8:1" },
               { id: "banker", label: "Banker", mul: "0.95:1" },
             ].map((o) => (
               <button
@@ -204,7 +204,7 @@ export default function BaccaratGame() {
             ))}
           </div>
           <p className="text-xs text-white/40 mt-2 leading-relaxed">
-            Baccarat con regola del terzo carta standard. Commissione 5% sulle vincite del Banker.
+            Baccarat with standard third-card rules. 5% commission on Banker wins.
           </p>
         </div>
       </div>

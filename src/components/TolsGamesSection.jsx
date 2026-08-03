@@ -31,7 +31,7 @@ export default function TolsGamesSection() {
             to="/?cat=originals"
             className="hidden sm:flex items-center h-9 px-4 rounded-full border border-white/10 text-xs font-bold text-white/60 hover:text-white hover:border-white/20 transition"
           >
-            Visualizza tutto
+            View all
           </Link>
           <div className="hidden sm:flex items-center gap-1.5">
             <button className="flex items-center justify-center w-9 h-9 rounded-full border border-white/10 text-white/50 hover:text-lime hover:border-lime/30 transition">

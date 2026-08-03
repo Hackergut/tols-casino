@@ -17,7 +17,7 @@ export default function SubNav({ active, onChange }) {
           }`}
         >
           <House className="w-[18px] h-[18px]" />
-          Sala Principal
+          Home
         </button>
         {CATEGORIES.map((c) => {
           const Icon = ICONS[c.icon] || Sparkles;
@@ -39,7 +39,7 @@ export default function SubNav({ active, onChange }) {
         })}
         <div className="ml-auto flex items-center gap-2 px-3 h-10 rounded-full bg-[#1a1a1a] border border-white/5 shrink-0 focus-within:border-lime/30">
           <Search className="w-4 h-4 text-white/50" />
-          <input placeholder="Cerca" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/40 w-20 sm:w-32" />
+          <input placeholder="Search" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/40 w-20 sm:w-32" />
         </div>
       </div>
     </nav>

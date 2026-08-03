@@ -4,9 +4,9 @@ import { useWallet } from "@/components/WalletProvider";
 import { X, ArrowDownToLine, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
 const CHAINS = [
-  { id: "solana", label: "Solana", fee: 0.01, addr: "Esempio: 7xKp...3fQ" },
-  { id: "polygon", label: "Polygon", fee: 0.05, addr: "Esempio: 0xAb...3F" },
-  { id: "ethereum", label: "Ethereum", fee: 0.02, addr: "Esempio: 0xAb...3F" },
+  { id: "solana", label: "Solana", fee: 0.01, addr: "Example: 7xKp...3fQ" },
+  { id: "polygon", label: "Polygon", fee: 0.05, addr: "Example: 0xAb...3F" },
+  { id: "ethereum", label: "Ethereum", fee: 0.02, addr: "Example: 0xAb...3F" },
 ];
 
 export default function WithdrawalPanel({ onClose }) {
@@ -49,7 +49,7 @@ export default function WithdrawalPanel({ onClose }) {
       setAddress("");
       await loadHistory();
     } catch (e) {
-      setError(e.message || "Errore durante la richiesta di prelievo");
+      setError(e.message || "Error during withdrawal request");
     } finally {
       setBusy(false);
     }
@@ -66,8 +66,8 @@ export default function WithdrawalPanel({ onClose }) {
               <ArrowDownToLine className="w-5 h-5 text-lime" />
             </div>
             <div>
-              <h3 className="font-black text-white text-lg leading-none">Preleva vincite</h3>
-              <p className="text-xs text-white/40 mt-1">Saldo disponibile: <span className="text-lime font-bold">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"} {wallet?.currency}</span></p>
+              <h3 className="font-black text-white text-lg leading-none">Withdraw winnings</h3>
+              <p className="text-xs text-white/40 mt-1">Available balance: <span className="text-lime font-bold">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"} {wallet?.currency}</span></p>
             </div>
           </div>
           <button onClick={onClose} className="w-9 h-9 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:bg-white/5 transition">
@@ -85,14 +85,14 @@ export default function WithdrawalPanel({ onClose }) {
             <div className="flex items-start gap-2 p-3 rounded-xl bg-lime/10 border border-lime/30 text-sm text-lime">
               <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" /> 
               <div>
-                <p>Richiesta di prelievo registrata con successo.</p>
-                <p className="text-white/50 text-xs mt-1">{success.amount} {wallet?.currency} su {success.chain} · in elaborazione</p>
+                <p>Withdrawal request registered successfully.</p>
+                <p className="text-white/50 text-xs mt-1">{success.amount} {wallet?.currency} on {success.chain} · processing</p>
               </div>
             </div>
           )}
 
           <div>
-            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Importo prelievo</label>
+            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Withdrawal amount</label>
             <div className="mt-2 relative">
               <input
                 type="number"
@@ -113,7 +113,7 @@ export default function WithdrawalPanel({ onClose }) {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Rete blockchain</label>
+            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Blockchain network</label>
             <div className="grid grid-cols-3 gap-2 mt-2">
               {CHAINS.map((c) => (
                 <button
@@ -132,7 +132,7 @@ export default function WithdrawalPanel({ onClose }) {
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Indirizzo wallet destinazione</label>
+            <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Destination wallet address</label>
             <input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
@@ -142,11 +142,11 @@ export default function WithdrawalPanel({ onClose }) {
           </div>
 
           <div className="rounded-xl bg-[#1a1a1a] border border-white/5 p-4 space-y-1.5 text-sm">
-            <Row label="Importo richiesto" value={`${amt.toFixed(2)} ${wallet?.currency || "USDT"}`} />
-            <Row label="Commissione rete" value={`${activeChain.fee} ${wallet?.currency || "USDT"}`} muted />
+            <Row label="Requested amount" value={`${amt.toFixed(2)} ${wallet?.currency || "USDT"}`} />
+            <Row label="Network fee" value={`${activeChain.fee} ${wallet?.currency || "USDT"}`} muted />
             <div className="border-t border-white/5 my-1" />
-            <Row label="Riceverai netto" value={`${net} ${wallet?.currency || "USDT"}`} accent />
-            <Row label="Saldo dopo prelievo" value={`${wallet ? Math.max(0, +(wallet.balance - amt)).toFixed(2) : "—"} ${wallet?.currency || "USDT"}`} muted />
+            <Row label="You'll receive (net)" value={`${net} ${wallet?.currency || "USDT"}`} accent />
+            <Row label="Balance after withdrawal" value={`${wallet ? Math.max(0, +(wallet.balance - amt)).toFixed(2) : "—"} ${wallet?.currency || "USDT"}`} muted />
           </div>
 
           <button
@@ -154,14 +154,14 @@ export default function WithdrawalPanel({ onClose }) {
             disabled={busy || !amount || !address}
             className="w-full h-12 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {busy ? <><Loader2 className="w-5 h-5 animate-spin" /> Elaborazione...</> : "Conferma prelievo"}
+            {busy ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</> : "Confirm withdrawal"}
           </button>
-          <p className="text-xs text-white/30 text-center">I prelievi vengono processati on-chain entro 24h · Transazione provably fair e tracciabile</p>
+          <p className="text-xs text-white/30 text-center">Withdrawals are processed on-chain within 24h · Provably fair and trackable</p>
         </div>
 
         {history.length > 0 && (
           <div className="border-t border-white/5 p-5">
-            <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wide mb-3">Prelievi recenti</h4>
+            <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wide mb-3">Recent withdrawals</h4>
             <div className="space-y-2 max-h-40 overflow-y-auto scrollbar-hide">
               {history.map((w) => (
                 <div key={w.id} className="flex items-center justify-between rounded-lg bg-[#1a1a1a] border border-white/5 px-3 py-2.5">
@@ -171,7 +171,7 @@ export default function WithdrawalPanel({ onClose }) {
                   </div>
                   <div className="text-right">
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${w.status === "completed" ? "bg-lime/10 text-lime" : w.status === "rejected" ? "bg-red-500/10 text-red-300" : "bg-yellow-500/10 text-yellow-300"}`}>
-                      {w.status === "completed" ? "Completato" : w.status === "rejected" ? "Rifiutato" : "In attesa"}
+                      {w.status === "completed" ? "Completed" : w.status === "rejected" ? "Rejected" : "Pending"}
                     </span>
                     <p className="text-xs text-white/30 mt-1">{w.chain}</p>
                   </div>

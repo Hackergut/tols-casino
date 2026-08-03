@@ -70,15 +70,15 @@ export default function KenoGame() {
           })}
         </div>
         <div className="mt-4 flex justify-between text-sm">
-          <span className="text-white/50">Selezionati: <span className="text-lime font-bold">{picks.length}</span>/10</span>
+          <span className="text-white/50">Picked: <span className="text-lime font-bold">{picks.length}</span>/10</span>
           {drawn.length > 0 && <span className="text-white/50">Matches: <span className="text-lime font-bold">{matches}</span> · {PAYOUTS[matches] || 0}x</span>}
         </div>
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={playing || picks.length === 0} betLabel={playing ? "Estrazione..." : "Estrai"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={playing || picks.length === 0} betLabel={playing ? "Drawing..." : "Draw"} />
         <div className="text-xs text-white/40">
-          <p className="font-semibold text-white/60 mb-1">Tabella pagamenti</p>
+          <p className="font-semibold text-white/60 mb-1">Paytable</p>
           <div className="grid grid-cols-3 gap-1">
             {Object.entries(PAYOUTS).filter(([k, v]) => v > 0).map(([k, v]) => (
               <span key={k} className="px-2 py-1 rounded bg-[#1a1a1a] text-center">{k}→{v}x</span>

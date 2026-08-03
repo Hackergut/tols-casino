@@ -48,11 +48,11 @@ export default function GamePlay({ slug }) {
         </div>
 
         {!game ? (
-          <div className="text-center py-20 text-white/40">Gioco non trovato</div>
+          <div className="text-center py-20 text-white/40">Game not found</div>
         ) : !game.playable ? (
           <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
             <h2 className="text-2xl font-black text-white">{game.name}</h2>
-            <p className="text-white/50 mt-2">Questo gioco arriverà presto nel catalogo TOLS.</p>
+            <p className="text-white/50 mt-2">This game will be added to the TOLS catalog soon.</p>
           </div>
         ) : (
           <div>

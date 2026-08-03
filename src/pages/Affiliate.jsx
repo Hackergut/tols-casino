@@ -137,9 +137,9 @@ export default function Affiliate() {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-            <span className="text-lime">Affiliati</span> TOLS
+            TOLS <span className="text-lime">Affiliates</span>
           </h1>
-          <p className="text-sm text-white/40 mt-1">Monitora referral, giocatori e commissioni in tempo reale</p>
+          <p className="text-sm text-white/40 mt-1">Track referrals, players and commissions in real time</p>
         </div>
 
         <AffiliateStats affiliate={affiliate} referrals={referrals} />
@@ -160,31 +160,31 @@ export default function Affiliate() {
 function PayoutPanel({ affiliate }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-5 sm:p-6">
-      <h3 className="font-bold text-white mb-4">Richiesta payout</h3>
+      <h3 className="font-bold text-white mb-4">Payout request</h3>
       <div className="grid sm:grid-cols-3 gap-4">
         <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
-          <p className="text-xs text-white/40">Commissioni totali</p>
+          <p className="text-xs text-white/40">Total commissions</p>
           <p className="text-2xl font-black text-white mt-1">${(affiliate.total_commission ?? 0).toFixed(2)}</p>
         </div>
         <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
-          <p className="text-xs text-white/40">In attesa</p>
+          <p className="text-xs text-white/40">Pending</p>
           <p className="text-2xl font-black text-lime mt-1">${(affiliate.pending_commission ?? 0).toFixed(2)}</p>
         </div>
         <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
-          <p className="text-xs text-white/40">Già pagato</p>
+          <p className="text-xs text-white/40">Already paid</p>
           <p className="text-2xl font-black text-white/70 mt-1">${(affiliate.paid_commission ?? 0).toFixed(2)}</p>
         </div>
       </div>
       <div className="mt-4 flex flex-col sm:flex-row gap-3">
         <input
-          placeholder="Indirizzo wallet crypto (ETH/SOL/MATIC)"
+          placeholder="Crypto wallet address (ETH/SOL/MATIC)"
           className="flex-1 h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-4 text-sm text-white outline-none focus:border-lime/40 placeholder-white/30"
         />
         <button className="h-12 px-8 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40" disabled={(affiliate.pending_commission ?? 0) < 50}>
-          Richiedi payout
+          Request payout
         </button>
       </div>
-      <p className="text-xs text-white/30 mt-3">Soglia minima di payout: $50 · Pagamenti in crypto entro 48h</p>
+      <p className="text-xs text-white/30 mt-3">Minimum payout threshold: $50 · Crypto payouts within 48h</p>
     </div>
   );
 }

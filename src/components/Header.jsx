@@ -68,7 +68,7 @@ export default function Header({ onMenu }) {
             </div>
             <button
               onClick={() => setShowWithdraw(true)}
-              title="Preleva vincite"
+              title="Withdraw winnings"
               className="flex items-center justify-center h-10 px-3 rounded-r-full bg-[#1a1a1a] border border-white/5 hover:border-lime/40 hover:text-lime text-white/50 transition"
             >
               <ArrowDownToLine className="w-4 h-4" />
@@ -86,16 +86,16 @@ export default function Header({ onMenu }) {
             {open && (
               <div className="absolute right-0 top-12 w-56 rounded-xl border border-white/10 bg-[#1a1a1a] shadow-2xl py-2 z-50">
                 <Link to="/vip" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <Crown className="w-4 h-4" /> Livello VIP
+                  <Crown className="w-4 h-4" /> VIP Tier
                 </Link>
                 <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <Users className="w-4 h-4" /> Pannello Affiliati
+                  <Users className="w-4 h-4" /> Affiliate Panel
                 </Link>
                 <button onClick={() => { setOpen(false); setShowWithdraw(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <ArrowDownToLine className="w-4 h-4" /> Preleva vincite
+                  <ArrowDownToLine className="w-4 h-4" /> Withdraw winnings
                 </button>
                 <Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <Wallet className="w-4 h-4" /> Il mio Wallet
+                  <Wallet className="w-4 h-4" /> My Wallet
                 </Link>
                 {isAdmin && (
                   <>
@@ -107,7 +107,7 @@ export default function Header({ onMenu }) {
                 )}
                 <div className="border-t border-white/5 my-1" />
                 <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:bg-white/5 transition">
-                  <User className="w-4 h-4" /> Impostazioni
+                  <User className="w-4 h-4" /> Settings
                 </button>
               </div>
             )}

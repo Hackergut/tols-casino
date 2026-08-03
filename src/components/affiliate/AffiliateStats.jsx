@@ -6,12 +6,12 @@ export default function AffiliateStats({ affiliate, referrals }) {
   const deposited = referrals.filter((r) => r.status === "deposited").length;
 
   const cards = [
-    { label: "Click totali", value: affiliate?.total_clicks ?? 0, icon: MousePointerClick, accent: "text-white" },
-    { label: "Registrazioni", value: affiliate?.total_referrals ?? referrals.length, icon: UserPlus, accent: "text-white" },
-    { label: "Giocatori attivi", value: activeReferrals, icon: UserPlus, accent: "text-lime" },
-    { label: "Volume scommesse", value: `$${(affiliate?.total_wagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, icon: TrendingUp, accent: "text-white" },
-    { label: "Commissioni totali", value: `$${(affiliate?.total_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: DollarSign, accent: "text-lime" },
-    { label: "In attesa di payout", value: `$${(affiliate?.pending_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: Clock, accent: "text-yellow-400" },
+    { label: "Total clicks", value: affiliate?.total_clicks ?? 0, icon: MousePointerClick, accent: "text-white" },
+    { label: "Signups", value: affiliate?.total_referrals ?? referrals.length, icon: UserPlus, accent: "text-white" },
+    { label: "Active players", value: activeReferrals, icon: UserPlus, accent: "text-lime" },
+    { label: "Wagering volume", value: `$${(affiliate?.total_wagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, icon: TrendingUp, accent: "text-white" },
+    { label: "Total commissions", value: `$${(affiliate?.total_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: DollarSign, accent: "text-lime" },
+    { label: "Pending payout", value: `$${(affiliate?.pending_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: Clock, accent: "text-yellow-400" },
   ];
 
   return (

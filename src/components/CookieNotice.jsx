@@ -22,14 +22,14 @@ export default function CookieNotice() {
           <Cookie className="w-5 h-5 text-lime" />
         </div>
         <p className="flex-1 text-xs text-white/60 leading-relaxed">
-          Utilizziamo i cookie per offrirti la migliore esperienza possibile sulla piattaforma TOLS.
+          We use cookies to give you the best possible experience on the TOLS platform.
         </p>
         <div className="flex flex-col gap-1.5 shrink-0">
           <button onClick={accept} className="px-4 h-9 rounded-lg bg-lime text-black text-xs font-black hover:opacity-90 transition">
-            Accetta
+            Accept
           </button>
           <button onClick={accept} className="px-4 h-7 rounded-lg text-white/50 text-[11px] font-semibold hover:text-white transition">
-            Maggiori info
+            More info
           </button>
         </div>
       </div>

@@ -13,15 +13,15 @@ const cellColor = (n) => (n === 0 ? "bg-green-600" : RED.has(n) ? "bg-red-600" :
 
 // outside bet definitions
 const OUTSIDE = [
-  { id: "red", label: "Rosso", mul: 2, test: (n) => n !== 0 && RED.has(n) },
-  { id: "black", label: "Nero", mul: 2, test: (n) => n !== 0 && !RED.has(n) },
-  { id: "even", label: "Pari", mul: 2, test: (n) => n !== 0 && n % 2 === 0 },
-  { id: "odd", label: "Dispari", mul: 2, test: (n) => n !== 0 && n % 2 === 1 },
+  { id: "red", label: "Red", mul: 2, test: (n) => n !== 0 && RED.has(n) },
+  { id: "black", label: "Black", mul: 2, test: (n) => n !== 0 && !RED.has(n) },
+  { id: "even", label: "Even", mul: 2, test: (n) => n !== 0 && n % 2 === 0 },
+  { id: "odd", label: "Odd", mul: 2, test: (n) => n !== 0 && n % 2 === 1 },
   { id: "low", label: "1-18", mul: 2, test: (n) => n >= 1 && n <= 18 },
   { id: "high", label: "19-36", mul: 2, test: (n) => n >= 19 && n <= 36 },
-  { id: "d1", label: "1ª 12", mul: 3, test: (n) => n >= 1 && n <= 12 },
-  { id: "d2", label: "2ª 12", mul: 3, test: (n) => n >= 13 && n <= 24 },
-  { id: "d3", label: "3ª 12", mul: 3, test: (n) => n >= 25 && n <= 36 },
+  { id: "d1", label: "1st 12", mul: 3, test: (n) => n >= 1 && n <= 12 },
+  { id: "d2", label: "2nd 12", mul: 3, test: (n) => n >= 13 && n <= 24 },
+  { id: "d3", label: "3rd 12", mul: 3, test: (n) => n >= 25 && n <= 36 },
 ];
 
 const colOf = (n) => (n === 0 ? 0 : n % 3 === 0 ? 3 : n % 3);
@@ -132,7 +132,7 @@ export default function RouletteGame() {
           </div>
           {lastWin && (
             <div className={`mt-4 px-5 py-2 rounded-xl border text-center ${lastWin.net >= 0 ? "border-lime/40 bg-lime/10" : "border-red-500/30 bg-red-500/5"}`}>
-              <p className="text-sm font-bold text-white/70">Uscito il <span className={colorOf(lastWin.num) === "red" ? "text-red-400" : colorOf(lastWin.num) === "green" ? "text-green-400" : "text-white"}>{lastWin.num}</span> ({colorOf(lastWin.num) === "red" ? "rosso" : lastWin.num === 0 ? "zero" : "nero"})</p>
+              <p className="text-sm font-bold text-white/70">Result <span className={colorOf(lastWin.num) === "red" ? "text-red-400" : colorOf(lastWin.num) === "green" ? "text-green-400" : "text-white"}>{lastWin.num}</span> ({colorOf(lastWin.num) === "red" ? "red" : lastWin.num === 0 ? "zero" : "black"})</p>
               <p className={`text-xl font-black ${lastWin.net >= 0 ? "text-lime" : "text-red-400"}`}>
                 {lastWin.net >= 0 ? `+${lastWin.net.toFixed(2)}` : lastWin.net.toFixed(2)} USDT
               </p>
@@ -187,16 +187,16 @@ export default function RouletteGame() {
           </div>
 
           <div className="flex items-center justify-between mt-3 text-sm">
-            <span className="text-white/50">Puntato: <b className="text-white tabular-nums">{totalStake.toFixed(2)} USDT</b></span>
-            <button onClick={clearBets} disabled={spinning} className="text-xs font-bold text-white/50 hover:text-red-400 transition disabled:opacity-30">Pulisci</button>
+            <span className="text-white/50">Staked: <b className="text-white tabular-nums">{totalStake.toFixed(2)} USDT</b></span>
+            <button onClick={clearBets} disabled={spinning} className="text-xs font-bold text-white/50 hover:text-red-400 transition disabled:opacity-30">Clear</button>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={spinning || totalStake <= 0} betLabel={spinning ? "Girando..." : "Spin"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={spinning || totalStake <= 0} betLabel={spinning ? "Spinning..." : "Spin"} />
         <p className="text-xs text-white/40 leading-relaxed">
-          Clicca sui numeri o sulle zone esterne per aggiungere puntate pari all'importo selezionato. Payout: numero singolo 35:1, dozzine/colonne 2:1, pari/dispari/rosso/nero 1:1.
+          Click numbers or outside zones to add bets equal to the selected amount. Payouts: single number 35:1, dozens/columns 2:1, even/odd/red/black 1:1.
         </p>
       </div>
     </div>

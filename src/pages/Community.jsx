@@ -4,10 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { Send, Hash, Users, LogIn, Loader2 } from "lucide-react";
 
 const CHANNELS = [
-  { id: "generale", label: "Generale", desc: "Chat principale della community" },
-  { id: "italiano", label: "Italiano", desc: "Community italiana" },
-  { id: "vip", label: "VIP Lounge", desc: "Solo membri VIP" },
-  { id: "supporto", label: "Supporto", desc: "Assistenza e domande" },
+  { id: "generale", label: "General", desc: "Main community chat" },
+  { id: "italiano", label: "Italian", desc: "Italian community" },
+  { id: "vip", label: "VIP Lounge", desc: "VIP members only" },
+  { id: "supporto", label: "Support", desc: "Help and questions" },
 ];
 
 const COLORS = ["#ccff00", "#4f8aff", "#ff4fa3", "#ff8a4f", "#2a8a6a", "#c4a01a", "#8a5a1a", "#a06aff"];
@@ -88,7 +88,7 @@ export default function Community() {
     setText("");
     try {
       await base44.entities.ChatMessage.create({
-        username: user.full_name || user.email || "Anonimo",
+        username: user.full_name || user.email || "Anonymous",
         avatar_color: userColor(user.full_name || user.email || "x"),
         message: msg.slice(0, 500),
         channel,
@@ -109,14 +109,14 @@ export default function Community() {
           <h1 className="text-2xl font-black tracking-tight text-white">
             <span className="text-lime">Community</span> Chat
           </h1>
-          <p className="text-sm text-white/50 mt-1">Conosci gli altri giocatori, condividi vincite e strategie.</p>
+          <p className="text-sm text-white/50 mt-1">Meet other players, share wins and strategies.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-4 h-[calc(100vh-180px)] min-h-[500px]">
           {/* Canali */}
           <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
-              <Hash className="w-3.5 h-3.5" /> Canali
+              <Hash className="w-3.5 h-3.5" /> Channels
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-hide p-2 space-y-1">
               {CHANNELS.map((c) => (
@@ -137,7 +137,7 @@ export default function Community() {
             </div>
             <div className="px-3 py-2.5 border-t border-white/5 flex items-center gap-2 text-xs text-white/40">
               <Users className="w-3.5 h-3.5" />
-              <span>{Math.max(1, messages.length)} messaggi</span>
+              <span>{Math.max(1, messages.length)} messages</span>
             </div>
           </div>
 
@@ -146,7 +146,7 @@ export default function Community() {
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
               <Hash className="w-4 h-4 text-lime" />
               <span className="text-sm font-black text-white">{CHANNELS.find((c) => c.id === channel)?.label}</span>
-              <span className="ml-auto text-xs text-white/40">{loading ? "Caricamento…" : "Live"}</span>
+              <span className="ml-auto text-xs text-white/40">{loading ? "Loading…" : "Live"}</span>
             </div>
 
             <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-hide px-4 py-4 space-y-3">
@@ -157,8 +157,8 @@ export default function Community() {
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center text-white/40">
                   <Hash className="w-10 h-10 mb-2 opacity-40" />
-                  <p className="text-sm">Nessun messaggio in questo canale.</p>
-                  <p className="text-xs mt-1">Scrivi il primo messaggio!</p>
+                  <p className="text-sm">No messages in this channel.</p>
+                  <p className="text-xs mt-1">Be the first to write!</p>
                 </div>
               ) : (
                 messages.map((m) => (
@@ -184,9 +184,9 @@ export default function Community() {
             {isGuest ? (
               <div className="px-4 py-3 border-t border-white/5 bg-[#0f0f0f]">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs text-white/50">Accedi per partecipare alla conversazione.</p>
+                  <p className="text-xs text-white/50">Log in to join the conversation.</p>
                   <Link to="/login" className="flex items-center gap-1.5 px-3 h-9 rounded-lg bg-lime text-black text-xs font-black hover:opacity-90 transition">
-                    <LogIn className="w-3.5 h-3.5" /> Accedi
+                    <LogIn className="w-3.5 h-3.5" /> Log in
                   </Link>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function Community() {
                 <input
                   value={text}
                   onChange={(e) => setText(e.target.value)}
-                  placeholder={`Messaggio in #${channel}…`}
+                  placeholder={`Message in #${channel}…`}
                   maxLength={500}
                   className="flex-1 h-10 px-3 rounded-lg bg-[#1a1a1a] border border-white/10 text-sm text-white placeholder-white/30 outline-none focus:border-lime/40 transition"
                 />

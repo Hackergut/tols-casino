@@ -112,9 +112,9 @@ export default function Admin() {
       const res = await base44.functions.invoke("syncSlotCatalog", {});
       const d = res.data || {};
       if (d.error) setSyncMsg({ ok: false, text: d.error });
-      else setSyncMsg({ ok: true, text: `${d.created || 0} nuove · ${d.updated || 0} aggiornate · ${d.total || 0} totali` });
+      else setSyncMsg({ ok: true, text: `${d.created || 0} new · ${d.updated || 0} updated · ${d.total || 0} total` });
     } catch (e) {
-      setSyncMsg({ ok: false, text: e?.response?.data?.error || e.message || "Errore sync" });
+      setSyncMsg({ ok: false, text: e?.response?.data?.error || e.message || "Sync error" });
     } finally {
       setSyncing(false);
     }
@@ -135,8 +135,8 @@ export default function Admin() {
           <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center mx-auto mb-4">
             <Ban className="w-8 h-8 text-red-400" />
           </div>
-          <h1 className="text-xl font-black text-white">Accesso negato</h1>
-          <p className="text-sm text-white/40 mt-2">Il pannello admin è riservato agli amministratori della piattaforma.</p>
+          <h1 className="text-xl font-black text-white">Access denied</h1>
+          <p className="text-sm text-white/40 mt-2">The admin panel is restricted to platform administrators.</p>
         </div>
       </div>
     );
@@ -153,7 +153,7 @@ export default function Admin() {
             </div>
             <div>
               <h1 className="text-2xl font-black tracking-tight text-white">Admin <span className="text-lime">Dashboard</span></h1>
-              <p className="text-xs text-white/40">Monitoraggio real-time · aggiornamento ogni 15s</p>
+              <p className="text-xs text-white/40">Real-time monitoring · updates every 15s</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -163,7 +163,7 @@ export default function Admin() {
               className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-lime text-black text-xs font-black hover:opacity-90 transition disabled:opacity-50"
             >
               {syncing ? <span className="w-3 h-3 rounded-full border-2 border-black/40 border-t-black animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
-              Sincronizza slot
+              Sync slots
             </button>
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime/10 border border-lime/30 text-xs font-bold text-lime">
               <span className="w-2 h-2 rounded-full bg-lime animate-pulse" /> LIVE
@@ -178,25 +178,25 @@ export default function Admin() {
 
         {/* KPI grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <Kpi icon={<DollarSign />} label="Volume scommesse" value={stats.totalWagered.toLocaleString()} sub="USDT totali" accent />
-          <Kpi icon={<TrendingUp />} label="House edge" value={`${stats.houseEdge}%`} sub={`Netto casa: ${stats.houseGross.toLocaleString()}`} />
-          <Kpi icon={<Wallet />} label="Saldo wallet" value={stats.totalBalance.toLocaleString()} sub={`${stats.walletCount} wallet`} />
-          <Kpi icon={<Users />} label="Utenti attivi" value={stats.activeUsers} sub={`${stats.betCount} scommesse`} />
+          <Kpi icon={<DollarSign />} label="Wagering volume" value={stats.totalWagered.toLocaleString()} sub="USDT total" accent />
+          <Kpi icon={<TrendingUp />} label="House edge" value={`${stats.houseEdge}%`} sub={`House net: ${stats.houseGross.toLocaleString()}`} />
+          <Kpi icon={<Wallet />} label="Wallet balance" value={stats.totalBalance.toLocaleString()} sub={`${stats.walletCount} wallets`} />
+          <Kpi icon={<Users />} label="Active users" value={stats.activeUsers} sub={`${stats.betCount} bets`} />
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <MiniKpi label="Payout totale" value={stats.totalPayout.toLocaleString()} />
+          <MiniKpi label="Total payout" value={stats.totalPayout.toLocaleString()} />
           <MiniKpi label="Win rate" value={`${stats.winRate}%`} sub={`${stats.wins}W / ${stats.losses}L`} />
-          <MiniKpi label="Prelievi in attesa" value={stats.pendingWithdrawals} sub={`${stats.pendingAmount} USDT`} warn={stats.pendingWithdrawals > 0} />
-          <MiniKpi label="Volume giocatori" value={stats.totalPlayerWagered.toLocaleString()} />
+          <MiniKpi label="Pending withdrawals" value={stats.pendingWithdrawals} sub={`${stats.pendingAmount} USDT`} warn={stats.pendingWithdrawals > 0} />
+          <MiniKpi label="Player volume" value={stats.totalPlayerWagered.toLocaleString()} />
         </div>
 
         {/* Charts */}
         <div className="grid lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-[#111] p-5">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-white flex items-center gap-2"><Activity className="w-4 h-4 text-lime" /> Volume scommesse (12h)</h3>
-              <span className="text-xs text-white/40">USDT per ora</span>
+              <h3 className="font-bold text-white flex items-center gap-2"><Activity className="w-4 h-4 text-lime" /> Wagering volume (12h)</h3>
+              <span className="text-xs text-white/40">USDT per hour</span>
             </div>
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={stats.series}>
@@ -209,14 +209,14 @@ export default function Admin() {
                 <XAxis dataKey="hour" stroke="#555" tick={{ fontSize: 11 }} />
                 <YAxis stroke="#555" tick={{ fontSize: 11 }} width={48} />
                 <Tooltip contentStyle={{ background: "#0d0d0d", border: "1px solid #333", borderRadius: 12, fontSize: 12 }} labelStyle={{ color: "#ccff00" }} />
-                <Area type="monotone" dataKey="wagered" stroke="#ccff00" strokeWidth={2} fill="url(#gwagered)" name="Scommesse" />
+                <Area type="monotone" dataKey="wagered" stroke="#ccff00" strokeWidth={2} fill="url(#gwagered)" name="Bets" />
                 <Line type="monotone" dataKey="payout" stroke="#888" strokeWidth={1.5} dot={false} name="Payout" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-            <h3 className="font-bold text-white mb-4">Top giochi per volume</h3>
+            <h3 className="font-bold text-white mb-4">Top games by volume</h3>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={stats.topGames} layout="vertical" margin={{ left: 20, right: 20 }}>
                 <XAxis type="number" stroke="#555" tick={{ fontSize: 10 }} />
@@ -232,7 +232,7 @@ export default function Admin() {
         <div className="grid lg:grid-cols-2 gap-4">
           {/* Recent bets */}
           <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-            <h3 className="font-bold text-white mb-3">Scommesse recenti</h3>
+            <h3 className="font-bold text-white mb-3">Recent bets</h3>
             <div className="space-y-2 max-h-72 overflow-y-auto scrollbar-hide">
               {bets.slice(0, 12).map((b) => (
                 <div key={b.id} className="flex items-center justify-between rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2">
@@ -248,14 +248,14 @@ export default function Admin() {
                   </div>
                 </div>
               ))}
-              {!bets.length && <p className="text-sm text-white/30 text-center py-6">Nessuna scommessa</p>}
+              {!bets.length && <p className="text-sm text-white/30 text-center py-6">No bets</p>}
             </div>
           </div>
 
           {/* Pending withdrawals */}
           <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
             <h3 className="font-bold text-white mb-3 flex items-center gap-2">
-              <ArrowDownToLine className="w-4 h-4 text-lime" /> Prelievi in attesa
+              <ArrowDownToLine className="w-4 h-4 text-lime" /> Pending withdrawals
             </h3>
             <div className="space-y-2 max-h-72 overflow-y-auto scrollbar-hide">
               {withdrawals.filter((w) => w.status === "pending").map((w) => (
@@ -270,21 +270,21 @@ export default function Admin() {
                   </div>
                 </div>
               ))}
-              {!withdrawals.filter((w) => w.status === "pending").length && <p className="text-sm text-white/30 text-center py-6">Nessun prelievo in attesa</p>}
+              {!withdrawals.filter((w) => w.status === "pending").length && <p className="text-sm text-white/30 text-center py-6">No pending withdrawals</p>}
             </div>
           </div>
         </div>
 
         {/* Top wallets */}
         <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-          <h3 className="font-bold text-white mb-3">Wallet per saldo</h3>
+          <h3 className="font-bold text-white mb-3">Wallets by balance</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="text-left text-xs text-white/40 uppercase border-b border-white/5">
                   <th className="py-2 px-2">Wallet</th>
-                  <th className="py-2 px-2 text-right">Saldo</th>
-                  <th className="py-2 px-2 text-right">Scommesso tot.</th>
+                  <th className="py-2 px-2 text-right">Balance</th>
+                  <th className="py-2 px-2 text-right">Total wagered</th>
                   <th className="py-2 px-2 text-right">XP</th>
                   <th className="py-2 px-2 text-right">VIP</th>
                 </tr>
@@ -300,7 +300,7 @@ export default function Admin() {
                   </tr>
                 ))}
                 {!wallets.length && (
-                  <tr><td colSpan={5} className="py-6 text-center text-white/30">Nessun wallet</td></tr>
+                  <tr><td colSpan={5} className="py-6 text-center text-white/30">No wallets</td></tr>
                 )}
               </tbody>
             </table>

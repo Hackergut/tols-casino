@@ -78,8 +78,8 @@ export default function CrashGame() {
             {multiplier.toFixed(2)}x
           </div>
           <div className="mt-3 text-sm font-semibold text-white/40">
-            {!running && !crashPoint && "Punta per iniziare"}
-            {running && !cashed && "IN VOLATA 🚀"}
+            {!running && !crashPoint && "Place a bet to start"}
+            {running && !cashed && "RISING 🚀"}
             {running && cashed && "CASHED OUT!"}
             {!running && crashPoint && "CRASHED"}
           </div>
@@ -93,7 +93,7 @@ export default function CrashGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={running} betLabel={running ? "IN CORSO..." : "Punta"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={running} betLabel={running ? "IN PROGRESS..." : "Bet"} />
         <div>
           <label className="text-xs font-semibold text-white/50 mb-1.5 block">Auto Cashout (x)</label>
           <input

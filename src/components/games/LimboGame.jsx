@@ -40,9 +40,9 @@ export default function LimboGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} betLabel="Lancia" />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} betLabel="Roll" />
         <div>
-          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Target moltiplicatore (x)</label>
+          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Target multiplier (x)</label>
           <input
             type="number"
             min="1.01"

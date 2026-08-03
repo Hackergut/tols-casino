@@ -24,7 +24,7 @@ export default function GameGrid({ title = "TOLS GAMES", filter }) {
         </div>
         <div className="flex items-center gap-2">
           <button className="hidden sm:flex items-center gap-1 text-sm font-semibold text-white/60 hover:text-lime transition">
-            Visualizza tutto <ArrowRight className="w-4 h-4" />
+            View all <ArrowRight className="w-4 h-4" />
           </button>
           <button onClick={() => scroll(-1)} className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a1a] border border-white/10 hover:border-lime/40 text-white/70 transition">
             <ChevronLeft className="w-4 h-4" />

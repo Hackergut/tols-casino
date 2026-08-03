@@ -38,10 +38,10 @@ export default function Home() {
         <TolsGamesSection />
         {active === "home" && (
           <>
-            <GameGrid title="Originali" filter="originals" />
+            <GameGrid title="Originals" filter="originals" />
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg sm:text-xl font-black text-white">Slot dei <span className="text-lime">Top Provider</span></h2>
+                <h2 className="text-lg sm:text-xl font-black text-white">Top <span className="text-lime">Provider</span> Slots</h2>
               </div>
               <ProviderFilter providers={PROVIDERS} active={provider} onChange={setProvider} />
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2.5 sm:gap-3 mt-4">
@@ -50,7 +50,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-            <GameGrid title="Giochi da Tavolo" filter="table" />
+            <GameGrid title="Table Games" filter="table" />
           </>
         )}
         {active === "slots" && (
@@ -63,7 +63,7 @@ export default function Home() {
             </div>
           </div>
         )}
-        {active !== "home" && active !== "slots" && <GameGrid title="Categoria" filter={active} />}
+        {active !== "home" && active !== "slots" && <GameGrid title="Category" filter={active} />}
       </main>
       <footer className="border-t border-white/5 mt-12 py-8 text-center text-xs text-white/30">
         <span className="text-lime font-black">TOLS</span> · Crypto Casino · Provably Fair

@@ -14,7 +14,7 @@ export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet",
   return (
     <div className="space-y-4">
       <div>
-        <label className="text-xs font-semibold text-white/50 mb-1.5 block">Importo scommessa</label>
+        <label className="text-xs font-semibold text-white/50 mb-1.5 block">Bet amount</label>
         <div className="flex items-center gap-2 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 px-3">
           <span className="text-lime font-bold text-sm">$</span>
           <input

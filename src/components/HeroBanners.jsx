@@ -38,7 +38,7 @@ function Banner({ badge, title, subtitle, icon, art }) {
           </h2>
           <p className="text-white/60 text-sm sm:text-base font-medium">{subtitle}</p>
           <button className="mt-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-lime hover:text-black hover:border-lime transition">
-            Partecipa ora →
+            Join now →
           </button>
         </div>
         <div className="absolute right-0 top-0 bottom-0 w-[45%] opacity-60 group-hover:opacity-90 transition">

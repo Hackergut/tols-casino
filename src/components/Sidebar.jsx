@@ -7,19 +7,19 @@ import {
 
 export const NAV_MAIN = [
   { id: "lobby", label: "Lobby", icon: Home, to: "/", match: "lobby" },
-  { id: "favorites", label: "Preferiti", icon: Star, to: "/", match: null },
-  { id: "latest", label: "Ultime uscite", icon: Clock3, to: "/?cat=slots", match: "cat:slots" },
-  { id: "recent", label: "Giocati di recente", icon: Flame, to: "/", match: null },
-  { id: "challenges", label: "Sfide", icon: Trophy, to: "/", match: null, badge: "39" },
-  { id: "promotions", label: "Promozioni", icon: Gift, to: "/", match: null },
+  { id: "favorites", label: "Favorites", icon: Star, to: "/", match: null },
+  { id: "latest", label: "Latest releases", icon: Clock3, to: "/?cat=slots", match: "cat:slots" },
+  { id: "recent", label: "Recently played", icon: Flame, to: "/", match: null },
+  { id: "challenges", label: "Challenges", icon: Trophy, to: "/", match: null, badge: "39" },
+  { id: "promotions", label: "Promotions", icon: Gift, to: "/", match: null },
   { id: "community", label: "Community Chat", icon: MessageCircle, to: "/community", match: "path:/community" },
 ];
 
 export const NAV_CATS = [
-  { id: "originals", label: "Originali", icon: Sparkles, to: "/?cat=originals", match: "cat:originals" },
-  { id: "slots", label: "Slot", icon: Gamepad2, to: "/?cat=slots", match: "cat:slots" },
+  { id: "originals", label: "Originals", icon: Sparkles, to: "/?cat=originals", match: "cat:originals" },
+  { id: "slots", label: "Slots", icon: Gamepad2, to: "/?cat=slots", match: "cat:slots" },
   { id: "live", label: "Live Dealers", icon: MonitorPlay, to: "/?cat=live", match: "cat:live" },
-  { id: "table", label: "Giochi da Tavolo", icon: Spade, to: "/?cat=table", match: "cat:table" },
+  { id: "table", label: "Table Games", icon: Spade, to: "/?cat=table", match: "cat:table" },
 ];
 
 export const NAV_GAMES = [
@@ -29,7 +29,7 @@ export const NAV_GAMES = [
 
 export const NAV_BOTTOM = [
   { id: "vip", label: "VIP", icon: Crown, to: "/vip", match: "path:/vip" },
-  { id: "affiliate", label: "Affiliati", icon: Users, to: "/affiliate", match: "path:/affiliate" },
+  { id: "affiliate", label: "Affiliates", icon: Users, to: "/affiliate", match: "path:/affiliate" },
   { id: "blog", label: "Blog", icon: Newspaper, to: "/", match: null },
 ];
 
@@ -59,17 +59,17 @@ export default function Sidebar() {
       <div className="px-4 pt-4">
         <div className="flex items-center gap-2 h-10 px-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus-within:border-lime/30 transition">
           <Search className="w-4 h-4 text-white/30" />
-          <input placeholder="Cerca giochi" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
+          <input placeholder="Search games" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
         </div>
       </div>
 
       {/* Nav scroll area */}
       <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
         <Section items={NAV_MAIN} isActive={isActive} />
-        <Group title="Categorie">
+        <Group title="Categories">
           <Section items={NAV_CATS} isActive={isActive} />
         </Group>
-        <Group title="Giochi">
+        <Group title="Games">
           <Section items={NAV_GAMES} isActive={isActive} />
         </Group>
       </nav>

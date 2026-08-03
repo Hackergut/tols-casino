@@ -10,7 +10,7 @@ export default function ProviderFilter({ providers, active, onChange }) {
           active === "all" ? "bg-lime text-black" : "bg-white/5 text-white/60 hover:text-white border border-white/5"
         }`}
       >
-        Tutti i provider
+        All providers
       </button>
       {providers.map((p) => (
         <button

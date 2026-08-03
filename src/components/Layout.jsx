@@ -103,17 +103,17 @@ function MobileNav({ onClose }) {
       <div className="px-4 pt-4">
         <div className="flex items-center gap-2 h-11 px-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus-within:border-lime/30 transition">
           <Search className="w-4 h-4 text-white/40" />
-          <input placeholder="Cerca giochi" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/40 w-full" />
+          <input placeholder="Search games" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/40 w-full" />
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
         <MSection items={NAV_MAIN} isActive={isActive} onClose={onClose} />
-        <MGroup title="Categorie">
+        <MGroup title="Categories">
           <MSection items={NAV_CATS} isActive={isActive} onClose={onClose} />
         </MGroup>
-        <MGroup title="Giochi">
+        <MGroup title="Games">
           <MSection items={NAV_GAMES} isActive={isActive} onClose={onClose} />
         </MGroup>
       </nav>

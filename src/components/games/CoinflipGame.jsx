@@ -33,7 +33,7 @@ export default function CoinflipGame() {
             <span className="text-3xl font-black italic" style={{ color: "#ccff00" }}>TOLS</span>
           </div>
           <div className="mt-4 text-sm font-bold text-white/60">
-            {last ? (last.won ? `${last.result.toUpperCase()} — VINTA!` : `${last.result.toUpperCase()} — PERSA`) : "Scegli e lancia"}
+            {last ? (last.won ? `${last.result.toUpperCase()} — WON!` : `${last.result.toUpperCase()} — LOST`) : "Pick and flip"}
           </div>
           {streak > 0 && <div className="mt-1 text-xs text-lime font-semibold">Streak: {streak} 🔥</div>}
         </div>
@@ -41,9 +41,9 @@ export default function CoinflipGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={flipping} betLabel={flipping ? "..." : "Lancia"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={flipping} betLabel={flipping ? "..." : "Flip"} />
         <div>
-          <label className="text-xs font-semibold text-white/50 mb-1.5 block">La tua scelta</label>
+          <label className="text-xs font-semibold text-white/50 mb-1.5 block">Your pick</label>
           <div className="flex gap-2">
             {["heads", "tails"].map((c) => (
               <button
@@ -51,7 +51,7 @@ export default function CoinflipGame() {
                 onClick={() => setChoice(c)}
                 className={`flex-1 h-12 rounded-xl text-sm font-bold capitalize ${choice === c ? "bg-lime text-black" : "bg-[#1a1a1a] text-white/60 border border-white/10"}`}
               >
-                {c === "heads" ? "Testa" : "Croce"}
+                {c === "heads" ? "Heads" : "Tails"}
               </button>
             ))}
           </div>

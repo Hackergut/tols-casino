@@ -7,30 +7,30 @@ const STEPS = [
   {
     icon: Sparkles,
     color: "#ccff00",
-    title: "Benvenuto su TOLS",
-    body: "Il tuo casinò crypto provably fair. Ti abbiamo accreditato 1000 USDT demo per esplorare la piattaforma senza rischi. Gioca, vinci e sali di livello!",
+    title: "Welcome to TOLS",
+    body: "Your provably fair crypto casino. We've credited 1,000 USDT in demo balance so you can explore the platform risk-free. Play, win and level up!",
     cta: null,
   },
   {
     icon: Wallet,
     color: "#4f8aff",
-    title: "Deposita e gestisci il saldo",
-    body: "Il saldo è visibile in alto a destra. In modalità reale colleghi il tuo wallet crypto (Solana, Polygon, Ethereum). Usa l'icona di prelievo per incassare le vincite on-chain in qualsiasi momento.",
-    cta: { label: "Vai al Wallet", to: "/" },
+    title: "Deposit and manage balance",
+    body: "Your balance is shown top-right. In real mode you connect your crypto wallet (Solana, Polygon, Ethereum). Use the withdrawal icon to cash out your winnings on-chain anytime.",
+    cta: { label: "Go to Wallet", to: "/wallet" },
   },
   {
     icon: ShieldCheck,
     color: "#ccff00",
-    title: "Giochi Provably Fair",
-    body: "I TOLS Originali (Dice, Crash, Plinko, Mines…) usano seed server + client nonce verificabili: ogni risultato è controllabile e impossibile da manipolare. Scommetti con totale trasparenza.",
-    cta: { label: "Prova gli Originali", to: "/?cat=originals" },
+    title: "Provably Fair Games",
+    body: "TOLS Originals (Dice, Crash, Plinko, Mines…) use verifiable server seed + client nonce: every result is checkable and impossible to tamper with. Bet with full transparency.",
+    cta: { label: "Try the Originals", to: "/?cat=originals" },
   },
   {
     icon: Crown,
     color: "#d4a01a",
-    title: "Sblocca i vantaggi VIP",
-    body: "Più scommetti, più sali di livello: da Bronze a Diamond. Ottieni cashback, moltiplicatori XP, bonus di livello e un host dedicato. Controlla i tuoi progressi nella sezione VIP.",
-    cta: { label: "Scopri il VIP", to: "/vip" },
+    title: "Unlock VIP benefits",
+    body: "The more you bet, the higher you climb: from Bronze to Diamond. Get cashback, XP multipliers, level-up bonuses and a dedicated host. Track your progress in the VIP section.",
+    cta: { label: "Explore VIP", to: "/vip" },
   },
 ];
 
@@ -79,7 +79,7 @@ export default function OnboardingTour() {
           </div>
 
           <div className="text-center mb-5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Step {step + 1} di {STEPS.length}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Step {step + 1} of {STEPS.length}</span>
             <h2 className="text-xl font-black text-white mt-1">{s.title}</h2>
           </div>
 
@@ -117,18 +117,18 @@ export default function OnboardingTour() {
           <div className="flex items-center gap-2">
             {step > 0 ? (
               <button onClick={prev} className="flex items-center gap-1 px-4 h-10 rounded-xl border border-white/10 text-sm font-bold text-white/70 hover:text-white hover:bg-white/5 transition">
-                <ChevronLeft className="w-4 h-4" /> Indietro
+                <ChevronLeft className="w-4 h-4" /> Back
               </button>
             ) : (
               <button onClick={close} className="px-4 h-10 rounded-xl text-sm font-bold text-white/40 hover:text-white/70 transition">
-                Salta
+                Skip
               </button>
             )}
             <button
               onClick={next}
               className="flex items-center justify-center gap-1 px-5 h-10 rounded-xl bg-[#1a1a1a] border border-white/10 text-sm font-bold text-white hover:border-lime/40 hover:text-lime transition ml-auto"
             >
-              {isLast ? "Inizia a giocare" : "Avanti"} <ChevronRight className="w-4 h-4" />
+              {isLast ? "Start playing" : "Next"} <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>

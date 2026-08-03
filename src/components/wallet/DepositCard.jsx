@@ -19,11 +19,11 @@ export default function DepositCard({ chain }) {
         </span>
         <div>
           <p className="font-bold text-white">{chain.label}</p>
-          <p className="text-xs text-white/40">Deposito gratuito · accreditato dopo 1 conferma</p>
+          <p className="text-xs text-white/40">Free deposit · credited after 1 confirmation</p>
         </div>
       </div>
       <label className="text-xs font-semibold text-white/40 uppercase tracking-wide">
-        Indirizzo di deposito {chain.label}
+        {chain.label} deposit address
       </label>
       <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0d0d0d] border border-white/10 p-3">
         <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{chain.address}</code>
@@ -36,7 +36,7 @@ export default function DepositCard({ chain }) {
       </div>
       <div className="flex items-start gap-1.5 mt-3 text-xs text-white/30">
         <ShieldCheck className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-        <p>Invia solo USDT sulla rete {chain.label}. Transazioni di altri token o reti potrebbero andare perse.</p>
+        <p>Send only USDT on the {chain.label} network. Other tokens or networks may be lost.</p>
       </div>
     </div>
   );

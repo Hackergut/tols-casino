@@ -33,7 +33,7 @@ export default function DiceGame() {
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-6">
         <div className="relative rounded-2xl border border-white/10 bg-[#111] p-8 min-h-[280px] flex flex-col items-center justify-center">
-          <div className="text-xs font-semibold text-white/40 mb-2">ULTIMO RISULTATO</div>
+          <div className="text-xs font-semibold text-white/40 mb-2">LAST RESULT</div>
           {lastRoll ? (
             <div className={`text-6xl font-black tabular-nums ${lastRoll.won ? "text-lime" : "text-white"}`}>
               {lastRoll.roll.toFixed(2)}
@@ -66,13 +66,13 @@ export default function DiceGame() {
               onClick={() => setDirection("under")}
               className={`px-4 py-2 rounded-full text-sm font-bold ${direction === "under" ? "bg-lime text-black" : "bg-[#1a1a1a] text-white/60"}`}
             >
-              Sotto {target}
+              Under {target}
             </button>
             <button
               onClick={() => setDirection("over")}
               className={`px-4 py-2 rounded-full text-sm font-bold ${direction === "over" ? "bg-lime text-black" : "bg-[#1a1a1a] text-white/60"}`}
             >
-              Sopra {target}
+              Over {target}
             </button>
           </div>
         </div>
@@ -80,9 +80,9 @@ export default function DiceGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Lancia"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Roll"} />
         <div className="grid grid-cols-3 gap-2 text-center">
-          <Stat label="Multiplicatore" value={`${multiplier}x`} />
+          <Stat label="Multiplier" value={`${multiplier}x`} />
           <Stat label="Win chance" value={`${winChance.toFixed(2)}%`} />
           <Stat label="Payout" value={`$${payout.toFixed(2)}`} />
         </div>

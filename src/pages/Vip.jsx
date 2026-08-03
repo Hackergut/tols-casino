@@ -18,7 +18,7 @@ export default function Vip() {
     <div className="min-h-screen bg-[#0d0d0d] text-white">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-lime transition mb-6">
-          <ChevronLeft className="w-4 h-4" /> Torna alla lobby
+          <ChevronLeft className="w-4 h-4" /> Back to lobby
         </Link>
 
         {/* Current tier card */}
@@ -33,7 +33,7 @@ export default function Vip() {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-white/40 mb-1">
-                <Sparkles className="w-3.5 h-3.5" /> Livello attuale
+                <Sparkles className="w-3.5 h-3.5" /> Current tier
               </div>
               <h1 className="text-3xl sm:text-4xl font-black italic" style={{ color: current.color, textShadow: `0 0 24px ${current.color}55` }}>
                 {current.name}
@@ -41,7 +41,7 @@ export default function Vip() {
               <div className="flex flex-wrap gap-4 mt-3 text-sm">
                 <span className="flex items-center gap-1.5 text-white/70">
                   <TrendingUp className="w-4 h-4 text-lime" />
-                  Volume scommesso: <b className="text-white tabular-nums">{wagered.toLocaleString()} USDT</b>
+                  Wagered volume: <b className="text-white tabular-nums">{wagered.toLocaleString()} USDT</b>
                 </span>
                 <span className="flex items-center gap-1.5 text-white/70">
                   <Percent className="w-4 h-4 text-lime" />
@@ -49,7 +49,7 @@ export default function Vip() {
                 </span>
                 <span className="flex items-center gap-1.5 text-white/70">
                   <Gift className="w-4 h-4 text-lime" />
-                  Moltiplicatore bonus: <b className="text-white">×{current.multiplier.toFixed(2)}</b>
+                  Bonus multiplier: <b className="text-white">×{current.multiplier.toFixed(2)}</b>
                 </span>
               </div>
             </div>
@@ -59,8 +59,8 @@ export default function Vip() {
           {next ? (
             <div className="relative mt-6">
               <div className="flex justify-between text-xs text-white/50 mb-2">
-                <span>Prossimo livello: <b style={{ color: next.color }}>{next.name}</b></span>
-                <span className="tabular-nums">Mancano {remaining.toLocaleString()} USDT</span>
+                <span>Next tier: <b style={{ color: next.color }}>{next.name}</b></span>
+                <span className="tabular-nums">{remaining.toLocaleString()} USDT to go</span>
               </div>
               <div className="h-3 rounded-full bg-[#0d0d0d] border border-white/10 overflow-hidden">
                 <div
@@ -71,13 +71,13 @@ export default function Vip() {
             </div>
           ) : (
             <div className="relative mt-6 text-sm font-bold text-lime flex items-center gap-2">
-              <Crown className="w-4 h-4" /> Livello massimo raggiunto — godi tutti i vantaggi Diamond!
+              <Crown className="w-4 h-4" /> Max tier reached — enjoy all Diamond benefits!
             </div>
           )}
         </div>
 
         {/* Tiers table */}
-        <h2 className="text-lg font-bold text-white/80 mb-4">Tutti i livelli</h2>
+        <h2 className="text-lg font-bold text-white/80 mb-4">All tiers</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {VIP_TIERS.map((t) => {
             const reached = wagered >= t.min_wagered;
@@ -92,19 +92,19 @@ export default function Vip() {
                 <div className="flex items-center gap-2 mb-3">
                   <Crown className="w-5 h-5" style={{ color: t.color }} />
                   <span className="font-black text-lg" style={{ color: t.color }}>{t.name}</span>
-                  {isCurrent && <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-lime text-black">ATTUALE</span>}
+                  {isCurrent && <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full bg-lime text-black">CURRENT</span>}
                 </div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between text-white/60">
-                    <span>Volume richiesto</span>
+                    <span>Required volume</span>
                     <span className="text-white tabular-nums">{t.min_wagered.toLocaleString()} USDT</span>
                   </div>
                   <div className="flex justify-between text-white/60">
-                    <span>Cashback perdite</span>
+                    <span>Loss cashback</span>
                     <span className="text-white">{(t.cashback * 100).toFixed(0)}%</span>
                   </div>
                   <div className="flex justify-between text-white/60">
-                    <span>Moltiplicatore bonus</span>
+                    <span>Bonus multiplier</span>
                     <span className="text-white">×{t.multiplier.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-white/60">
@@ -118,8 +118,8 @@ export default function Vip() {
         </div>
 
         <p className="text-xs text-white/40 mt-6 leading-relaxed">
-          Il livello VIP viene calcolato automaticamente sul volume totale scommesso. Raggiungendo un nuovo livello ricevi subito il bonus level-up accreditato sul saldo.
-          Il cashback è calcolato sulle perdite nette e il moltiplicatore bonus viene applicato alle ricompense.
+          Your VIP tier is automatically calculated on total wagered volume. Reaching a new tier instantly credits the level-up bonus to your balance.
+          Cashback is calculated on net losses and the bonus multiplier applies to rewards.
         </p>
       </div>
     </div>
