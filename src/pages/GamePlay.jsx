@@ -13,6 +13,8 @@ import WheelGame from "@/components/games/WheelGame";
 import CoinflipGame from "@/components/games/CoinflipGame";
 import KenoGame from "@/components/games/KenoGame";
 import SlotGame from "@/components/games/SlotGame";
+import RouletteGame from "@/components/games/RouletteGame";
+import BaccaratGame from "@/components/games/BaccaratGame";
 
 const GAMES_MAP = {
   dice: DiceGame,
@@ -23,6 +25,8 @@ const GAMES_MAP = {
   wheel: WheelGame,
   coinflip: CoinflipGame,
   keno: KenoGame,
+  roulette: RouletteGame,
+  baccarat: BaccaratGame,
 };
 
 export default function GamePlay({ slug }) {
