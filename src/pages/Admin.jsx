@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban } from "lucide-react";
+import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban, RefreshCw } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
@@ -11,6 +11,8 @@ export default function Admin() {
   const [withdrawals, setWithdrawals] = useState([]);
   const [wallets, setWallets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -103,6 +105,21 @@ export default function Admin() {
     return () => clearInterval(id);
   }, []);
 
+  const syncCatalog = async () => {
+    setSyncing(true);
+    setSyncMsg(null);
+    try {
+      const res = await base44.functions.invoke("syncSlotCatalog", {});
+      const d = res.data || {};
+      if (d.error) setSyncMsg({ ok: false, text: d.error });
+      else setSyncMsg({ ok: true, text: `${d.created || 0} nuove · ${d.updated || 0} aggiornate · ${d.total || 0} totali` });
+    } catch (e) {
+      setSyncMsg({ ok: false, text: e?.response?.data?.error || e.message || "Errore sync" });
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center">
@@ -139,9 +156,24 @@ export default function Admin() {
               <p className="text-xs text-white/40">Monitoraggio real-time · aggiornamento ogni 15s</p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime/10 border border-lime/30 text-xs font-bold text-lime">
-            <span className="w-2 h-2 rounded-full bg-lime animate-pulse" /> LIVE
-          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={syncCatalog}
+              disabled={syncing}
+              className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-lime text-black text-xs font-black hover:opacity-90 transition disabled:opacity-50"
+            >
+              {syncing ? <span className="w-3 h-3 rounded-full border-2 border-black/40 border-t-black animate-spin" /> : <RefreshCw className="w-3.5 h-3.5" />}
+              Sincronizza slot
+            </button>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-lime/10 border border-lime/30 text-xs font-bold text-lime">
+              <span className="w-2 h-2 rounded-full bg-lime animate-pulse" /> LIVE
+            </span>
+          </div>
+          {syncMsg && (
+            <div className="basis-full mt-2 text-xs font-semibold">
+              <span className={syncMsg.ok ? "text-lime" : "text-red-400"}>{syncMsg.ok ? "✓ " : "⚠ "}{syncMsg.text}</span>
+            </div>
+          )}
         </div>
 
         {/* KPI grid */}
