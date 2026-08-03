@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import Header from "@/components/Header";
+import React, { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import SubNav from "@/components/SubNav";
 import HeroBanners from "@/components/HeroBanners";
 import GameGrid from "@/components/GameGrid";
@@ -8,7 +8,9 @@ import GameCard from "@/components/GameCard";
 import { GAMES, PROVIDERS } from "@/lib/games";
 
 export default function Home() {
-  const [active, setActive] = useState("home");
+  const [params, setParams] = useSearchParams();
+  const active = params.get("cat") || "home";
+  const setActive = (c) => setParams(c === "home" ? {} : { cat: c });
   const [provider, setProvider] = useState("all");
 
   const slotGames = useMemo(() => GAMES.filter((g) => g.category === "slots"), []);
@@ -19,7 +21,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <Header />
       <SubNav active={active} onChange={setActive} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-8">
         <HeroBanners />

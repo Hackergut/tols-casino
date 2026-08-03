@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown } from "lucide-react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown, Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import WithdrawalPanel from "@/components/WithdrawalPanel";
 
-export default function Header() {
+export default function Header({ onMenu }) {
   const { wallet, vipTier } = useWallet();
   const [open, setOpen] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
@@ -27,6 +27,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-4">
+        <button onClick={onMenu} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a1a1a] border border-white/5 text-white/70 hover:text-lime transition">
+          <Menu className="w-5 h-5" />
+        </button>
         {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
           <span className="text-2xl sm:text-3xl font-black tracking-tighter italic" style={{ color: "#ccff00", textShadow: "0 0 18px rgba(204,255,0,0.5)" }}>

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
-import Header from "@/components/Header";
 import { getGame } from "@/lib/games";
 import { useWallet } from "@/components/WalletProvider";
 import DiceGame from "@/components/games/DiceGame";
@@ -38,7 +37,6 @@ export default function GamePlay({ slug }) {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <Header />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
         <div className="flex items-center justify-between mb-6">
           <Link to="/" className="flex items-center gap-2 text-sm font-bold text-white/60 hover:text-lime transition">

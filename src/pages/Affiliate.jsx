@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import Header from "@/components/Header";
 import ReferralLink from "@/components/affiliate/ReferralLink";
 import AffiliateStats from "@/components/affiliate/AffiliateStats";
 import CommissionPlan from "@/components/affiliate/CommissionPlan";
@@ -135,7 +134,6 @@ export default function Affiliate() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <Header />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">

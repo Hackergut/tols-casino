@@ -12,6 +12,7 @@ const GamePlayWrapper = () => {
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { WalletProvider } from '@/components/WalletProvider';
+import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import GamePlay from '@/pages/GamePlay';
 import Affiliate from '@/pages/Affiliate';
@@ -47,11 +48,13 @@ const AuthenticatedApp = () => {
     <WalletProvider>
       <Routes>
         {/* Add your page Route elements here */}
-        <Route path="/" element={<Home />} />
-        <Route path="/game/:slug" element={<GamePlayWrapper />} />
-        <Route path="/affiliate" element={<Affiliate />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/vip" element={<Vip />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/game/:slug" element={<GamePlayWrapper />} />
+          <Route path="/affiliate" element={<Affiliate />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/vip" element={<Vip />} />
+        </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </WalletProvider>

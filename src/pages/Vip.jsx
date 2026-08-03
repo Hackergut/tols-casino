@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Crown, TrendingUp, Gift, Percent, ChevronLeft, Sparkles } from "lucide-react";
-import Header from "@/components/Header";
 import { useWallet } from "@/components/WalletProvider";
 import { VIP_TIERS, tierForWagered, nextTier } from "@/lib/vipTiers";
 
@@ -17,7 +16,6 @@ export default function Vip() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-white">
-      <Header />
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-lime transition mb-6">
           <ChevronLeft className="w-4 h-4" /> Torna alla lobby

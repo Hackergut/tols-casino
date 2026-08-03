@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import Header from "@/components/Header";
 import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban } from "lucide-react";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
@@ -128,7 +127,6 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <Header />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
         {/* Title */}
         <div className="flex items-center justify-between flex-wrap gap-3">
