@@ -1,0 +1,22 @@
+{
+  "name": "PlatformSetting",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "Unique setting key"
+    },
+    "value": {
+      "type": "string",
+      "default": ""
+    },
+    "category": {
+      "type": "string",
+      "default": "general"
+    }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
+}

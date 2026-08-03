@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban, RefreshCw } from "lucide-react";
+import PaymentSettings from "@/components/admin/PaymentSettings";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
@@ -306,6 +307,7 @@ export default function Admin() {
             </table>
           </div>
         </div>
+        <PaymentSettings />
       </main>
     </div>
   );

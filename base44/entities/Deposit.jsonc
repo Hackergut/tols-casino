@@ -1,0 +1,52 @@
+{
+  "name": "Deposit",
+  "type": "object",
+  "properties": {
+    "chain": {
+      "type": "string",
+      "enum": [
+        "solana",
+        "ethereum",
+        "polygon"
+      ]
+    },
+    "tx_hash": {
+      "type": "string",
+      "description": "Prefixed chain:hash dedupe key"
+    },
+    "amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Credited amount in USDT"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "from_address": {
+      "type": "string",
+      "default": ""
+    },
+    "to_address": {
+      "type": "string",
+      "default": ""
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "failed"
+      ],
+      "default": "pending"
+    },
+    "credited": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "chain",
+    "tx_hash"
+  ]
+}
