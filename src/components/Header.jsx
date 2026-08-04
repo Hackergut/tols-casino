@@ -5,9 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWalletModal } from "@/components/wallet/useWalletModal";
 import { VipProgressBadge, VipProgressCard } from "@/components/VipProgress";
-import { Image } from "@/components/ui/image";
-
-const LOGO_URL = "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/b435c9c53_IMG_1866.png";
+import TolsLogo from "@/components/TolsLogo";
 
 export default function Header({ onMenu }) {
   const { wallet, vipTier } = useWallet();
@@ -36,12 +34,7 @@ export default function Header({ onMenu }) {
         </button>
         {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
-          <Image
-            src={LOGO_URL}
-            alt="TOLS"
-            fittingType="fit"
-            className="h-9 w-9 sm:h-11 sm:w-11 rounded-lg"
-          />
+          <TolsLogo />
         </a>
 
         {/* Search */}
