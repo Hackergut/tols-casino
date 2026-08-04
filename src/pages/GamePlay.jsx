@@ -16,6 +16,7 @@ import KenoGame from "@/components/games/KenoGame";
 import SlotGame from "@/components/games/SlotGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
+import { RTP_ORIGINALS } from "@/lib/gameEngine";
 
 const GAMES_MAP = {
   dice: DiceGame,
@@ -59,8 +60,15 @@ export default function GamePlay({ slug }) {
           <Link to="/" className="flex items-center gap-2 text-sm font-bold text-white/60 hover:text-lime transition">
             <ArrowLeft className="w-4 h-4" /> Lobby
           </Link>
-          <div className="flex items-center gap-2 text-xs text-white/40">
-            <ShieldCheck className="w-4 h-4 text-lime" /> Provably Fair
+          <div className="flex items-center gap-3 text-xs text-white/40">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-lime" /> Provably Fair
+            </span>
+            {game && RTP_ORIGINALS[game.slug] && (
+              <span className="px-2 py-1 rounded-full bg-lime/10 border border-lime/30 text-lime font-bold">
+                RTP {(RTP_ORIGINALS[game.slug] * 100).toFixed(0)}%
+              </span>
+            )}
           </div>
         </div>
 
