@@ -23,9 +23,9 @@ export default function ReferralLink({ code }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-4">
-        <span className="text-sm text-white/50 truncate flex-1 font-mono">{link}</span>
-        <button onClick={copy} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-lime text-black text-xs font-bold hover:opacity-90 transition">
+      <div className="flex items-center gap-2 h-11 sm:h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-3 sm:px-4">
+        <span className="text-xs sm:text-sm text-white/50 truncate flex-1 font-mono">{link}</span>
+        <button onClick={copy} className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-lime text-black text-xs font-bold hover:opacity-90 transition shrink-0">
           {copied ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
         </button>
       </div>
@@ -35,10 +35,10 @@ export default function ReferralLink({ code }) {
         <span className="font-mono font-bold text-lime tracking-wider">{code}</span>
       </div>
 
-      <div className="flex gap-2 mt-4">
+      <div className="grid grid-cols-3 gap-2 mt-4">
         {["Twitter", "Telegram", "Discord"].map((s) => (
-          <button key={s} className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-xs font-semibold text-white/70 hover:border-lime/40 hover:text-lime transition">
-            <Share2 className="w-3.5 h-3.5" /> {s}
+          <button key={s} className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-xs font-semibold text-white/70 hover:border-lime/40 hover:text-lime transition">
+            <Share2 className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">{s}</span>
           </button>
         ))}
       </div>
