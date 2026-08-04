@@ -1,121 +1,98 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { PanelLeftClose, PanelLeftOpen, ChevronDown, Globe } from "lucide-react";
 import TolsLogo from "@/components/TolsLogo";
-import {
-  Home, Star, Clock3, Flame, Trophy, Gift, Sparkles, Gamepad2,
-  Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
-} from "lucide-react";
-
-export const NAV_MAIN = [
-  { id: "lobby", label: "Lobby", icon: Home, to: "/", match: "lobby" },
-  { id: "favorites", label: "Favorites", icon: Star, to: "/", match: null },
-  { id: "latest", label: "Latest releases", icon: Clock3, to: "/?cat=slots", match: "cat:slots" },
-  { id: "recent", label: "Recently played", icon: Flame, to: "/", match: null },
-  { id: "challenges", label: "Tournaments", icon: Trophy, to: "/tournaments", match: "path:/tournaments", badge: "4" },
-  { id: "promotions", label: "Promotions", icon: Gift, to: "/", match: null },
-  { id: "community", label: "Community Chat", icon: MessageCircle, to: "/community", match: "path:/community" },
-];
-
-export const NAV_CATS = [
-  { id: "originals", label: "Originals", icon: Sparkles, to: "/?cat=originals", match: "cat:originals" },
-  { id: "slots", label: "Slots", icon: Gamepad2, to: "/?cat=slots", match: "cat:slots" },
-  { id: "table", label: "Table Games", icon: Spade, to: "/?cat=table", match: "cat:table" },
-];
-
-export const NAV_GAMES = [
-  { id: "roulette", label: "Roulette", icon: Disc3, to: "/game/roulette", match: "path:/game/roulette" },
-  { id: "baccarat", label: "Baccarat", icon: Spade, to: "/game/baccarat", match: "path:/game/baccarat" },
-];
-
-export const NAV_BOTTOM = [
-  { id: "vip", label: "VIP", icon: Crown, to: "/vip", match: "path:/vip" },
-  { id: "affiliate", label: "Affiliates", icon: Users, to: "/affiliate", match: "path:/affiliate" },
-  { id: "blog", label: "Blog", icon: Newspaper, to: "/", match: null },
-];
+import JackpotTicker from "@/components/JackpotTicker";
+import ProductToggle from "@/components/nav/ProductToggle";
+import SidebarOriginals from "@/components/nav/SidebarOriginals";
+import { NavItem, NavGroup } from "@/components/nav/NavItem";
+import { NAV_TOP, NAV_CASINO, NAV_PROMOS, NAV_FOOTER } from "@/components/nav/navItems";
 
 export default function Sidebar() {
-  const loc = useLocation();
-  const cat = new URLSearchParams(loc.search).get("cat");
-
-  const isActive = (item) => {
-    if (!item.match) return false;
-    if (item.match === "lobby") return loc.pathname === "/" && !cat;
-    if (item.match.startsWith("cat:")) return cat === item.match.split(":")[1];
-    if (item.match.startsWith("path:")) return loc.pathname === item.match.split(":")[1];
-    return false;
-  };
+  const [collapsed, setCollapsed] = useState(false);
+  const [casinoOpen, setCasinoOpen] = useState(true);
+  const [originalsOpen, setOriginalsOpen] = useState(true);
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 sticky top-0 h-screen bg-[#0f0f0f] border-r border-white/5 z-40">
-      {/* Logo */}
-      <Link to="/" className="flex items-center gap-2 h-16 px-5 shrink-0 border-b border-white/5">
-        <TolsLogo size="sm" />
-        <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">.casino</span>
-      </Link>
-
-      {/* Search */}
-      <div className="px-4 pt-4">
-        <div className="flex items-center gap-2 h-10 px-3 rounded-xl bg-[#1a1a1a] border border-white/5 focus-within:border-lime/30 transition">
-          <Search className="w-4 h-4 text-white/30" />
-          <input placeholder="Search games" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
-        </div>
-      </div>
-
-      {/* Nav scroll area */}
-      <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-5">
-        <Section items={NAV_MAIN} isActive={isActive} />
-        <Group title="Categories">
-          <Section items={NAV_CATS} isActive={isActive} />
-        </Group>
-        <Group title="Games">
-          <Section items={NAV_GAMES} isActive={isActive} />
-        </Group>
-      </nav>
-
-      {/* Bottom */}
-      <div className="shrink-0 border-t border-white/5 p-3 space-y-1">
-        {NAV_BOTTOM.map((item) => (
-          <Item key={item.id} item={item} active={isActive(item)} />
-        ))}
-      </div>
-    </aside>
-  );
-}
-
-function Group({ title, children }) {
-  return (
-    <div>
-      <p className="px-3 mb-1.5 text-[10px] font-bold uppercase tracking-widest text-white/30">{title}</p>
-      {children}
-    </div>
-  );
-}
-
-function Section({ items, isActive }) {
-  return (
-    <div className="space-y-0.5">
-      {items.map((item) => (
-        <Item key={item.id} item={item} active={isActive(item)} />
-      ))}
-    </div>
-  );
-}
-
-function Item({ item, active }) {
-  const Icon = item.icon;
-  return (
-    <Link
-      to={item.to}
-      className={`group flex items-center gap-3 h-10 px-3 rounded-lg text-sm font-semibold transition ${
-        active ? "bg-lime/10 text-lime" : "text-white/60 hover:text-white hover:bg-white/5"
+    <aside
+      className={`hidden lg:flex flex-col shrink-0 sticky top-0 h-screen bg-[#0f0f0f] border-r border-white/5 z-40 transition-[width] duration-300 ${
+        collapsed ? "w-[76px]" : "w-64"
       }`}
     >
-      <Icon className={`shrink-0 ${active ? "text-lime" : "text-white/50 group-hover:text-white"}`} style={{ width: 18, height: 18 }} />
-      <span className="flex-1 truncate">{item.label}</span>
-      {item.badge && (
-        <span className="px-1.5 py-0.5 rounded-full bg-lime text-black text-[10px] font-black">{item.badge}</span>
-      )}
-      {active && <ChevronRight className="w-3.5 h-3.5 text-lime" />}
-    </Link>
+      <div className={`flex items-center h-16 shrink-0 border-b border-white/5 ${collapsed ? "justify-center" : "justify-between px-4"}`}>
+        {!collapsed && (
+          <Link to="/" className="flex items-center gap-2">
+            <TolsLogo size="sm" />
+            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">.casino</span>
+          </Link>
+        )}
+        <button
+          onClick={() => setCollapsed((c) => !c)}
+          className="flex items-center justify-center w-9 h-9 rounded-lg text-white/40 hover:text-lime hover:bg-white/5 transition"
+        >
+          {collapsed ? <PanelLeftOpen className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+        </button>
+      </div>
+
+      <div className="pt-3">
+        <ProductToggle collapsed={collapsed} />
+      </div>
+
+      <nav className="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-4">
+        <div className="space-y-0.5">
+          {NAV_TOP.map((i) => <NavItem key={i.id} item={i} collapsed={collapsed} />)}
+        </div>
+
+        <div>
+          <button
+            onClick={() => setCasinoOpen((o) => !o)}
+            className={`flex items-center w-full h-10 rounded-xl text-[10px] font-black uppercase tracking-[0.18em] text-white/35 hover:text-white/70 transition ${
+              collapsed ? "justify-center" : "px-3"
+            }`}
+          >
+            {!collapsed && <span className="flex-1 text-left">Casino</span>}
+            <ChevronDown className={`w-4 h-4 transition ${casinoOpen ? "" : "-rotate-90"}`} />
+          </button>
+          {casinoOpen && (
+            <div className="space-y-0.5">
+              {NAV_CASINO.map((i) => <NavItem key={i.id} item={i} collapsed={collapsed} />)}
+            </div>
+          )}
+        </div>
+
+        {!collapsed && (
+          <div>
+            <button
+              onClick={() => setOriginalsOpen((o) => !o)}
+              className="flex items-center w-full h-10 px-3 rounded-xl text-[10px] font-black uppercase tracking-[0.18em] text-white/35 hover:text-white/70 transition"
+            >
+              <span className="flex-1 text-left">Originals</span>
+              <ChevronDown className={`w-4 h-4 transition ${originalsOpen ? "" : "-rotate-90"}`} />
+            </button>
+            {originalsOpen && <SidebarOriginals />}
+          </div>
+        )}
+
+        <NavGroup title="Promotions" collapsed={collapsed}>
+          {NAV_PROMOS.map((i) => <NavItem key={i.id} item={i} collapsed={collapsed} />)}
+        </NavGroup>
+      </nav>
+
+      <div className="shrink-0 border-t border-white/5 p-3 space-y-1">
+        {NAV_FOOTER.map((i) => <NavItem key={i.id} item={i} collapsed={collapsed} />)}
+        {!collapsed && (
+          <div className="flex items-center gap-3 h-10 px-3 text-sm font-semibold text-white/40">
+            <Globe className="w-[19px] h-[19px]" /> English
+          </div>
+        )}
+        <div className="pt-1">
+          {collapsed ? (
+            <Link to="/tournaments" className="block text-center py-2 rounded-xl bg-lime/10 border border-lime/20 text-[9px] font-black text-lime">POT</Link>
+          ) : (
+            <JackpotTicker />
+          )}
+        </div>
+      </div>
+    </aside>
   );
 }

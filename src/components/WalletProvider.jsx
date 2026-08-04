@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
+import { contributeToJackpot } from "@/lib/jackpot";
 
 const WalletContext = createContext(null);
 
@@ -84,9 +85,12 @@ export function WalletProvider({ children }) {
           house_profit: +(wager - payout).toFixed(2),
           currency: bet.currency || "USDT",
         });
+        // every real wager feeds the global progressive pot (and can hit it)
+        const jp = await contributeToJackpot(wager);
+        if (jp.won && jp.prize > 0) await updateBalance(jp.prize, 0);
       }
     } catch (e) { /* ignore */ }
-  }, [wallet]);
+  }, [wallet, updateBalance]);
 
   const requestWithdrawal = useCallback(async ({ amount, wallet_address, chain }) => {
     if (!wallet) throw new Error("Wallet non disponibile");

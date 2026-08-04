@@ -1,0 +1,38 @@
+{
+  "name": "GlobalJackpot",
+  "type": "object",
+  "properties": {
+    "amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Current progressive pot in USDT"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "contributions_count": {
+      "type": "number",
+      "default": 0,
+      "description": "How many wagers fed the pot since the last win"
+    },
+    "last_winner": {
+      "type": "string",
+      "default": ""
+    },
+    "last_win_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "last_win_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
+    }
+  },
+  "required": []
+}

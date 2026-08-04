@@ -15,6 +15,7 @@ import { WalletProvider } from '@/components/WalletProvider';
 import { WalletModalProvider } from '@/components/wallet/useWalletModal';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
+import GameCategory from '@/pages/GameCategory';
 import GamePlay from '@/pages/GamePlay';
 import Affiliate from '@/pages/Affiliate';
 import Admin from '@/pages/Admin';
@@ -67,6 +68,9 @@ const AuthenticatedApp = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/game/:slug" element={<GamePlayWrapper />} />
+          <Route path="/games/:slug" element={<GamePlayWrapper />} />
+          <Route path="/games/category/:cat" element={<GameCategory mode="category" />} />
+          <Route path="/games/provider/:provider" element={<GameCategory mode="provider" />} />
           <Route path="/affiliate" element={<Affiliate />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/vip" element={<Vip />} />
