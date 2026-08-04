@@ -34,8 +34,8 @@ export default function Home() {
     <div className="min-h-screen bg-[#0d0d0d]">
       <SubNav active={active} onChange={setActive} />
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-8">
-        <HeroBanners />
         <TolsGamesSection />
+        <HeroBanners />
         {active === "home" && (
           <>
             <GameGrid title="Originals" filter="originals" />
