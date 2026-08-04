@@ -46,8 +46,8 @@ export default function WheelGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-8 flex flex-col items-center justify-center min-h-[360px]">
-        <div className="relative" style={{ width: 260, height: 260 }}>
+      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[360px]">
+        <div className="relative aspect-square w-full max-w-[260px]">
           {/* pointer */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-10 w-0 h-0 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-lime" />
           <div

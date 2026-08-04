@@ -112,26 +112,26 @@ export default function Community() {
           <p className="text-sm text-white/50 mt-1">Meet other players, share wins and strategies.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-4 h-[calc(100vh-180px)] min-h-[500px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] grid-rows-[auto_1fr] lg:grid-rows-1 gap-3 lg:gap-4 h-[68vh] lg:h-[calc(100vh-180px)] min-h-[440px]">
           {/* Canali */}
-          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
-            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40">
+          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden min-h-0">
+            <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 shrink-0">
               <Hash className="w-3.5 h-3.5" /> Channels
             </div>
-            <div className="flex-1 overflow-y-auto scrollbar-hide p-2 space-y-1">
+            <div className="flex flex-row lg:flex-col lg:flex-1 overflow-x-auto lg:overflow-y-auto scrollbar-hide p-2 gap-1 min-h-0">
               {CHANNELS.map((c) => (
                 <button
                   key={c.id}
                   onClick={() => setChannel(c.id)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg transition ${
+                  className={`shrink-0 w-auto lg:w-full text-left px-3 py-2.5 rounded-lg transition ${
                     channel === c.id ? "bg-lime/10 text-lime" : "text-white/60 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <Hash className="w-3.5 h-3.5 shrink-0" />
-                    <span className="text-sm font-bold truncate">{c.label}</span>
+                    <span className="text-sm font-bold whitespace-nowrap">{c.label}</span>
                   </div>
-                  <p className="text-[11px] text-white/40 mt-0.5 truncate pl-5">{c.desc}</p>
+                  <p className="hidden lg:block text-[11px] text-white/40 mt-0.5 truncate pl-5">{c.desc}</p>
                 </button>
               ))}
             </div>
@@ -142,7 +142,7 @@ export default function Community() {
           </div>
 
           {/* Chat */}
-          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden min-h-0">
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
               <Hash className="w-4 h-4 text-lime" />
               <span className="text-sm font-black text-white">{CHANNELS.find((c) => c.id === channel)?.label}</span>

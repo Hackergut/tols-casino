@@ -42,8 +42,8 @@ export default function PlinkoGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-6 flex flex-col items-center">
-        <div className="relative" style={{ width: 280 }}>
+      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6 flex flex-col items-center">
+        <div className="relative" style={{ width: 280, maxWidth: "100%" }}>
           {/* pegs */}
           {Array.from({ length: ROWS + 1 }).map((_, row) => (
             <div key={row} className="flex justify-center gap-3" style={{ marginTop: 18 }}>

@@ -25,14 +25,14 @@ export default function LimboGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-8 min-h-[260px] flex flex-col items-center justify-center">
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[220px] sm:min-h-[260px] flex flex-col items-center justify-center">
           <div className="text-xs font-semibold text-white/40 mb-2">RISULTATO</div>
           {last ? (
-            <div className={`text-7xl font-black tabular-nums ${last.won ? "text-lime" : "text-white/60"}`}>
+            <div className={`text-6xl sm:text-7xl font-black tabular-nums ${last.won ? "text-lime" : "text-white/60"}`}>
               {last.result.toFixed(2)}x
             </div>
           ) : (
-            <div className="text-7xl font-black text-white/20">1.00x</div>
+            <div className="text-6xl sm:text-7xl font-black text-white/20">1.00x</div>
           )}
           <div className="mt-3 text-sm text-white/40">Target: {target.toFixed(2)}x</div>
         </div>

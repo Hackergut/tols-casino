@@ -82,8 +82,8 @@ export default function Tournaments() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-              <Trophy className="w-8 h-8 text-lime" /> <span className="text-lime">TOLS</span> Tournaments
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2 sm:gap-3">
+              <Trophy className="w-7 h-7 sm:w-8 sm:h-8 text-lime shrink-0" /> <span className="text-lime">TOLS</span> Tournaments
             </h1>
             <p className="text-sm text-white/50 mt-1.5">Compete with players worldwide. Wager to climb the leaderboard and win a share of the prize pool.</p>
           </div>

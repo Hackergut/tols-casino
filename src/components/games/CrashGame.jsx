@@ -66,7 +66,7 @@ export default function CrashGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-8 min-h-[360px] flex flex-col items-center justify-center overflow-hidden">
+        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-4 sm:p-8 min-h-[320px] sm:min-h-[360px] flex flex-col items-center justify-center overflow-hidden">
           <div className="absolute top-3 left-3 right-3 flex gap-1.5 flex-wrap">
             {history.map((h, i) => (
               <span key={i} className={`text-xs font-bold px-2 py-0.5 rounded-full ${h >= 2 ? "text-lime bg-lime/10" : "text-red-400 bg-red-500/10"}`}>
@@ -74,7 +74,7 @@ export default function CrashGame() {
               </span>
             ))}
           </div>
-          <div className={`text-7xl font-black tabular-nums transition-colors ${running ? (cashed ? "text-lime" : "text-white") : crashPoint ? "text-red-500" : "text-white/20"}`}>
+          <div className={`text-6xl sm:text-7xl font-black tabular-nums transition-colors ${running ? (cashed ? "text-lime" : "text-white") : crashPoint ? "text-red-500" : "text-white/20"}`}>
             {multiplier.toFixed(2)}x
           </div>
           <div className="mt-3 text-sm font-semibold text-white/40">

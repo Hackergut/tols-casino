@@ -129,9 +129,9 @@ export default function BaccaratGame() {
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
         {/* Table */}
-        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#0f3d2e] to-[#082319] p-8 min-h-[380px] overflow-hidden">
+        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#0f3d2e] to-[#082319] p-4 sm:p-8 min-h-[340px] sm:min-h-[380px] overflow-hidden">
           <div className="absolute inset-0 bg-grid opacity-10" />
-          <div className="relative grid grid-cols-2 gap-6">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* Banker */}
             <div className="text-center">
               <div className="text-xs font-bold uppercase tracking-widest text-white/60 mb-3">Banker · {result ? result.bVal : "—"}</div>

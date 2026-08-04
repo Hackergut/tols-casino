@@ -32,7 +32,7 @@ export default function DiceGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-6">
-        <div className="relative rounded-2xl border border-white/10 bg-[#111] p-8 min-h-[280px] flex flex-col items-center justify-center">
+        <div className="relative rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[240px] sm:min-h-[280px] flex flex-col items-center justify-center">
           <div className="text-xs font-semibold text-white/40 mb-2">LAST RESULT</div>
           {lastRoll ? (
             <div className={`text-6xl font-black tabular-nums ${lastRoll.won ? "text-lime" : "text-white"}`}>

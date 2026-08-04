@@ -28,7 +28,7 @@ export default function CoinflipGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-8 min-h-[300px] flex flex-col items-center justify-center">
+        <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[260px] sm:min-h-[300px] flex flex-col items-center justify-center">
           <div className={`w-32 h-32 rounded-full border-4 flex items-center justify-center transition ${last?.won ? "border-lime bg-lime/10" : "border-white/10 bg-[#1a1a1a]"} ${flipping ? "animate-spin" : ""}`}>
             <span className="text-3xl font-black italic" style={{ color: "#ccff00" }}>TOLS</span>
           </div>

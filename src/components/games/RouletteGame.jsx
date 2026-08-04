@@ -100,7 +100,7 @@ export default function RouletteGame() {
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
         {/* Wheel */}
-        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-6 flex flex-col items-center">
+        <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-3 sm:p-6 flex flex-col items-center">
           <div className="relative" style={{ width: 280, height: 280 }}>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[16px] border-l-transparent border-r-transparent border-t-lime drop-shadow" />
             <div
