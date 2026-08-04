@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
+import { limboWinChance, limboResultFromFloat } from "@/lib/gameEngine";
 
 export default function LimboGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -12,7 +13,7 @@ export default function LimboGame() {
   const [busy, setBusy] = useState(false);
   const timers = useRef([]);
 
-  const winChance = (99 / target).toFixed(2);
+  const winChance = limboWinChance(target).toFixed(2);
 
   const animate = (to, done) => {
     timers.current.forEach(clearTimeout);
@@ -35,7 +36,7 @@ export default function LimboGame() {
     setBusy(true);
     setDisplay(1);
     const r = await pf.roll();
-    const result = Math.max(1.0, Math.floor((99 / (1 - r)) * 100) / 100);
+    const result = limboResultFromFloat(r);
     const won = result >= target;
     const payout = won ? amount * target : 0;
     setLast({ result, won, multiplier: won ? target : 0, payout: won ? payout : amount });

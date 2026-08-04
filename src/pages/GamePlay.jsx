@@ -76,7 +76,7 @@ export default function GamePlay({ slug }) {
             </span>
             {game && RTP_ORIGINALS[game.slug] && (
               <span className="px-2 py-1 rounded-full bg-lime/10 border border-lime/30 text-lime font-bold">
-                RTP {(RTP_ORIGINALS[game.slug] * 100).toFixed(0)}%
+                RTP {(RTP_ORIGINALS[game.slug] * 100).toFixed(1)}%
               </span>
             )}
             {dbSlot && dbSlot.rtp ? (

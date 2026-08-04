@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
-import { KENO_GRID, KENO_PICKS, kenoPaytable } from "@/lib/gameEngine";
+import { KENO_GRID, KENO_PICKS, kenoPaytable, RTP } from "@/lib/gameEngine";
 
 export default function KenoGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -115,7 +115,7 @@ export default function KenoGame() {
                 </span>
               ))}
           </div>
-          <p className="mt-2 text-white/30">RTP 96% · Provably fair draw of 10/40</p>
+          <p className="mt-2 text-white/30">RTP {(RTP * 100).toFixed(1)}% · Provably fair draw of 10/40</p>
         </div>
       </div>
     </div>

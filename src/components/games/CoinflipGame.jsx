@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
+import { COINFLIP_MULTIPLIER } from "@/lib/gameEngine";
 
 export default function CoinflipGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -18,7 +19,7 @@ export default function CoinflipGame() {
     const r = await pf.roll();
     const result = r < 0.5 ? "heads" : "tails";
     const won = result === choice;
-    const payout = won ? amount * 1.98 : 0;
+    const payout = won ? amount * COINFLIP_MULTIPLIER : 0;
 
     // 3D flip: 5 full turns, land on the correct face (heads = 0°, tails = 180°)
     const base = Math.floor(coinRot / 360) * 360;
@@ -26,11 +27,11 @@ export default function CoinflipGame() {
     setCoinRot(target);
 
     setTimeout(() => {
-      setLast({ result, won, multiplier: won ? 1.98 : 0, payout: won ? payout : amount });
+      setLast({ result, won, multiplier: won ? COINFLIP_MULTIPLIER : 0, payout: won ? payout : amount });
       setFlipping(false);
       setStreak((s) => (won ? s + 1 : 0));
       updateBalance(won ? payout - amount : -amount, amount);
-      recordBet({ game_id: "coinflip", game_name: "Coinflip", amount, multiplier: won ? 1.98 : 0, payout, result: won ? "win" : "lose", client_seed: pf.clientSeed, server_seed_hash: pf.serverHash, nonce: pf.nonce });
+      recordBet({ game_id: "coinflip", game_name: "Coinflip", amount, multiplier: won ? COINFLIP_MULTIPLIER : 0, payout, result: won ? "win" : "lose", client_seed: pf.clientSeed, server_seed_hash: pf.serverHash, nonce: pf.nonce });
     }, 1300);
   };
 
@@ -82,7 +83,7 @@ export default function CoinflipGame() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-white/40 mt-2">Payout: <span className="text-lime font-bold">1.98x</span></p>
+          <p className="text-xs text-white/40 mt-2">Payout: <span className="text-lime font-bold">{COINFLIP_MULTIPLIER}x</span></p>
         </div>
       </div>
     </div>

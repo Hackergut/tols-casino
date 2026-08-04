@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 import { useWallet } from "@/components/WalletProvider";
+import { diceMultiplier } from "@/lib/gameEngine";
 
 export default function DiceGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -14,7 +15,7 @@ export default function DiceGame() {
   const timers = useRef([]);
 
   const winChance = direction === "over" ? 100 - target : target;
-  const multiplier = (99 / winChance).toFixed(4);
+  const multiplier = diceMultiplier(winChance).toFixed(4);
   const payout = amount * multiplier;
 
   const animate = (to, done) => {

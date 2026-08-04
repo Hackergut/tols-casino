@@ -2,16 +2,12 @@ import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { Bomb, Gem } from "lucide-react";
+import { minesMultiplier } from "@/lib/gameEngine";
 
 const GRID = 25;
 
-// multiplier for revealing k gems with m mines
-function multiplierForReveals(k, mines) {
-  const safe = GRID - mines;
-  let p = 1;
-  for (let i = 0; i < k; i++) p *= (safe - i) / (GRID - i);
-  return Math.floor((0.99 / p) * 100) / 100;
-}
+// multiplier for revealing k gems with m mines (calibrated in the engine)
+const multiplierForReveals = (k, mines) => minesMultiplier(k, mines);
 
 export default function MinesGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
