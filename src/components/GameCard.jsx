@@ -2,9 +2,11 @@ import React from "react";
 import { Image } from "@/components/ui/image";
 import { Link } from "react-router-dom";
 import { Lock, Play } from "lucide-react";
+import GameArt from "@/components/GameArt";
 
 export default function GameCard({ game }) {
   const accent = game.accent || "#ccff00";
+  const isSlot = game.category === "slots";
   return (
     <Link
       to={`/game/${game.slug}`}
@@ -15,14 +17,18 @@ export default function GameCard({ game }) {
         className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"
         style={{ background: `radial-gradient(circle at 50% 40%, ${accent}22, transparent 70%)` }}
       />
-      {game.image ? (
-        <Image src={game.image} fittingType="fit" className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-110 transition duration-500" />
+      {isSlot ? (
+        game.image ? (
+          <Image src={game.image} fittingType="fit" className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-110 transition duration-500" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-3xl sm:text-4xl font-black italic" style={{ color: accent, textShadow: `0 0 28px ${accent}66` }}>
+              {game.name.split(" ")[0]}
+            </span>
+          </div>
+        )
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-3xl sm:text-4xl font-black italic" style={{ color: accent, textShadow: `0 0 28px ${accent}66` }}>
-            {game.name.split(" ")[0]}
-          </span>
-        </div>
+        <GameArt slug={game.slug} className="absolute inset-0 group-hover:scale-105 transition duration-500" />
       )}
 
       <div className="absolute top-2 inset-x-2 flex items-center justify-between">
@@ -35,7 +41,9 @@ export default function GameCard({ game }) {
             {game.provider}
           </span>
         ) : (
-          <span />
+          <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur text-[9px] font-bold uppercase tracking-wide" style={{ color: accent }}>
+            TOLS
+          </span>
         )}
         {game.rtp ? (
           <span className="px-1.5 py-0.5 rounded-full bg-lime/15 backdrop-blur text-[9px] font-bold text-lime">{game.rtp}%</span>
