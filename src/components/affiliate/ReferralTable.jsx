@@ -1,13 +1,8 @@
 import React from "react";
 import { Users } from "lucide-react";
+import { computeCommission } from "@/lib/affiliate";
 
-export default function ReferralTable({ referrals, plan }) {
-  const computeCommission = (r) => {
-    if (plan === "cpa") return r.status === "deposited" ? 50 : 0;
-    if (plan === "hybrid") return (r.status === "deposited" ? 50 : 0) + Math.max(0, r.net_loss) * 0.25;
-    // revshare
-    return Math.max(0, r.net_loss) * 0.25;
-  };
+export default function ReferralTable({ referrals, plan, commission_rate = 25, cpa_amount = 50 }) {
 
   if (!referrals.length) {
     return (
@@ -58,7 +53,7 @@ export default function ReferralTable({ referrals, plan }) {
                   ${Math.max(0, r.net_loss).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </td>
                 <td className="px-5 py-3.5 text-right tabular-nums font-bold text-lime">
-                  ${computeCommission(r).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  ${computeCommission(r, { plan, commission_rate, cpa_amount }).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </td>
               </tr>
             ))}

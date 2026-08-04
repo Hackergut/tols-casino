@@ -2,13 +2,14 @@ import React from "react";
 import { MousePointerClick, UserPlus, DollarSign, TrendingUp, Clock } from "lucide-react";
 
 export default function AffiliateStats({ affiliate, referrals }) {
-  const activeReferrals = referrals.filter((r) => r.status !== "inactive").length;
-  const deposited = referrals.filter((r) => r.status === "deposited").length;
+  const clicks = affiliate?.total_clicks ?? 0;
+  const conversions = referrals.filter((r) => r.status === "deposited").length;
+  const conversionRate = clicks > 0 ? ((conversions / clicks) * 100).toFixed(1) : "0.0";
 
   const cards = [
-    { label: "Total clicks", value: affiliate?.total_clicks ?? 0, icon: MousePointerClick, accent: "text-white" },
+    { label: "Total clicks", value: clicks, icon: MousePointerClick, accent: "text-white" },
     { label: "Signups", value: affiliate?.total_referrals ?? referrals.length, icon: UserPlus, accent: "text-white" },
-    { label: "Active players", value: activeReferrals, icon: UserPlus, accent: "text-lime" },
+    { label: "Conversions", value: conversions, sub: `${conversionRate}% rate`, icon: UserPlus, accent: "text-lime" },
     { label: "Wagering volume", value: `$${(affiliate?.total_wagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`, icon: TrendingUp, accent: "text-white" },
     { label: "Total commissions", value: `$${(affiliate?.total_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: DollarSign, accent: "text-lime" },
     { label: "Pending payout", value: `$${(affiliate?.pending_commission ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`, icon: Clock, accent: "text-yellow-400" },
@@ -23,6 +24,7 @@ export default function AffiliateStats({ affiliate, referrals }) {
             <Icon className={`w-5 h-5 ${c.accent} mb-2`} />
             <p className="text-xl font-black text-white tabular-nums">{c.value}</p>
             <p className="text-xs text-white/40 font-medium mt-0.5">{c.label}</p>
+            {c.sub && <p className="text-[10px] text-lime/80 font-bold mt-0.5">{c.sub}</p>}
           </div>
         );
       })}

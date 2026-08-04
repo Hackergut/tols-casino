@@ -5,6 +5,7 @@ import AffiliateStats from "@/components/affiliate/AffiliateStats";
 import CommissionPlan from "@/components/affiliate/CommissionPlan";
 import ReferralTable from "@/components/affiliate/ReferralTable";
 import { WalletProvider } from "@/components/WalletProvider";
+import { computeCommission } from "@/lib/affiliate";
 
 const SAMPLE_REFERRALS = [
   { player_alias: "Whale_88", status: "deposited", total_wagered: 12450, total_payout: 10800, net_loss: 1650 },
@@ -25,6 +26,7 @@ export default function Affiliate() {
   const [affiliate, setAffiliate] = useState(null);
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -55,16 +57,15 @@ export default function Affiliate() {
         );
       }
 
-      // recompute aggregate stats from referrals
-      const totalWagered = refs.reduce((s, r) => s + r.total_wagered, 0);
-      const netLoss = refs.reduce((s, r) => s + Math.max(0, r.net_loss), 0);
-      const totalCommission = netLoss * (aff.commission_rate / 100);
+      // recompute aggregate stats from referrals (volume-based commission)
+      const totalWagered = refs.reduce((s, r) => s + (r.total_wagered || 0), 0);
+      const totalCommission = refs.reduce((s, r) => s + computeCommission(r, aff), 0);
       const pending = Math.max(0, totalCommission - (aff.paid_commission || 0));
 
       const updated = {
         ...aff,
         total_referrals: refs.length,
-        total_wagered: totalWagered,
+        total_wagered: +totalWagered.toFixed(2),
         total_commission: +totalCommission.toFixed(2),
         pending_commission: +pending.toFixed(2),
       };
@@ -99,9 +100,9 @@ export default function Affiliate() {
         };
       }
       const totalWagered = SAMPLE_REFERRALS.reduce((s, r) => s + r.total_wagered, 0);
-      const netLoss = SAMPLE_REFERRALS.reduce((s, r) => s + Math.max(0, r.net_loss), 0);
+      const totalCommission = SAMPLE_REFERRALS.reduce((s, r) => s + computeCommission(r, local), 0);
       local.total_wagered = totalWagered;
-      local.total_commission = +(netLoss * 0.25).toFixed(2);
+      local.total_commission = +totalCommission.toFixed(2);
       local.pending_commission = local.total_commission;
       local.total_referrals = SAMPLE_REFERRALS.length;
       localStorage.setItem("tols_affiliate", JSON.stringify(local));
@@ -109,10 +110,19 @@ export default function Affiliate() {
       setReferrals(SAMPLE_REFERRALS.map((r, i) => ({ id: i, ...r })));
     } finally {
       setLoading(false);
+      setLastUpdated(new Date());
     }
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  // real-time refresh: poll every 10s + react to entity changes
+  useEffect(() => {
+    const id = setInterval(load, 10000);
+    const u1 = base44.entities.Referral.subscribe(() => load());
+    const u2 = base44.entities.Affiliate.subscribe(() => load());
+    return () => { clearInterval(id); u1(); u2(); };
+  }, [load]);
 
   const changePlan = async (plan) => {
     const next = { ...affiliate, commission_plan: plan };
@@ -140,6 +150,14 @@ export default function Affiliate() {
             TOLS <span className="text-lime">Affiliates</span>
           </h1>
           <p className="text-sm text-white/40 mt-1">Track referrals, players and commissions in real time</p>
+          <div className="flex items-center gap-3 mt-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-lime/10 border border-lime/30 text-[11px] font-bold text-lime">
+              <span className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" /> LIVE
+            </span>
+            {lastUpdated && (
+              <span className="text-[11px] text-white/30">Updated {lastUpdated.toLocaleTimeString()}</span>
+            )}
+          </div>
         </div>
 
         <AffiliateStats affiliate={affiliate} referrals={referrals} />
@@ -149,7 +167,12 @@ export default function Affiliate() {
           <CommissionPlan affiliate={affiliate} onPlanChange={changePlan} />
         </div>
 
-        <ReferralTable referrals={referrals} plan={affiliate.commission_plan} />
+        <ReferralTable
+          referrals={referrals}
+          plan={affiliate.commission_plan}
+          commission_rate={affiliate.commission_rate}
+          cpa_amount={affiliate.cpa_amount}
+        />
 
         <PayoutPanel affiliate={affiliate} />
       </main>
