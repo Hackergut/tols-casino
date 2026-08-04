@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban, RefreshCw } from "lucide-react";
 import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
+import HouseMargin from "@/components/admin/HouseMargin";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
@@ -12,6 +13,7 @@ export default function Admin() {
   const [bets, setBets] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
   const [wallets, setWallets] = useState([]);
+  const [earnings, setEarnings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState(null);
@@ -38,6 +40,7 @@ export default function Admin() {
       setWallets(walletList || []);
       setWithdrawals(withdrawalList || []);
       setUsers(userList || []);
+      setEarnings(earningList || []);
 
       // aggregate KPIs
       const totalWagered = (betList || []).reduce((s, b) => s + (b.amount || 0), 0);
@@ -286,6 +289,9 @@ export default function Admin() {
             </div>
           </div>
         </div>
+
+        {/* House margin comparison */}
+        <HouseMargin earnings={earnings} />
 
         {/* Tables */}
         <div className="grid lg:grid-cols-2 gap-4">
