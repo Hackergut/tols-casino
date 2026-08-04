@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Lock, LogIn, Wallet } from "lucide-react";
 import { getGame } from "@/lib/games";
-import { useWallet } from "@/components/WalletProvider";
 import { base44 } from "@/api/base44Client";
+import { useWallet } from "@/components/WalletProvider";
+import { useWalletModal } from "@/components/wallet/useWalletModal";
 import DemoSlotPlayer from "@/components/DemoSlotPlayer";
+import RealSlotPlayer from "@/components/RealSlotPlayer";
 import DiceGame from "@/components/games/DiceGame";
 import CrashGame from "@/components/games/CrashGame";
 import PlinkoGame from "@/components/games/PlinkoGame";
@@ -13,7 +15,6 @@ import LimboGame from "@/components/games/LimboGame";
 import WheelGame from "@/components/games/WheelGame";
 import CoinflipGame from "@/components/games/CoinflipGame";
 import KenoGame from "@/components/games/KenoGame";
-import SlotGame from "@/components/games/SlotGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
 import { RTP_ORIGINALS } from "@/lib/gameEngine";
@@ -33,25 +34,34 @@ const GAMES_MAP = {
 
 export default function GamePlay({ slug }) {
   const game = getGame(slug);
-  const { wallet } = useWallet();
   const Game = game && GAMES_MAP[game.slug];
-  const isSlot = game && game.category === "slots";
+  const { wallet } = useWallet();
+  const { openWallet } = useWalletModal();
+  const isGuest = !wallet || wallet.id === "guest";
+
   const [mode, setMode] = useState("demo");
   const [dbSlot, setDbSlot] = useState(null);
   const [dbLoading, setDbLoading] = useState(false);
 
   useEffect(() => {
-    if (game) return;
+    if (game) {
+      setDbSlot(null);
+      return;
+    }
     let active = true;
     setDbLoading(true);
+    setDbSlot(null);
     base44.entities.SlotGame.filter({ slug })
-      .then((list) => { if (active) setDbSlot(list && list.length ? list[0] : null); })
-      .catch(() => { if (active) setDbSlot(null); })
+      .then((list) => {
+        if (!active) return;
+        setDbSlot(list && list.length ? list[0] : null);
+      })
+      .catch(() => {})
       .finally(() => active && setDbLoading(false));
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [slug, game]);
-
-  const launchDemo = !game && dbSlot && dbSlot.demo_url;
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
@@ -69,56 +79,104 @@ export default function GamePlay({ slug }) {
                 RTP {(RTP_ORIGINALS[game.slug] * 100).toFixed(0)}%
               </span>
             )}
+            {dbSlot && dbSlot.rtp ? (
+              <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 font-bold">
+                RTP {dbSlot.rtp}%
+              </span>
+            ) : null}
           </div>
         </div>
 
-        {!game ? (
-          dbLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
-            </div>
-          ) : launchDemo ? (
-            <DemoSlotPlayer slot={dbSlot} />
-          ) : (
-            <div className="text-center py-20 text-white/40">Game not found</div>
-          )
-        ) : !game.playable ? (
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
-            <h2 className="text-2xl font-black text-white">{game.name}</h2>
-            <p className="text-white/50 mt-2">This game will be added to the TOLS catalog soon.</p>
+        {game ? (
+          <div>
+            <h1 className="text-2xl font-black tracking-tight text-white mb-5">
+              <span className="text-lime">{game.name.split(" ")[0]}</span>{" "}
+              {game.name.split(" ").slice(1).join(" ")}
+            </h1>
+            {Game ? (
+              <Game />
+            ) : (
+              <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
+                <h2 className="text-2xl font-black text-white">{game.name}</h2>
+                <p className="text-white/50 mt-2">This game will be added to the TOLS catalog soon.</p>
+              </div>
+            )}
+          </div>
+        ) : dbLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
+          </div>
+        ) : !dbSlot ? (
+          <div className="text-center py-20">
+            <p className="text-white/40 font-bold">Game not found</p>
+            <p className="text-white/30 text-sm mt-1">This slot is not in the synced catalog.</p>
           </div>
         ) : (
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
               <h1 className="text-2xl font-black tracking-tight text-white">
-                <span className="text-lime">{game.name.split(" ")[0]}</span> {game.name.split(" ").slice(1).join(" ")}
+                <span className="text-lime">{dbSlot.name.split(" ")[0]}</span>{" "}
+                {dbSlot.name.split(" ").slice(1).join(" ")}
               </h1>
-              {isSlot && (
-                <div className="flex items-center gap-1 p-1 rounded-xl bg-[#1a1a1a] border border-white/10 w-fit">
-                  <button
-                    onClick={() => setMode("demo")}
-                    className={`px-4 h-9 rounded-lg text-xs font-black transition ${
-                      mode === "demo" ? "bg-blue-500 text-white" : "text-white/50 hover:text-white"
-                    }`}
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-[#1a1a1a] border border-white/10 w-fit">
+                <button
+                  onClick={() => setMode("demo")}
+                  className={`px-4 h-9 rounded-lg text-xs font-black transition ${
+                    mode === "demo" ? "bg-blue-500 text-white" : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  DEMO
+                </button>
+                <button
+                  onClick={() => setMode("real")}
+                  className={`px-4 h-9 rounded-lg text-xs font-black transition ${
+                    mode === "real" ? "bg-lime text-black" : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  REAL
+                </button>
+              </div>
+            </div>
+
+            {mode === "demo" ? (
+              dbSlot.demo_url ? (
+                <DemoSlotPlayer slot={dbSlot} />
+              ) : (
+                <div className="rounded-2xl border border-white/10 bg-[#111] p-12 text-center text-white/50">
+                  <p className="font-bold text-white">Demo not available</p>
+                  <p className="text-sm mt-1">This provider hasn't supplied a demo URL. Try Real mode.</p>
+                </div>
+              )
+            ) : isGuest ? (
+              <div className="max-w-md mx-auto rounded-2xl border border-lime/30 bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-8 text-center">
+                <div className="w-14 h-14 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center mx-auto mb-4">
+                  <Lock className="w-7 h-7 text-lime" />
+                </div>
+                <h2 className="text-2xl font-black text-white">Real money play</h2>
+                <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
+                  Log in and deposit crypto to play {dbSlot.name} for real. Every session is launched through the secured aggregator backend.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center mt-5">
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition"
                   >
-                    DEMO
-                  </button>
+                    <LogIn className="w-4 h-4" /> Log in
+                  </Link>
                   <button
-                    onClick={() => setMode("real")}
-                    className={`px-4 h-9 rounded-lg text-xs font-black transition ${
-                      mode === "real" ? "bg-lime text-black" : "text-white/50 hover:text-white"
-                    }`}
+                    onClick={() => openWallet({ tab: "deposit" })}
+                    className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-lime text-black font-black hover:opacity-90 transition glow-lime"
                   >
-                    REAL
+                    <Wallet className="w-4 h-4" /> Deposit
                   </button>
                 </div>
-              )}
-            </div>
-            {isSlot ? (
-              <SlotGame key={game.slug + mode} game={game} mode={mode} />
-            ) : Game ? (
-              <Game />
-            ) : null}
+                <p className="text-xs text-white/30 mt-4">
+                  Or switch to <span className="text-blue-400 font-bold">DEMO</span> to try it first.
+                </p>
+              </div>
+            ) : (
+              <RealSlotPlayer game={dbSlot} mode="real" />
+            )}
           </div>
         )}
       </div>

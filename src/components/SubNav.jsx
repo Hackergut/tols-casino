@@ -1,11 +1,11 @@
 import React from "react";
-import { Sparkles, Cherry, Video, Spade, Search, House } from "lucide-react";
+import { Sparkles, Cherry, Spade, Search, House } from "lucide-react";
 import { CATEGORIES, GAMES } from "@/lib/games";
 
-const ICONS = { Sparkles, Cherry, Video, Spade };
+const ICONS = { Sparkles, Cherry, Spade };
 
-export default function SubNav({ active, onChange }) {
-  const countFor = (id) => GAMES.filter((g) => g.category === id).length;
+export default function SubNav({ active, onChange, slotCount = 0 }) {
+  const countFor = (id) => (id === "slots" ? slotCount : GAMES.filter((g) => g.category === id).length);
   return (
     <nav className="sticky top-16 z-40 bg-[#0d0d0d]/95 backdrop-blur-md border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 flex items-center gap-1.5 sm:gap-2 h-14 overflow-x-auto scrollbar-hide">

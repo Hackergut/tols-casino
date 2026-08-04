@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import TolsLogo from "@/components/TolsLogo";
 import {
   Home, Star, Clock3, Flame, Trophy, Gift, Sparkles, Gamepad2,
-  MonitorPlay, Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
+  Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
 } from "lucide-react";
 
 export const NAV_MAIN = [
@@ -19,7 +19,6 @@ export const NAV_MAIN = [
 export const NAV_CATS = [
   { id: "originals", label: "Originals", icon: Sparkles, to: "/?cat=originals", match: "cat:originals" },
   { id: "slots", label: "Slots", icon: Gamepad2, to: "/?cat=slots", match: "cat:slots" },
-  { id: "live", label: "Live Dealers", icon: MonitorPlay, to: "/?cat=live", match: "cat:live" },
   { id: "table", label: "Table Games", icon: Spade, to: "/?cat=table", match: "cat:table" },
 ];
 
