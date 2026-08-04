@@ -19,6 +19,11 @@
       "type": "string",
       "default": "generale",
       "description": "Canale della chat community"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
     }
   },
   "required": [

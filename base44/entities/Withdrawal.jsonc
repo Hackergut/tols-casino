@@ -48,6 +48,11 @@
     "processed_date": {
       "type": "string",
       "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
     }
   },
   "required": [

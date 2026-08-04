@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import SubNav from "@/components/SubNav";
 import HeroBanners from "@/components/HeroBanners";
 import GameGrid from "@/components/GameGrid";
@@ -65,8 +65,12 @@ export default function Home() {
         )}
         {active !== "home" && active !== "slots" && <GameGrid title="Category" filter={active} />}
       </main>
-      <footer className="border-t border-white/5 mt-12 py-8 text-center text-xs text-white/30">
-        <span className="text-lime font-black">TOLS</span> · Crypto Casino · Provably Fair
+      <footer className="border-t border-white/5 mt-12 py-8 px-4 text-center text-xs text-white/30 space-y-3">
+        <div className="flex items-center justify-center gap-5">
+          <Link to="/about" className="hover:text-lime transition">About</Link>
+          <Link to="/contact" className="hover:text-lime transition">Contact</Link>
+        </div>
+        <p><span className="text-lime font-black">TOLS</span> · Crypto Casino · Provably Fair</p>
       </footer>
     </div>
   );

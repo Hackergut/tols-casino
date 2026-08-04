@@ -40,6 +40,11 @@
     "nonce": {
       "type": "number",
       "default": 0
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
     }
   },
   "required": [

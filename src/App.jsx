@@ -26,6 +26,8 @@ import ResetPassword from '@/pages/ResetPassword';
 import Community from '@/pages/Community';
 import Wallet from '@/pages/Wallet';
 import Tournaments from '@/pages/Tournaments';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -71,6 +73,8 @@ const AuthenticatedApp = () => {
           <Route path="/community" element={<Community />} />
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/tournaments" element={<Tournaments />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
