@@ -22,8 +22,8 @@ export default function TolsLogo({ className = "", size = "md" }) {
         style={{
           fontFamily: '"Archivo Black", "Inter", ui-sans-serif, system-ui, sans-serif',
           color: "transparent",
-          WebkitTextStroke: "1.5px #ccff00",
-          textShadow: "0 0 14px rgba(204,255,0,0.55)",
+          WebkitTextStroke: "1.25px #ccff00",
+          textShadow: "0 0 8px rgba(204,255,0,0.25)",
         }}
       >
         TOLS
