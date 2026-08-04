@@ -1,0 +1,45 @@
+{
+  "name": "Large Deposit Alert",
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "large_deposit_alert",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "notify": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "notifyLargeDeposit",
+            "args": {
+              "deposit_id": "${ .trigger.entity_id }",
+              "amount": "${ .trigger.data.amount }",
+              "chain": "${ .trigger.data.chain }",
+              "currency": "${ .trigger.data.currency }",
+              "from_address": "${ .trigger.data.from_address }",
+              "tx_hash": "${ .trigger.data.tx_hash }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Avvisa team deposito grande",
+            "description": "Email agli admin se supera la soglia"
+          }
+        }
+      }
+    ]
+  },
+  "description": "Notifies the admin team by email when a deposit exceeds the configured threshold (PlatformSetting: large_deposit_threshold).",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Deposit"
+    }
+  }
+}
