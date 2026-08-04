@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+import TolsLogo from "@/components/TolsLogo";
 import {
   Home, Star, Clock3, Flame, Trophy, Gift, Sparkles, Gamepad2,
   MonitorPlay, Spade, Disc3, Crown, Users, Newspaper, Search, ChevronRight, MessageCircle,
@@ -49,9 +50,7 @@ export default function Sidebar() {
     <aside className="hidden lg:flex flex-col w-64 shrink-0 sticky top-0 h-screen bg-[#0f0f0f] border-r border-white/5 z-40">
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2 h-16 px-5 shrink-0 border-b border-white/5">
-        <span className="text-2xl font-black tracking-tighter italic" style={{ color: "#ccff00", textShadow: "0 0 18px rgba(204,255,0,0.5)" }}>
-          TOLS
-        </span>
+        <TolsLogo size="sm" />
         <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">.casino</span>
       </Link>
 
