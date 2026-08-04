@@ -40,6 +40,11 @@
     "enabled": {
       "type": "boolean",
       "default": true
+    },
+    "demo_url": {
+      "type": "string",
+      "default": "",
+      "description": "Demo play URL (from iGaming.tools) \u2014 launched in an iframe"
     }
   },
   "required": [

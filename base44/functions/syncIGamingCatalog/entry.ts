@@ -16,6 +16,7 @@ function mapSlot(s) {
     has_demo: !!s.demo_url,
     has_real: false,
     enabled: true,
+    demo_url: s.demo_url || "",
   };
 }
 

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { getGame } from "@/lib/games";
 import { useWallet } from "@/components/WalletProvider";
+import { base44 } from "@/api/base44Client";
+import DemoSlotPlayer from "@/components/DemoSlotPlayer";
 import DiceGame from "@/components/games/DiceGame";
 import CrashGame from "@/components/games/CrashGame";
 import PlinkoGame from "@/components/games/PlinkoGame";
@@ -34,6 +36,21 @@ export default function GamePlay({ slug }) {
   const Game = game && GAMES_MAP[game.slug];
   const isSlot = game && game.category === "slots";
   const [mode, setMode] = useState("demo");
+  const [dbSlot, setDbSlot] = useState(null);
+  const [dbLoading, setDbLoading] = useState(false);
+
+  useEffect(() => {
+    if (game) return;
+    let active = true;
+    setDbLoading(true);
+    base44.entities.SlotGame.filter({ slug })
+      .then((list) => { if (active) setDbSlot(list && list.length ? list[0] : null); })
+      .catch(() => { if (active) setDbSlot(null); })
+      .finally(() => active && setDbLoading(false));
+    return () => { active = false; };
+  }, [slug, game]);
+
+  const launchDemo = !game && dbSlot && dbSlot.demo_url;
 
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
@@ -48,7 +65,15 @@ export default function GamePlay({ slug }) {
         </div>
 
         {!game ? (
-          <div className="text-center py-20 text-white/40">Game not found</div>
+          dbLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
+            </div>
+          ) : launchDemo ? (
+            <DemoSlotPlayer slot={dbSlot} />
+          ) : (
+            <div className="text-center py-20 text-white/40">Game not found</div>
+          )
         ) : !game.playable ? (
           <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
             <h2 className="text-2xl font-black text-white">{game.name}</h2>
