@@ -26,11 +26,12 @@ export default function Admin() {
       }
       setAuthed(true);
 
-      const [betList, walletList, withdrawalList, userList] = await Promise.all([
+      const [betList, walletList, withdrawalList, userList, earningList] = await Promise.all([
         base44.entities.Bet.list("-created_date", 200),
         base44.entities.UserWallet.list("-updated_date", 100),
         base44.entities.Withdrawal.list("-created_date", 50),
         base44.entities.User.list(),
+        base44.entities.HouseEarning.list("-created_date", 500),
       ]);
 
       setBets(betList || []);
@@ -79,6 +80,24 @@ export default function Admin() {
       });
       const topGames = Object.values(gameMap).sort((a, b) => b.wagered - a.wagered).slice(0, 6).map((g) => ({ ...g, wagered: +g.wagered.toFixed(2), payout: +g.payout.toFixed(2) }));
 
+      // House earnings ledger aggregation
+      const ledger = earningList || [];
+      const ledgerWagered = +ledger.reduce((s, e) => s + (e.wager || 0), 0).toFixed(2);
+      const ledgerPaid = +ledger.reduce((s, e) => s + (e.payout || 0), 0).toFixed(2);
+      const ledgerNet = +ledger.reduce((s, e) => s + (e.house_profit || 0), 0).toFixed(2);
+      const gameLedger = {};
+      ledger.forEach((e) => {
+        const n = e.game_name || e.game_id || "unknown";
+        if (!gameLedger[n]) gameLedger[n] = { name: n, wagered: 0, paid: 0, net: 0, count: 0 };
+        gameLedger[n].wagered += e.wager || 0;
+        gameLedger[n].paid += e.payout || 0;
+        gameLedger[n].net += e.house_profit || 0;
+        gameLedger[n].count += 1;
+      });
+      const ledgerByGame = Object.values(gameLedger)
+        .sort((a, b) => b.net - a.net)
+        .map((g) => ({ ...g, wagered: +g.wagered.toFixed(2), paid: +g.paid.toFixed(2), net: +g.net.toFixed(2) }));
+
       setStats({
         totalWagered: +totalWagered.toFixed(2),
         totalPayout: +totalPayout.toFixed(2),
@@ -93,6 +112,7 @@ export default function Admin() {
         pendingWithdrawals: pendingWithdrawals.length,
         pendingAmount: +pendingAmount.toFixed(2),
         series, topGames,
+        ledgerWagered, ledgerPaid, ledgerNet, ledgerByGame, ledgerCount: ledger.length,
       });
       setLoading(false);
     } catch (e) {
@@ -227,6 +247,43 @@ export default function Admin() {
                 <Bar dataKey="wagered" fill="#ccff00" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* House earnings ledger */}
+        <div className="grid lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1 rounded-2xl border border-lime/20 bg-gradient-to-br from-lime/10 to-[#111] p-5">
+            <h3 className="font-bold text-white flex items-center gap-2"><DollarSign className="w-4 h-4 text-lime" /> House earnings</h3>
+            <p className={`text-4xl font-black mt-3 ${stats.ledgerNet >= 0 ? "text-lime" : "text-red-400"}`}>
+              {stats.ledgerNet >= 0 ? "+" : ""}{stats.ledgerNet.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            </p>
+            <p className="text-xs text-white/50 mt-1">Net profit · USDT</p>
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <div className="rounded-lg bg-black/30 p-2.5">
+                <p className="text-[10px] text-white/40 uppercase">Wagered</p>
+                <p className="text-sm font-bold text-white">{stats.ledgerWagered.toLocaleString()}</p>
+              </div>
+              <div className="rounded-lg bg-black/30 p-2.5">
+                <p className="text-[10px] text-white/40 uppercase">Paid out</p>
+                <p className="text-sm font-bold text-white">{stats.ledgerPaid.toLocaleString()}</p>
+              </div>
+            </div>
+            <p className="text-xs text-white/40 mt-3">{stats.ledgerCount} settled bets in ledger</p>
+          </div>
+          <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-[#111] p-5">
+            <h3 className="font-bold text-white mb-3">Earnings by game</h3>
+            <div className="space-y-1.5 max-h-56 overflow-y-auto scrollbar-hide">
+              {stats.ledgerByGame.map((g) => (
+                <div key={g.name} className="flex items-center justify-between rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2">
+                  <span className="text-sm font-semibold text-white">{g.name}</span>
+                  <div className="text-right">
+                    <span className={`text-sm font-bold ${g.net >= 0 ? "text-lime" : "text-red-400"}`}>{g.net >= 0 ? "+" : ""}{g.net}</span>
+                    <span className="text-xs text-white/30 ml-2">{g.count} bets</span>
+                  </div>
+                </div>
+              ))}
+              {!stats.ledgerByGame.length && <p className="text-sm text-white/30 text-center py-6">No earnings recorded yet</p>}
+            </div>
           </div>
         </div>
 

@@ -1,0 +1,44 @@
+{
+  "name": "HouseEarning",
+  "type": "object",
+  "properties": {
+    "game_id": {
+      "type": "string",
+      "description": "Game identifier (e.g. dice, crash, plinko)"
+    },
+    "game_name": {
+      "type": "string",
+      "default": ""
+    },
+    "bet_id": {
+      "type": "string",
+      "default": "",
+      "description": "Reference to the settled Bet record"
+    },
+    "wager": {
+      "type": "number",
+      "default": 0,
+      "description": "Amount wagered by the player"
+    },
+    "payout": {
+      "type": "number",
+      "default": 0,
+      "description": "Amount paid back to the player"
+    },
+    "house_profit": {
+      "type": "number",
+      "default": 0,
+      "description": "wager - payout. Positive = house won, negative = player won."
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    }
+  },
+  "required": [
+    "game_id",
+    "wager",
+    "payout",
+    "house_profit"
+  ]
+}

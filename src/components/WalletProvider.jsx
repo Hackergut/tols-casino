@@ -72,7 +72,18 @@ export function WalletProvider({ children }) {
   const recordBet = useCallback(async (bet) => {
     try {
       if (wallet && wallet.id !== "guest") {
-        await base44.entities.Bet.create(bet);
+        const created = await base44.entities.Bet.create(bet);
+        const wager = +(bet.amount || 0).toFixed(2);
+        const payout = +(bet.payout || 0).toFixed(2);
+        await base44.entities.HouseEarning.create({
+          game_id: bet.game_id || "",
+          game_name: bet.game_name || "",
+          bet_id: created?.id || "",
+          wager,
+          payout,
+          house_profit: +(wager - payout).toFixed(2),
+          currency: bet.currency || "USDT",
+        });
       }
     } catch (e) { /* ignore */ }
   }, [wallet]);
