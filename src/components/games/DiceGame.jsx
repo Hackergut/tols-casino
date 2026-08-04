@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 import { useWallet } from "@/components/WalletProvider";
 import { diceMultiplier } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 export default function DiceGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -54,8 +55,14 @@ export default function DiceGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-6">
-        <div className="relative rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[240px] sm:min-h-[280px] flex flex-col items-center justify-center overflow-hidden">
-          <div className="absolute -inset-20 opacity-[0.06] bg-grid pointer-events-none" />
+        <GameFrame
+          title="Dice"
+          stats={[
+            { label: "Multiplier", value: `${multiplier}x` },
+            { label: "Win chance", value: `${winChance.toFixed(2)}%` },
+            { label: "Payout", value: `$${payout.toFixed(2)}` },
+          ]}
+        >
           <div className="text-xs font-semibold text-white/40 mb-2">LAST RESULT</div>
           <div
             className={`text-6xl sm:text-7xl font-black tabular-nums transition-colors ${shown == null ? "text-white/20" : lastRoll && lastRoll.won ? "text-lime" : "text-white"}`}
@@ -108,27 +115,13 @@ export default function DiceGame() {
               Over {target}
             </button>
           </div>
-        </div>
+        </GameFrame>
         {lastRoll && <ResultBadge result={lastRoll.won ? "win" : "lose"} multiplier={lastRoll.multiplier} payout={lastRoll.won ? lastRoll.payout - amount : -amount} />}
       </div>
 
       <div className="space-y-4">
         <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Roll"} />
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <Stat label="Multiplier" value={`${multiplier}x`} />
-          <Stat label="Win chance" value={`${winChance.toFixed(2)}%`} />
-          <Stat label="Payout" value={`$${payout.toFixed(2)}`} />
-        </div>
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value }) {
-  return (
-    <div className="rounded-xl bg-[#1a1a1a] border border-white/10 p-3">
-      <p className="text-[10px] uppercase text-white/40 font-semibold">{label}</p>
-      <p className="text-sm font-bold text-lime mt-0.5">{value}</p>
     </div>
   );
 }

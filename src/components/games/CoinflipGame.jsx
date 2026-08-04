@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 import { COINFLIP_MULTIPLIER } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 export default function CoinflipGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -38,8 +39,14 @@ export default function CoinflipGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[260px] sm:min-h-[300px] flex flex-col items-center justify-center overflow-hidden">
-          <div className="absolute -inset-20 opacity-[0.06] bg-grid pointer-events-none" />
+        <GameFrame
+          title="Coinflip"
+          stats={[
+            { label: "Your pick", value: choice.toUpperCase(), tone: "muted" },
+            { label: "Multiplier", value: `${COINFLIP_MULTIPLIER}x` },
+            { label: "Streak", value: streak, tone: streak > 0 ? "default" : "muted" },
+          ]}
+        >
           <div style={{ perspective: 800 }}>
             <div
               className="relative w-32 h-32 rounded-full"
@@ -63,7 +70,7 @@ export default function CoinflipGame() {
             {last ? (last.won ? `${last.result.toUpperCase()} — WON!` : `${last.result.toUpperCase()} — LOST`) : "Pick and flip"}
           </div>
           {streak > 0 && <div className="mt-1 text-xs text-lime font-semibold">Streak: {streak} 🔥</div>}
-        </div>
+        </GameFrame>
         {last && <ResultBadge result={last.won ? "win" : "lose"} multiplier={last.multiplier} payout={last.won ? last.payout - amount : -amount} />}
       </div>
 

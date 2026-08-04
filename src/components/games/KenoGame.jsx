@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { KENO_GRID, KENO_PICKS, kenoPaytable, RTP } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 export default function KenoGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -56,8 +57,16 @@ export default function KenoGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
-        <div className="grid grid-cols-8 sm:grid-cols-10 gap-1.5">
+      <GameFrame
+        title="Keno"
+        minH=""
+        stats={[
+          { label: "Picked", value: `${picks.length}/${KENO_PICKS}`, tone: picks.length === KENO_PICKS ? "default" : "muted" },
+          { label: "Matches", value: drawn.length ? matches : "—" },
+          { label: "Multiplier", value: `${paytable[matches] || 0}x` },
+        ]}
+      >
+        <div className="grid grid-cols-8 sm:grid-cols-10 gap-1.5 w-full">
           {Array.from({ length: KENO_GRID }).map((_, i) => {
             const n = i + 1;
             const isPicked = picks.includes(n);
@@ -84,17 +93,7 @@ export default function KenoGame() {
             );
           })}
         </div>
-        <div className="mt-4 flex justify-between text-sm">
-          <span className="text-white/50">
-            Picked: <span className="text-lime font-bold">{picks.length}</span>/{KENO_PICKS}
-          </span>
-          {drawn.length > 0 && (
-            <span className="text-white/50">
-              Matches: <span className="text-lime font-bold">{matches}</span> · {paytable[matches] || 0}x
-            </span>
-          )}
-        </div>
-      </div>
+      </GameFrame>
 
       <div className="space-y-4">
         <BetPanel

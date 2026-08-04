@@ -3,6 +3,7 @@ import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { Bomb, Gem } from "lucide-react";
 import { minesMultiplier } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 const GRID = 25;
 
@@ -65,8 +66,16 @@ export default function MinesGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
-        <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-md mx-auto" style={busted ? { animation: "shake 0.4s" } : undefined}>
+      <GameFrame
+        title="Mines"
+        minH=""
+        stats={[
+          { label: "Mines", value: mines, tone: "muted" },
+          { label: "Current", value: `${currentMul.toFixed(2)}x` },
+          { label: "Next tile", value: active ? `${nextMul.toFixed(2)}x` : "—" },
+        ]}
+      >
+        <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-md mx-auto w-full" style={busted ? { animation: "shake 0.4s" } : undefined}>
           {Array.from({ length: GRID }).map((_, i) => {
             const isRevealed = revealed.includes(i);
             const isBomb = bombs.includes(i);
@@ -101,7 +110,7 @@ export default function MinesGame() {
           </div>
         )}
         {!active && <div className="mt-6 text-center text-sm text-white/40">Set the mines and press "Start"</div>}
-      </div>
+      </GameFrame>
 
       <div className="space-y-4">
         <BetPanel amount={amount} setAmount={setAmount} onBet={start} disabled={active} betLabel={active ? "IN PROGRESS" : "Start"} />

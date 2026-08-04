@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { WHEEL_SEGMENTS } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 function buildSegments(muls) {
   return muls.map((m, i) => ({
@@ -49,7 +50,14 @@ export default function WheelGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[360px]">
+      <GameFrame
+        title="Wheel"
+        stats={[
+          { label: "Risk", value: risk.toUpperCase(), tone: "muted" },
+          { label: "Last result", value: last && !spinning ? last.label : "—", tone: last && last.mul < 1 ? "danger" : "default" },
+          { label: "Max win", value: `${Math.max(...WHEEL_SEGMENTS[risk]).toFixed(2)}x` },
+        ]}
+      >
         <div className="relative aspect-square w-full max-w-[260px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-lime animate-pulse" style={{ filter: "drop-shadow(0 0 6px rgba(204,255,0,0.8))" }} />
           <div
@@ -82,7 +90,7 @@ export default function WheelGame() {
             Result: <span className={last.mul >= 1 ? "text-lime" : "text-red-400"}>{last.label}</span>
           </p>
         )}
-      </div>
+      </GameFrame>
 
       <div className="space-y-4">
         <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={spinning} betLabel={spinning ? "Spinning..." : "Spin"} />

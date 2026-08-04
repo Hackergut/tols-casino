@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { crashPointFromFloat } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 import { TrendingUp } from "lucide-react";
 
 export default function CrashGame() {
@@ -86,7 +87,15 @@ export default function CrashGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-4 sm:p-8 min-h-[320px] sm:min-h-[360px] flex flex-col items-center justify-center overflow-hidden">
+        <GameFrame
+          title="Crash"
+          className="overflow-hidden"
+          stats={[
+            { label: "Auto cashout", value: `${autoCashout.toFixed(2)}x`, tone: "muted" },
+            { label: "Current", value: `${multiplier.toFixed(2)}x`, tone: !running && crashPoint ? "danger" : "default" },
+            { label: "Potential", value: `$${(amount * multiplier).toFixed(2)}` },
+          ]}
+        >
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="crashFill" x1="0" y1="0" x2="0" y2="1">
@@ -136,7 +145,7 @@ export default function CrashGame() {
             {!running && crashPoint && "CRASHED"}
           </div>
           <TrendingUp className={`absolute bottom-8 ${running ? "text-lime/30" : "text-white/5"}`} style={{ width: 120, height: 120 }} />
-        </div>
+        </GameFrame>
         {running && (
           <button
             onClick={() => doCashout()}

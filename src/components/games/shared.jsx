@@ -12,10 +12,15 @@ export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet",
   const setMax = () => setAmount(+(balance).toFixed(2));
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 rounded-2xl border border-white/10 bg-[#101010] p-4 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
       <div>
-        <label className="text-xs font-semibold text-white/50 mb-1.5 block">Bet amount</label>
-        <div className="flex items-center gap-2 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 px-3">
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="text-xs font-semibold text-white/50">Bet amount</label>
+          <span className="text-[10px] font-bold text-white/35">
+            Balance <span className="text-lime">${balance.toFixed(2)}</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2 h-12 rounded-xl bg-[#1a1a1a] border border-white/10 px-3 focus-within:border-lime/40 transition">
           <span className="text-lime font-bold text-sm">$</span>
           <input
             type="number"
@@ -44,7 +49,7 @@ export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet",
       <button
         onClick={onBet}
         disabled={disabled}
-        className="w-full h-14 rounded-xl bg-lime text-black font-black text-lg hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed glow-lime"
+        className="w-full h-14 rounded-xl bg-lime text-black font-black text-lg uppercase tracking-wide hover:brightness-110 active:scale-[0.98] transition disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 glow-lime"
       >
         {betLabel}
       </button>

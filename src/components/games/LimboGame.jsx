@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 import { limboWinChance, limboResultFromFloat } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 export default function LimboGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
@@ -50,8 +51,14 @@ export default function LimboGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="relative rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[220px] sm:min-h-[260px] flex flex-col items-center justify-center overflow-hidden">
-          <div className="absolute -inset-20 opacity-[0.06] bg-grid pointer-events-none" />
+        <GameFrame
+          title="Limbo"
+          stats={[
+            { label: "Target", value: `${target.toFixed(2)}x` },
+            { label: "Win chance", value: `${winChance}%` },
+            { label: "Payout", value: `$${(amount * target).toFixed(2)}` },
+          ]}
+        >
           <div className="text-xs font-semibold text-white/40 mb-2">RESULT</div>
           <div
             className={`text-6xl sm:text-7xl font-black tabular-nums ${shown == null ? "text-white/20" : last && last.won ? "text-lime" : "text-white/70"}`}
@@ -60,7 +67,7 @@ export default function LimboGame() {
             {shown != null ? `${shown.toFixed(2)}x` : "1.00x"}
           </div>
           <div className="mt-3 text-sm text-white/40">Target: {target.toFixed(2)}x</div>
-        </div>
+        </GameFrame>
         {last && <ResultBadge result={last.won ? "win" : "lose"} multiplier={last.multiplier} payout={last.won ? last.payout - amount : -amount} />}
       </div>
 

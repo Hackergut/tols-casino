@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { PLINKO_ROW_COUNT, PLINKO_MULTIPLIERS } from "@/lib/gameEngine";
+import GameFrame from "@/components/games/GameFrame";
 
 const ROWS = PLINKO_ROW_COUNT; // 12
 const SP = 26; // peg spacing px
@@ -82,7 +83,14 @@ export default function PlinkoGame() {
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6 flex flex-col items-center">
+      <GameFrame
+        title="Plinko"
+        stats={[
+          { label: "Risk", value: risk.toUpperCase(), tone: "muted" },
+          { label: "Last result", value: lastBucket !== null ? `${muls[lastBucket].toFixed(2)}x` : "—" },
+          { label: "Max win", value: `${Math.max(...muls).toFixed(2)}x` },
+        ]}
+      >
         <div className="relative" style={{ width: W, maxWidth: "100%", height: H }}>
           {/* drop chute */}
           <div className="absolute left-1/2 -translate-x-1/2 top-0 w-10 h-5 rounded-b-lg bg-white/5 border-x border-t border-white/10" />
@@ -108,7 +116,7 @@ export default function PlinkoGame() {
           )}
         </div>
         {/* buckets */}
-        <div className="grid gap-1 mt-2 w-full" style={{ gridTemplateColumns: `repeat(${buckets}, 1fr)` }}>
+        <div className="grid gap-1 mt-3 w-full" style={{ gridTemplateColumns: `repeat(${buckets}, 1fr)` }}>
           {muls.map((m, i) => (
             <div
               key={i}
@@ -123,12 +131,7 @@ export default function PlinkoGame() {
             </div>
           ))}
         </div>
-        {lastBucket !== null && !dropping && (
-          <p className="mt-4 text-sm font-bold text-white/60">
-            Result: <span className="text-lime">{muls[lastBucket].toFixed(2)}x</span>
-          </p>
-        )}
-      </div>
+      </GameFrame>
 
       <div className="space-y-4">
         <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={dropping} betLabel={dropping ? "Dropping..." : "Drop ball"} />
