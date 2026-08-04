@@ -11,11 +11,10 @@ const CHAINS = [
   { id: "polygon", label: "Polygon", color: "#8247E5", symbol: "POL" },
 ];
 
-export default function RealDeposit() {
+export default function RealDeposit({ chain = "solana" }) {
   const { reload } = useWallet();
   const w3 = useWeb3Wallet();
   const [settings, setSettings] = useState({});
-  const [chain, setChain] = useState("solana");
   const [copied, setCopied] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [busy, setBusy] = useState(false);
@@ -70,15 +69,6 @@ export default function RealDeposit() {
       <div className="flex items-start gap-2 p-4 rounded-xl bg-lime/5 border border-lime/20 text-sm text-lime/80">
         <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" />
         <p>Send <b>{active.symbol}</b> from your connected wallet to the platform deposit address below. Funds are credited to your balance in <b>USDT</b> at live market rate after 1 confirmation.</p>
-      </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        {CHAINS.map((c) => (
-          <button key={c.id} onClick={() => { setChain(c.id); setError(""); setResult(null); }}
-            className={`h-12 rounded-xl border text-sm font-bold transition flex items-center justify-center gap-2 ${chain === c.id ? "bg-lime/10 border-lime/40 text-lime" : "bg-[#1a1a1a] border-white/10 text-white/60 hover:border-white/20"}`}>
-            <span className="w-2 h-2 rounded-full" style={{ background: c.color }} /> {c.label}
-          </button>
-        ))}
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-[#111] p-5">

@@ -9,10 +9,9 @@ const CHAINS = [
   { id: "ethereum", label: "Ethereum", fee: 0.02, placeholder: "0xAb...3F" },
 ];
 
-export default function WithdrawForm() {
+export default function WithdrawForm({ chain = "solana" }) {
   const { wallet, requestWithdrawal } = useWallet();
   const [amount, setAmount] = useState("");
-  const [chain, setChain] = useState("solana");
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
@@ -81,20 +80,6 @@ export default function WithdrawForm() {
             {[25, 50, 100].map((p) => (
               <button key={p} onClick={() => quick(p)} className="flex-1 h-9 rounded-lg bg-white/5 border border-white/10 text-xs font-bold text-white/70 hover:bg-lime/10 hover:text-lime hover:border-lime/30 transition">
                 {p === 100 ? "MAX" : `${p}%`}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Blockchain network</label>
-          <div className="grid grid-cols-3 gap-2 mt-2">
-            {CHAINS.map((c) => (
-              <button
-                key={c.id} onClick={() => setChain(c.id)}
-                className={`h-11 rounded-xl border text-sm font-bold transition ${chain === c.id ? "bg-lime/10 border-lime/40 text-lime" : "bg-[#1a1a1a] border-white/10 text-white/60 hover:border-white/20"}`}
-              >
-                {c.label}
               </button>
             ))}
           </div>

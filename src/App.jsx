@@ -12,6 +12,7 @@ const GamePlayWrapper = () => {
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { WalletProvider } from '@/components/WalletProvider';
+import { WalletModalProvider } from '@/components/wallet/useWalletModal';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import GamePlay from '@/pages/GamePlay';
@@ -53,6 +54,7 @@ const AuthenticatedApp = () => {
   // Render the main app
   return (
     <WalletProvider>
+      <WalletModalProvider>
       <Routes>
         {/* Auth routes (pubbliche, senza layout) */}
         <Route path="/login" element={<Login />} />
@@ -72,6 +74,7 @@ const AuthenticatedApp = () => {
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+      </WalletModalProvider>
     </WalletProvider>
   );
 };

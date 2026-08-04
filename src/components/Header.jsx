@@ -3,12 +3,12 @@ import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownTo
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
-import WithdrawalPanel from "@/components/WithdrawalPanel";
+import { useWalletModal } from "@/components/wallet/useWalletModal";
 
 export default function Header({ onMenu }) {
   const { wallet, vipTier } = useWallet();
   const [open, setOpen] = useState(false);
-  const [showWithdraw, setShowWithdraw] = useState(false);
+  const { openWallet } = useWalletModal();
   const [isAdmin, setIsAdmin] = useState(false);
   const menuRef = useRef(null);
 
@@ -60,14 +60,14 @@ export default function Header({ onMenu }) {
             <Plus className="w-4 h-4" /> Sign up
           </button>
           <div className="flex items-center gap-0">
-            <div className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-[#1a1a1a] border border-white/5 border-r-0">
+            <button onClick={() => openWallet({ tab: "deposit" })} className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-[#1a1a1a] border border-white/5 border-r-0 hover:border-lime/40 transition cursor-pointer">
               <DollarSign className="w-4 h-4 text-lime" />
               <span className="text-sm font-semibold text-white tabular-nums">
                 {wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
               </span>
-            </div>
+            </button>
             <button
-              onClick={() => setShowWithdraw(true)}
+              onClick={() => openWallet({ tab: "withdraw" })}
               title="Withdraw winnings"
               className="flex items-center justify-center h-10 px-3 rounded-r-full bg-[#1a1a1a] border border-white/5 hover:border-lime/40 hover:text-lime text-white/50 transition"
             >
@@ -91,7 +91,7 @@ export default function Header({ onMenu }) {
                 <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <Users className="w-4 h-4" /> Affiliate Panel
                 </Link>
-                <button onClick={() => { setOpen(false); setShowWithdraw(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
+                <button onClick={() => { setOpen(false); openWallet({ tab: "withdraw" }); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
                   <ArrowDownToLine className="w-4 h-4" /> Withdraw winnings
                 </button>
                 <Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
@@ -114,7 +114,6 @@ export default function Header({ onMenu }) {
           </div>
         </div>
       </div>
-      {showWithdraw && <WithdrawalPanel onClose={() => setShowWithdraw(false)} />}
     </header>
   );
 }
