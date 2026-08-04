@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 
@@ -8,11 +8,32 @@ export default function LimboGame() {
   const [amount, setAmount] = useState(1);
   const [target, setTarget] = useState(2.0);
   const [last, setLast] = useState(null);
+  const [display, setDisplay] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const timers = useRef([]);
 
   const winChance = (99 / target).toFixed(2);
 
+  const animate = (to, done) => {
+    timers.current.forEach(clearTimeout);
+    const steps = 30;
+    let i = 0;
+    const run = () => {
+      i++;
+      const e = 1 - Math.pow(1 - i / steps, 3);
+      setDisplay(1 + (to - 1) * e);
+      if (i < steps) timers.current.push(setTimeout(run, 22));
+      else { setDisplay(to); done(); }
+    };
+    timers.current.push(setTimeout(run, 22));
+  };
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
   const play = async () => {
-    if (!wallet || amount > wallet.balance || amount <= 0) return;
+    if (busy || !wallet || amount > wallet.balance || amount <= 0) return;
+    setBusy(true);
+    setDisplay(1);
     const r = await pf.roll();
     const result = Math.max(1.0, Math.floor((99 / (1 - r)) * 100) / 100);
     const won = result >= target;
@@ -20,27 +41,30 @@ export default function LimboGame() {
     setLast({ result, won, multiplier: won ? target : 0, payout: won ? payout : amount });
     updateBalance(won ? payout - amount : -amount, amount);
     recordBet({ game_id: "limbo", game_name: "Limbo", amount, multiplier: won ? target : 0, payout, result: won ? "win" : "lose", client_seed: pf.clientSeed, server_seed_hash: pf.serverHash, nonce: pf.nonce });
+    animate(result, () => setBusy(false));
   };
+
+  const shown = busy && display != null ? display : last ? last.result : null;
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[220px] sm:min-h-[260px] flex flex-col items-center justify-center">
-          <div className="text-xs font-semibold text-white/40 mb-2">RISULTATO</div>
-          {last ? (
-            <div className={`text-6xl sm:text-7xl font-black tabular-nums ${last.won ? "text-lime" : "text-white/60"}`}>
-              {last.result.toFixed(2)}x
-            </div>
-          ) : (
-            <div className="text-6xl sm:text-7xl font-black text-white/20">1.00x</div>
-          )}
+        <div className="relative rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 min-h-[220px] sm:min-h-[260px] flex flex-col items-center justify-center overflow-hidden">
+          <div className="absolute -inset-20 opacity-[0.06] bg-grid pointer-events-none" />
+          <div className="text-xs font-semibold text-white/40 mb-2">RESULT</div>
+          <div
+            className={`text-6xl sm:text-7xl font-black tabular-nums ${shown == null ? "text-white/20" : last && last.won ? "text-lime" : "text-white/70"}`}
+            style={shown != null && last && last.won ? { textShadow: "0 0 28px rgba(204,255,0,0.55)" } : undefined}
+          >
+            {shown != null ? `${shown.toFixed(2)}x` : "1.00x"}
+          </div>
           <div className="mt-3 text-sm text-white/40">Target: {target.toFixed(2)}x</div>
         </div>
         {last && <ResultBadge result={last.won ? "win" : "lose"} multiplier={last.multiplier} payout={last.won ? last.payout - amount : -amount} />}
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} betLabel="Roll" />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Roll"} />
         <div>
           <label className="text-xs font-semibold text-white/50 mb-1.5 block">Target multiplier (x)</label>
           <input

@@ -4,10 +4,10 @@ import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { WHEEL_SEGMENTS } from "@/lib/gameEngine";
 
 function buildSegments(muls) {
-  return muls.map((m) => ({
+  return muls.map((m, i) => ({
     label: m === 0 ? "0" : `${m}x`,
     mul: m,
-    color: m === 0 ? "#1a1a1a" : "#ccff00",
+    color: m === 0 ? "#242424" : i % 2 === 0 ? "#ccff00" : "#a8cc00",
   }));
 }
 
@@ -51,7 +51,7 @@ export default function WheelGame() {
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-8 flex flex-col items-center justify-center min-h-[320px] sm:min-h-[360px]">
         <div className="relative aspect-square w-full max-w-[260px]">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-0 h-0 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-lime" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-lime animate-pulse" style={{ filter: "drop-shadow(0 0 6px rgba(204,255,0,0.8))" }} />
           <div
             className="w-full h-full rounded-full border-4 border-white/10"
             style={{
@@ -78,7 +78,7 @@ export default function WheelGame() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#1a1a1a] border-2 border-lime" />
         </div>
         {last && !spinning && (
-          <p className="mt-6 text-lg font-bold">
+          <p className="mt-6 text-lg font-bold" style={{ animation: "popIn 0.3s both" }}>
             Result: <span className={last.mul >= 1 ? "text-lime" : "text-red-400"}>{last.label}</span>
           </p>
         )}

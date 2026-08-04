@@ -70,7 +70,7 @@ export default function MinesGame() {
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="rounded-2xl border border-white/10 bg-[#111] p-4 sm:p-6">
-        <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-md mx-auto">
+        <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-md mx-auto" style={busted ? { animation: "shake 0.4s" } : undefined}>
           {Array.from({ length: GRID }).map((_, i) => {
             const isRevealed = revealed.includes(i);
             const isBomb = bombs.includes(i);
@@ -85,10 +85,12 @@ export default function MinesGame() {
                     ? showBomb
                       ? "bg-red-500/15 border-red-500/40"
                       : "bg-lime/10 border-lime/30"
-                    : "bg-[#1a1a1a] border-white/10 hover:border-lime/30"
+                    : "bg-[#1a1a1a] border-white/10 hover:border-lime/30 hover:bg-white/5"
                 }`}
               >
-                {isRevealed && (showBomb ? <Bomb className="w-6 h-6 text-red-400" /> : <Gem className="w-6 h-6 text-lime" />)}
+                {isRevealed && (showBomb
+                  ? <Bomb className="w-6 h-6 text-red-400" style={{ animation: "popIn 0.35s both" }} />
+                  : <Gem className="w-6 h-6 text-lime" style={{ animation: "gemPop 0.4s both" }} />)}
                 {!isRevealed && active && <span className="w-2 h-2 rounded-full bg-white/10" />}
               </button>
             );

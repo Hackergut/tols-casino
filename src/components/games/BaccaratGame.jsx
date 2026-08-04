@@ -214,12 +214,24 @@ export default function BaccaratGame() {
 
 function Card({ card, delay }) {
   return (
-    <div
-      className="w-16 h-24 rounded-lg bg-white flex flex-col items-center justify-center shadow-xl"
-      style={{ animation: `dealIn 0.4s ${delay}s both` }}
-    >
-      <span className="text-2xl font-black leading-none" style={{ color: suitColor(card.s) }}>{card.r}</span>
-      <span className="text-2xl leading-none" style={{ color: suitColor(card.s) }}>{card.s}</span>
+    <div className="w-16 h-24 rounded-lg shadow-xl" style={{ perspective: 600 }}>
+      <div
+        className="relative w-full h-full rounded-lg"
+        style={{
+          transformStyle: "preserve-3d",
+          animation: `dealIn 0.4s ${delay}s both, cardFlip 0.5s ${delay + 0.15}s both`,
+        }}
+      >
+        {/* back */}
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-[#1a3a1a] to-[#0a1a0a] border border-lime/30 flex items-center justify-center" style={{ backfaceVisibility: "hidden" }}>
+          <span className="text-lg font-black italic text-lime/80">T</span>
+        </div>
+        {/* front */}
+        <div className="absolute inset-0 rounded-lg bg-white flex flex-col items-center justify-center" style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}>
+          <span className="text-2xl font-black leading-none" style={{ color: suitColor(card.s) }}>{card.r}</span>
+          <span className="text-2xl leading-none" style={{ color: suitColor(card.s) }}>{card.s}</span>
+        </div>
+      </div>
     </div>
   );
 }

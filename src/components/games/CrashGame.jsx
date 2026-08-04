@@ -14,6 +14,7 @@ export default function CrashGame() {
   const [running, setRunning] = useState(false);
   const [cashed, setCashed] = useState(false);
   const [history, setHistory] = useState([]);
+  const [curve, setCurve] = useState([]);
 
   const rafRef = useRef(null);
   const cashedRef = useRef(false);
@@ -43,6 +44,7 @@ export default function CrashGame() {
     setRunning(true);
     setCashed(false);
     cashedRef.current = false;
+    setCurve([]);
     setMultiplier(1.0);
     multRef.current = 1.0;
     setCrashPoint(null);
@@ -54,8 +56,10 @@ export default function CrashGame() {
       const m = Math.floor(Math.pow(1.07, elapsed * 8) * 100) / 100;
       multRef.current = m;
       setMultiplier(m);
+      setCurve((c) => [...c, m].slice(-200));
       if (m >= cp) {
         setMultiplier(cp);
+        setCurve((c) => [...c, cp]);
         setRunning(false);
         setHistory((h) => [cp, ...h].slice(0, 12));
         if (!cashedRef.current) {
@@ -83,6 +87,31 @@ export default function CrashGame() {
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
       <div className="space-y-4">
         <div className="relative rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-4 sm:p-8 min-h-[320px] sm:min-h-[360px] flex flex-col items-center justify-center overflow-hidden">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="crashFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#ccff00" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#ccff00" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {curve.length > 1 && (
+              <>
+                <polygon
+                  points={`0,100 ${curve.map((m, i) => `${(i / (curve.length - 1)) * 100},${100 - (Math.min(m, 15) / 15) * 100}`).join(" ")} 100,100`}
+                  fill="url(#crashFill)"
+                />
+                <polyline
+                  points={curve.map((m, i) => `${(i / (curve.length - 1)) * 100},${100 - (Math.min(m, 15) / 15) * 100}`).join(" ")}
+                  fill="none"
+                  stroke="#ccff00"
+                  strokeWidth="1.4"
+                  strokeLinejoin="round"
+                  vectorEffect="non-scaling-stroke"
+                  style={{ filter: "drop-shadow(0 0 5px rgba(204,255,0,0.7))" }}
+                />
+              </>
+            )}
+          </svg>
           <div className="absolute top-3 left-3 right-3 flex gap-1.5 flex-wrap">
             {history.map((h, i) => (
               <span

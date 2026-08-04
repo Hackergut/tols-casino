@@ -102,7 +102,7 @@ export default function RouletteGame() {
         {/* Wheel */}
         <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-[#141414] to-[#0a0a0a] p-3 sm:p-6 flex flex-col items-center">
           <div className="relative" style={{ width: 280, height: 280 }}>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[16px] border-l-transparent border-r-transparent border-t-lime drop-shadow" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[16px] border-l-transparent border-r-transparent border-t-lime drop-shadow animate-pulse" />
             <div
               className="absolute inset-0 rounded-full border-4 border-white/10"
               style={{
@@ -124,9 +124,9 @@ export default function RouletteGame() {
                 </span>
               ))}
             </div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#1a1a1a] border-2 border-lime flex items-center justify-center">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#1a1a1a] border-2 border-lime flex items-center justify-center" style={winner !== null && !spinning ? { animation: "flashGlow 0.8s" } : undefined}>
               {winner !== null && !spinning ? (
-                <span className={`text-xl font-black ${colorOf(winner) === "red" ? "text-red-400" : colorOf(winner) === "green" ? "text-green-400" : "text-white"}`}>{winner}</span>
+                <span className={`text-xl font-black ${colorOf(winner) === "red" ? "text-red-400" : colorOf(winner) === "green" ? "text-green-400" : "text-white"}`} style={{ animation: "popIn 0.3s both" }}>{winner}</span>
               ) : <RotateCw className={`w-6 h-6 text-lime ${spinning ? "animate-spin" : ""}`} />}
             </div>
           </div>

@@ -26,15 +26,22 @@ export default function KenoGame() {
     if (!canPlay || !wallet || amount > wallet.balance || amount <= 0) return;
     setPlaying(true);
     setDrawn([]);
+    setMatches(0);
     const drawnSet = new Set();
     while (drawnSet.size < 10) {
       const r = await pf.roll();
       drawnSet.add(Math.floor(r * KENO_GRID) + 1);
     }
     const drawnArr = Array.from(drawnSet);
-    setDrawn(drawnArr);
+    // sequential reveal animation
+    const revealed = [];
+    for (const num of drawnArr) {
+      await new Promise((res) => setTimeout(res, 190));
+      revealed.push(num);
+      setDrawn([...revealed]);
+      setMatches(revealed.filter((x) => picks.includes(x)).length);
+    }
     const m = drawnArr.filter((x) => picks.includes(x)).length;
-    setMatches(m);
     const mul = paytable[m] || 0;
     const payout = amount * mul;
     setPlaying(false);
@@ -70,6 +77,7 @@ export default function KenoGame() {
                     ? "bg-white/10 text-white/60 border-white/20"
                     : "bg-[#1a1a1a] text-white/50 border-white/5 hover:border-lime/30"
                 }`}
+                style={isDrawn ? { animation: "kenoPop 0.3s both" } : undefined}
               >
                 {n}
               </button>
