@@ -32,12 +32,20 @@ export default async function(req) {
     const token = get("igaming_api_token");
     if (!token) return Response.json({ error: "iGaming API token not set. Add it in Admin → Catalog settings." }, { status: 503 });
     const lastTs = get("igaming_sync_ts");
+    const cursor = get("igaming_sync_cursor"); // resume URL for an in-progress bulk load
 
-    let url = BASE + "/slots/?page_size=100";
-    if (lastTs) url += "&updated_since=" + encodeURIComponent(lastTs);
+    // Resume an unfinished bulk load; otherwise start fresh (incremental if we have a lastTs)
+    let url = cursor || (BASE + "/slots/?page_size=100");
+    if (!cursor && lastTs) url += "&updated_since=" + encodeURIComponent(lastTs);
 
     let fetched = 0, created = 0, updated = 0, done = false, syncTs = null;
     let status = "ok";
+
+    const saveSetting = async (key, value) => {
+      const ex = await base44.asServiceRole.entities.PlatformSetting.filter({ key });
+      if (ex && ex.length) await base44.asServiceRole.entities.PlatformSetting.update(ex[0].id, { value });
+      else await base44.entities.PlatformSetting.create({ key, value, category: "catalog_sync" });
+    };
 
     for (let page = 0; page < MAX_PAGES; page++) {
       const r = await fetch(url, { headers: { Authorization: "Token " + token } });
@@ -80,10 +88,13 @@ export default async function(req) {
       url = data.next;
     }
 
-    if (done && syncTs) {
-      const tsSetting = await base44.asServiceRole.entities.PlatformSetting.filter({ key: "igaming_sync_ts" });
-      if (tsSetting.length) await base44.asServiceRole.entities.PlatformSetting.update(tsSetting[0].id, { value: syncTs });
-      else await base44.asServiceRole.entities.PlatformSetting.create({ key: "igaming_sync_ts", value: syncTs, category: "catalog_sync" });
+    if (done) {
+      // full sweep finished: persist sync timestamp and clear the resume cursor
+      if (syncTs) await saveSetting("igaming_sync_ts", syncTs);
+      await saveSetting("igaming_sync_cursor", "");
+    } else {
+      // still more pages: persist the next URL so the next run continues from here
+      await saveSetting("igaming_sync_cursor", url);
     }
 
     return Response.json({ status, fetched, created, updated, hasMore: !done, lastSync: done ? syncTs : get("igaming_sync_ts") });
