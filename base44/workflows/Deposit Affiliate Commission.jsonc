@@ -1,0 +1,40 @@
+{
+  "name": "Deposit Affiliate Commission",
+  "description": "When a Deposit is verified (status -> confirmed), if it is linked to a Referral, calculate the affiliate commission from PlatformSetting, credit the Affiliate's balance, update the Referral, and log the transaction.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Deposit",
+      "events": [
+        "update"
+      ]
+    },
+    "condition": "${ .trigger.data.status == \"confirmed\" and .trigger.old_data.status != \"confirmed\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "deposit_affiliate_commission",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "process_commission": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "processDepositCommission",
+            "args": {
+              "deposit_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Calculate affiliate commission",
+            "description": "Credit affiliate + log transaction"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "name": "CommissionLog",
+  "type": "object",
+  "properties": {
+    "affiliate_id": {
+      "type": "string",
+      "description": "Reference to the Affiliate record credited"
+    },
+    "referral_id": {
+      "type": "string",
+      "default": "",
+      "description": "Reference to the Referral record that earned this commission"
+    },
+    "deposit_id": {
+      "type": "string",
+      "description": "Reference to the verified Deposit that triggered the commission"
+    },
+    "deposit_amount": {
+      "type": "number",
+      "default": 0,
+      "description": "Original deposit amount in USDT"
+    },
+    "commission": {
+      "type": "number",
+      "default": 0,
+      "description": "Commission amount credited to the affiliate"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "revshare",
+        "cpa",
+        "hybrid"
+      ],
+      "default": "revshare"
+    },
+    "rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Commission rate (%) applied"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "affiliate_id",
+    "deposit_id",
+    "commission"
+  ]
+}

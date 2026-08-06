@@ -44,6 +44,11 @@
       "type": "boolean",
       "default": false
     },
+    "referral_code": {
+      "type": "string",
+      "default": "",
+      "description": "Affiliate referral code that referred this depositor (empty if none). Set at deposit time; drives the affiliate-commission workflow."
+    },
     "description": {
       "type": "string",
       "default": "",

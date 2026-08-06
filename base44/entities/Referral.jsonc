@@ -5,6 +5,11 @@
     "player_alias": {
       "type": "string"
     },
+    "affiliate_code": {
+      "type": "string",
+      "default": "",
+      "description": "Referral code of the Affiliate who owns this referral. Links Referral -> Affiliate."
+    },
     "status": {
       "type": "string",
       "enum": [
