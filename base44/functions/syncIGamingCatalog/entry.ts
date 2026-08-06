@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 
 const BASE = "https://i-gaming.tools/api/v1";
-const MAX_PAGES = 25; // ~2500 slots per sync run; admin can press again for more
+const MAX_PAGES = 5; // ~500 slots per run — keeps each invocation under the timeout; press again to continue (hasMore)
 const VMAP = { low: "Low", med_low: "Med-Low", medium: "Medium", med_high: "Med-High", high: "High", very_high: "Very High" };
 
 function mapSlot(s) {
