@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Outlet } from "react-router-dom";
+import { useLocation, useOutlet } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/nav/MobileNav";
 import Header from "@/components/Header";
@@ -13,6 +14,13 @@ export default function Layout() {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(max-width: 1023px)").matches
   );
+
+  // Route-level page transitions. Keyed by the first path segment so that
+  // same-route navigations (e.g. /game/dice -> /game/mines, /games/category/...)
+  // stay mounted and re-render in place instead of remounting + refetching.
+  const location = useLocation();
+  const outlet = useOutlet();
+  const routeKey = location.pathname.split("/")[1] || "root";
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
@@ -45,7 +53,17 @@ export default function Layout() {
         <div className="flex-1 min-w-0 flex flex-col">
           <Header onMenu={() => setMobileNav(true)} />
           <main className="flex-1">
-            <Outlet />
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={routeKey}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+              >
+                {outlet}
+              </motion.div>
+            </AnimatePresence>
           </main>
         </div>
       </div>

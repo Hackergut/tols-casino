@@ -19,10 +19,10 @@ export default function GameCard({ game }) {
       />
       {isSlot ? (
         game.image ? (
-          <Image src={game.image} fittingType="fit" className="absolute inset-0 w-full h-full object-contain p-3 group-hover:scale-110 transition duration-500" />
+          <Image src={game.image} fittingType="fill" className="absolute inset-0 w-full h-full group-hover:scale-105 transition duration-500" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-3xl sm:text-4xl font-black italic" style={{ color: accent, textShadow: `0 0 28px ${accent}66` }}>
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a]">
+            <span className="text-2xl sm:text-3xl font-black italic px-2 text-center leading-tight" style={{ color: accent, textShadow: `0 0 28px ${accent}66` }}>
               {game.name.split(" ")[0]}
             </span>
           </div>

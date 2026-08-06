@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Gamepad2, Spade, Flame, Star } from "lucide-react";
+import { Sparkles, Spade, Flame, Star } from "lucide-react";
 import HeroBanners from "@/components/HeroBanners";
 import JackpotTicker from "@/components/JackpotTicker";
 import GameRail from "@/components/home/GameRail";
@@ -8,6 +8,7 @@ import LobbySearch from "@/components/home/LobbySearch";
 import CategoryChips from "@/components/home/CategoryChips";
 import ProvidersRail from "@/components/home/ProvidersRail";
 import GameCard from "@/components/GameCard";
+import AllGamesGrid from "@/components/home/AllGamesGrid";
 import { GAMES } from "@/lib/games";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
@@ -51,7 +52,6 @@ export default function Home() {
     { id: "featured", title: "Featured Games", icon: Star, games: [...slotCards.slice(0, 6), ...originals.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "originals", title: "TOLS Originals", icon: Sparkles, games: originals, to: "/games/category/originals" },
     { id: "new", title: "New Games", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
-    { id: "slots", title: "Slots", icon: Gamepad2, games: slotCards, to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
   ];
   const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails;
@@ -89,6 +89,7 @@ export default function Home() {
             {visibleRails.map((r) => (
               <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} />
             ))}
+            <AllGamesGrid title="All Slots & Games" games={all} limit={48} viewAllTo="/games/category/slots" />
             <ProvidersRail providers={providers} />
           </>
         )}
