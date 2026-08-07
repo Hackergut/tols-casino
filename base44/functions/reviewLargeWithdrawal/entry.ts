@@ -1,14 +1,23 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { requireInternalCaller } from '../../shared/internalAuth.ts';
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Only the workflow (no user session) or an admin may put a withdrawal on hold.
+    const denied = await requireInternalCaller(base44);
+    if (denied) return denied;
+
     const body = await req.json().catch(() => ({}));
     const withdrawal_id = body.withdrawal_id || "";
     if (!withdrawal_id) return Response.json({ error: "withdrawal_id required" }, { status: 400 });
 
     const w = await base44.asServiceRole.entities.Withdrawal.get(withdrawal_id);
     if (!w) return Response.json({ error: "withdrawal not found" }, { status: 404 });
+    // Only a freshly created request can be put on hold — replayed or forged
+    // calls against already-reviewed/processed withdrawals are no-ops.
+    if (w.status !== "pending") return Response.json({ flagged: false, reason: "not_pending", status: w.status });
 
     const amount = Number(w.amount) || 0;
     const currency = w.currency || "USDT";

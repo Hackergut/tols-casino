@@ -1,12 +1,15 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { requireInternalCaller } from '../../shared/internalAuth.ts';
+
+const ALERT_MARKER = "[admin-alerted]";
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
     // Only the workflow (no user session) or an admin may trigger admin alerts.
-    const caller = await base44.auth.me().catch(() => null);
-    if (caller && caller.role !== "admin") return Response.json({ error: "Forbidden" }, { status: 403 });
+    const denied = await requireInternalCaller(base44);
+    if (denied) return denied;
 
     const body = await req.json().catch(() => ({}));
     const deposit_id = body.deposit_id || "";
@@ -15,6 +18,11 @@ export default async function(req) {
     // Alert content comes from the stored deposit, never from the request body
     const deposit = await base44.asServiceRole.entities.Deposit.get(deposit_id).catch(() => null);
     if (!deposit) return Response.json({ notified: false, reason: "deposit_not_found" }, { status: 404 });
+    // Real deposits only, and one alert per deposit — replayed or forged calls are no-ops
+    if (deposit.status !== "confirmed") return Response.json({ notified: false, reason: "not_confirmed" });
+    if ((deposit.description || "").includes(ALERT_MARKER)) {
+      return Response.json({ notified: false, reason: "already_alerted" });
+    }
 
     const amount = Number(deposit.amount) || 0;
     const chain = deposit.chain || "";
@@ -52,6 +60,10 @@ export default async function(req) {
       `Tx hash: ${tx_hash || "—"}\n` +
       `Deposit ID: ${deposit_id || "—"}\n\n` +
       `Review it in the Admin dashboard.`;
+
+    await base44.asServiceRole.entities.Deposit.update(deposit_id, {
+      description: `${(deposit.description || "").slice(0, 900)} ${ALERT_MARKER}`.trim(),
+    });
 
     const results = [];
     for (const a of admins) {
