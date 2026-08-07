@@ -3,7 +3,7 @@ import { ShoppingCart, Repeat, Tag, X, Search } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
-import TolsCard from "@/components/cards/TolsCard";
+import MarketCardTile from "@/components/cards/MarketCardTile";
 import { COLLECTION_NAMES, rarityColor, rarityLabel } from "@/lib/packs";
 
 const TABS = [
@@ -93,32 +93,22 @@ export default function Marketplace() {
 }
 
 function ListingCard({ listing, onAction }) {
-  const card = {
-    collection: listing.collection, card_name: listing.card_name, rarity: listing.rarity,
-    insured_value: listing.insured_value, grading_company: "PSA", grading_id: listing.id?.slice(-6), token_id: listing.id,
-  };
   const isSale = listing.listing_type === "sale";
   return (
-    <div className="rounded-xl bg-card border border-white/10 p-2">
-      <TolsCard card={card} />
-      <div className="mt-2 px-1">
-        <div className="flex items-center justify-between text-[10px] text-white/40">
-          <span>{listing.seller_alias || "TOLS user"}</span>
-          <span style={{ color: rarityColor(listing.rarity) }}>{rarityLabel(listing.rarity)}</span>
+    <MarketCardTile
+      listing={listing}
+      actionLabel={isSale ? `Buy now · $${Number(listing.price || 0).toLocaleString()}` : "Propose swap"}
+      actionVariant={isSale ? "solid" : "outline"}
+      onAction={onAction}
+      footer={
+        <div className="mt-2.5 flex items-center justify-between text-[11px]">
+          <span className="text-white/40 truncate">{listing.seller_alias || "TOLS user"}</span>
+          {isSale
+            ? <span className="font-black text-lime tabular-nums">${Number(listing.price || 0).toLocaleString()}</span>
+            : <span className="text-white/60">Wants <span className="text-lime font-bold">{listing.swap_for || "any"}</span></span>}
         </div>
-        {isSale ? (
-          <>
-            <div className="text-base font-black text-white mt-1">${Number(listing.price || 0).toLocaleString()}</div>
-            <button onClick={onAction} className="mt-2 w-full h-9 rounded-lg bg-lime text-black font-black text-sm">Buy now</button>
-          </>
-        ) : (
-          <>
-            <div className="text-[11px] text-white/60 mt-1">Wants: <span className="text-lime font-bold">{listing.swap_for || "any"}</span></div>
-            <button onClick={onAction} className="mt-2 w-full h-9 rounded-lg border border-lime/40 text-lime font-black text-sm">Propose swap</button>
-          </>
-        )}
-      </div>
-    </div>
+      }
+    />
   );
 }
 
@@ -194,13 +184,18 @@ function SellForm({ myCards, myListings, onChange }) {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {myListings.map((l) => (
-              <div key={l.id} className="rounded-xl bg-card border border-white/10 p-2">
-                <TolsCard card={{ collection: l.collection, card_name: l.card_name, rarity: l.rarity, insured_value: l.insured_value, grading_company: "PSA", grading_id: l.id?.slice(-6), token_id: l.id }} />
-                <div className="mt-2 flex items-center justify-between text-[11px]">
-                  <span className="text-white/60">{l.listing_type === "sale" ? `$${Number(l.price || 0).toLocaleString()}` : `Swap · ${l.swap_for || "any"}`}</span>
-                  <button onClick={() => cancelListing(l.id)} className="text-white/40 hover:text-red-400 inline-flex items-center gap-1"><X className="w-3 h-3" /> Close</button>
-                </div>
-              </div>
+              <MarketCardTile
+                key={l.id}
+                listing={l}
+                actionLabel="Close listing"
+                actionVariant="outline"
+                onAction={() => cancelListing(l.id)}
+                footer={
+                  <div className="mt-2.5 text-[11px] text-white/60">
+                    {l.listing_type === "sale" ? <span className="font-black text-lime">${Number(l.price || 0).toLocaleString()}</span> : <>Swap · <span className="text-lime font-bold">{l.swap_for || "any"}</span></>}
+                  </div>
+                }
+              />
             ))}
           </div>
         )}

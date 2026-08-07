@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Image } from "@/components/ui/image";
-import { Crosshair, Target, Gift, Trophy, ChevronLeft, ChevronRight } from "lucide-react";
+import { Crosshair, Target, Gift, Trophy, ChevronLeft, ChevronRight, HandCoins } from "lucide-react";
 
 const IMGS = {
   mega: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/a4f6af45f_IMG_1973.png",
   gauntlet: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/bdced99c6_IMG_1971.png",
   live: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/c02228216_IMG_1976.jpg",
   king: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/bf77160cc_IMG_1974.jpg",
+  cards: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/4d5e7fb2c_generated_image.png",
 };
 
 const CARDS = [
@@ -18,11 +19,13 @@ const CARDS = [
     { icon: Trophy, t: "BE THE LEGEND", b: "Top players. Biggest wins." },
   ] },
   { img: IMGS.live, to: "/games/category/live", amount: "$25,000", brand: "TOLS", title: "LIVE DROP!", copy: "Roulette, slots & dice — provably fair, onchain.", cta: "SPIN. WIN. WIN." },
-  { img: IMGS.mega, to: "/swap", amount: "SWAP", brand: "TOLS", title: "CARDS!", copy: "Estrazione gacha — chase mythic, completa i set tematici.", cta: "OPEN. PULL. COLLECT.", split: true, features: [
-    { icon: Gift, t: "GACHA PULL", b: "3 carte per pack" },
-    { icon: Trophy, t: "CHASE MYTHIC", b: "Rarità pesate" },
-    { icon: Target, t: "90% BUYBACK", b: "Valore garantito" },
-  ] },
+  {
+    img: IMGS.cards, to: "/swap", kind: "cards",
+    amount: "$50,000", brand: "CARD", title: "DROP!",
+    sub: "Soccer, UFC, NBA, Legends & Many More",
+    copy: "Swap, Trade, Buy — All blockchain-verified collectibles.",
+    cta: "TRADE. COLLECT. WIN.",
+  },
 ];
 
 function Brand() {
@@ -67,7 +70,22 @@ export default function MegaPromoCards() {
               <Image src={c.img} fittingType="fill" className="absolute inset-0 w-full h-full transition duration-500 group-hover:scale-[1.04]" />
               <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-black/10" />
               <div className="relative z-10 h-full flex flex-col justify-between p-5 sm:p-8">
-                <div className="flex justify-end"><Brand /></div>
+                <div className="flex justify-end">
+                  {c.kind === "cards" ? (
+                    <span className="inline-flex items-center gap-1.5 text-[13px] sm:text-base font-display tracking-[0.18em] uppercase">
+                      <span className="text-white">TOLS</span><span className="text-lime">CARDS</span>
+                    </span>
+                  ) : <Brand />}
+                </div>
+                {c.kind === "cards" ? (
+                  <div>
+                    <h2 className="font-display uppercase leading-[0.9] text-4xl sm:text-6xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
+                      <span className="text-lime">{c.amount}</span> <span className="text-white">{c.brand} {c.title}</span>
+                    </h2>
+                    <p className="mt-2 text-lg sm:text-2xl font-bold text-white/95 max-w-[65%] leading-tight drop-shadow">{c.sub}</p>
+                    <p className="mt-2 text-xs sm:text-base text-white/70 max-w-[60%] drop-shadow">{c.copy}</p>
+                  </div>
+                ) : (
                 <div>
                   <h2 className="font-display uppercase leading-[0.92] text-4xl sm:text-6xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
                     <span className="text-lime">{c.amount}</span> <span className="text-white">{c.brand}</span> <span className="text-lime">{c.title}</span>
@@ -87,7 +105,16 @@ export default function MegaPromoCards() {
                     </div>
                   )}
                 </div>
-                {c.split ? (
+                )}
+                {c.kind === "cards" ? (
+                  <span className="inline-flex items-center gap-2.5 h-11 w-fit pl-4 pr-5 rounded-full border-2 border-lime bg-black/55 backdrop-blur-sm">
+                    <HandCoins className="w-5 h-5 text-lime" />
+                    <span className="text-sm sm:text-base font-display tracking-wide uppercase">
+                      <span className="text-white">TRADE. COLLECT. </span><span className="text-lime">WIN.</span>
+                    </span>
+                    <span className="hidden sm:inline text-[10px] text-white/55 font-bold tracking-widest">ONLY ON TOLS CARDS.</span>
+                  </span>
+                ) : c.split ? (
                   <div className="-mx-5 sm:-mx-8 flex h-10">
                     <span className="flex items-center gap-1.5 px-4 bg-lime text-black font-black text-xs tracking-wide"><span>&gt;</span> {c.cta}</span>
                     <span className="flex-1 flex items-center px-4 bg-black text-white text-[10px] font-bold tracking-widest">ONLY ON TOLS</span>
