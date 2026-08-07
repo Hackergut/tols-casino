@@ -10,7 +10,7 @@ export default function GameCard({ game }) {
   return (
     <Link
       to={`/game/${game.slug}`}
-      className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-b from-[#161d3a] to-[#0a0e22] border border-white/10 hover:border-lime/50 transition-all duration-300 hover:-translate-y-1"
+      className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-b from-[#161d3a] to-[#0a0e22] border border-white/10 hover:border-lime/50 active:scale-[0.97] transition-all duration-300 hover:-translate-y-1"
     >
       <div className="absolute inset-0 bg-grid opacity-[0.06] group-hover:opacity-20 transition duration-300" />
       <div
@@ -50,8 +50,8 @@ export default function GameCard({ game }) {
         ) : null}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-        <p className="text-white text-xs sm:text-sm font-bold truncate leading-tight">{game.name}</p>
+      <div className="absolute inset-x-0 bottom-0 p-2 sm:p-2.5 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+        <p className="text-white text-[11px] sm:text-sm font-bold leading-tight line-clamp-2">{game.name}</p>
         {game.volatility ? <p className="text-[10px] text-white/40 truncate">{game.volatility} vol</p> : null}
       </div>
 

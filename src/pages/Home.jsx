@@ -23,8 +23,13 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [chip, setChip] = useState(null);
 
+  const byPlayable = (a, b) =>
+    Boolean(b.playable) - Boolean(a.playable) || String(a.name).localeCompare(String(b.name));
   const slotCards = useMemo(
-    () => slots.map((s) => ({ ...s, category: "slots", playable: !!(s.demo_url), accent: s.accent || "#ccff00" })),
+    () =>
+      slots
+        .map((s) => ({ ...s, category: "slots", playable: !!(s.demo_url), accent: s.accent || "#ccff00" }))
+        .sort(byPlayable),
     [slots]
   );
   const originals = useMemo(() => GAMES.filter((g) => g.category === "originals"), []);
@@ -60,7 +65,7 @@ export default function Home() {
   };
 
   const rails = [
-    { id: "featured", title: "Featured Games", icon: Star, games: [...slotCards.slice(0, 6), ...originals.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
+    { id: "featured", title: "Featured Games", icon: Star, games: [...originals.slice(0, 6), ...slotCards.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "originals", title: "TOLS Originals", icon: Sparkles, games: originals, to: "/games/category/originals" },
     { id: "new", title: "New Releases", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
@@ -94,7 +99,7 @@ export default function Home() {
                 No game matches your search
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2.5 sm:gap-3">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-2.5 sm:gap-3">
                 {results.map((g) => <GameCard key={g.id} game={g} />)}
               </div>
             )}
@@ -116,7 +121,7 @@ export default function Home() {
         <LiveWinsTicker />
       </main>
 
-      <footer className="border-t border-white/5 mt-12 py-8 px-4 sm:px-6">
+      <footer className="border-t border-white/5 mt-12 py-8 pb-24 lg:pb-8 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-5">
           <TolsLogo size="sm" />
           <div className="flex items-center justify-center gap-5 text-xs text-white/40">
