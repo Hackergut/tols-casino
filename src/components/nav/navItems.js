@@ -11,7 +11,7 @@ export const NAV_CASINO = [
   { id: "live", label: "Live Casino", icon: Radio, to: "/games/category/live" },
   { id: "table", label: "Table Games", icon: Spade, to: "/games/category/table" },
   { id: "packs", label: "Card Packs", icon: Layers, to: "/packs" },
-  { id: "collection", label: "La mia collezione", icon: Album, to: "/collection" },
+  { id: "collection", label: "My Collection", icon: Album, to: "/collection" },
   { id: "swap", label: "Swap Cards", icon: Repeat, to: "/swap" },
   { id: "marketplace", label: "Marketplace", icon: Store, to: "/marketplace" },
 ];

@@ -53,7 +53,7 @@ export default function LivePullsTicker() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0a0e22]/50 overflow-hidden">
+    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
         <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
         <span className="text-[11px] font-black tracking-[0.18em] text-white/80 uppercase">Live card pulls</span>
@@ -70,7 +70,7 @@ export default function LivePullsTicker() {
             return (
               <div
                 key={r.id}
-                className={`shrink-0 w-40 rounded-xl bg-gradient-to-b from-[#11182e] to-[#0a0e22] border ${rar.ring} ${rar.glow} overflow-hidden`}
+                className={`shrink-0 w-40 rounded-xl bg-gradient-to-b from-[#161616] to-[#0a0a0a] border ${rar.ring} ${rar.glow} overflow-hidden`}
               >
                 <div className="flex items-center justify-between px-2.5 py-1.5 border-b border-white/5">
                   <span className="text-[10px] font-black uppercase tracking-wide text-white/70 truncate">{r.collection}</span>

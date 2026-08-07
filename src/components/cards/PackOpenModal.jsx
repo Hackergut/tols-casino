@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { ArrowLeft, X, Sparkles, Check, Loader2, Eye, Minus, Plus, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
-import { openPack, rarityColor, rarityLabel, RARITIES, RARITY_ORDER } from "@/lib/packs";
-import CardVisual from "@/components/cards/CardVisual";
+import { openPack, rarityColor, rarityLabel, RARITIES, RARITY_ORDER, COLLECTION_IMAGES } from "@/lib/packs";
+import { Image } from "@/components/ui/image";
+import TolsCard from "@/components/cards/TolsCard";
 import CardDetailModal from "@/components/cards/CardDetailModal";
 
 // Pack purchase + reveal flow. Confirms price → deducts wallet → generates &
@@ -165,7 +166,7 @@ export default function PackOpenModal({ pack, onClose }) {
                   <button key={c.id || i} onClick={() => (isRevealed ? setDetail(c) : setRevealed(i + 1))} className="text-left">
                     {isRevealed ? (
                       <div className="relative">
-                        <CardVisual card={c} side="front" className="w-full animate-[popIn_0.4s_ease-out]" />
+                        <TolsCard card={c} className="w-full animate-[popIn_0.4s_ease-out]" />
                         <span className="absolute top-2 right-2 grid place-items-center w-6 h-6 rounded-full bg-black/70 border border-white/15"><Check className="w-3.5 h-3.5 text-lime" /></span>
                       </div>
                     ) : (
@@ -199,10 +200,13 @@ export default function PackOpenModal({ pack, onClose }) {
 function PackHero({ pack }) {
   const accent = "#ccff00";
   const initial = String(pack.collection || "★").trim().charAt(0).toUpperCase();
+  const art = pack.image || COLLECTION_IMAGES[pack.collection] || "";
   return (
     <div className="relative rounded-2xl border-2 border-lime/40 bg-gradient-to-b from-[#1a1d10] to-[#0d0d0d] flex items-center justify-center h-56 overflow-hidden" style={{ boxShadow: "0 0 30px -8px rgba(204,255,0,0.6)" }}>
       <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-lime/10 blur-3xl" />
-      <div className="w-20 h-28 rounded-xl border-2 flex items-center justify-center text-4xl font-black" style={{ color: accent, borderColor: accent + "66", background: accent + "12" }}>{initial}</div>
+      <div className="relative w-20 h-28 rounded-xl overflow-hidden border-2 flex items-center justify-center text-4xl font-black" style={{ color: accent, borderColor: accent + "88", background: accent + "12" }}>
+        {art ? <Image src={art} fittingType="fill" className="absolute inset-0 w-full h-full" /> : initial}
+      </div>
     </div>
   );
 }

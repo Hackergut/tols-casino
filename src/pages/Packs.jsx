@@ -5,6 +5,7 @@ import { useWallet } from "@/components/WalletProvider";
 import PackCard from "@/components/cards/PackCard";
 import PackOpenModal from "@/components/cards/PackOpenModal";
 import CardDetailModal from "@/components/cards/CardDetailModal";
+import CardThumb from "@/components/cards/CardThumb";
 import { RARITY_ORDER, rarityColor, rarityLabel } from "@/lib/packs";
 
 const RARITY_ICONS = { common: Star, rare: Zap, epic: Gem, legendary: Crown, mythic: Sparkles };
@@ -112,11 +113,7 @@ export default function Packs() {
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filteredCards.map((c) => (
-                  <button key={c.id} onClick={() => setDetail(c)} className="text-left">
-                    <MiniCard card={c} />
-                  </button>
-                ))}
+                {filteredCards.map((c) => <CardThumb key={c.id} card={c} onClick={() => setDetail(c)} />)}
               </div>
             )}
           </div>
@@ -125,35 +122,6 @@ export default function Packs() {
 
       {opening && <PackOpenModal pack={opening} onClose={() => { setOpening(null); loadCards(); }} />}
       {detail && <CardDetailModal card={detail} onClose={() => setDetail(null)} />}
-    </div>
-  );
-}
-
-function MiniCard({ card }) {
-  const frame = rarityColor(card.rarity);
-  const accent = "#ccff00";
-  const monogram = String(card.card_name || card.collection || "T").charAt(0).toUpperCase();
-  return (
-    <div className="relative rounded-lg overflow-hidden border-2 bg-[#0a0a0a] bg-grid" style={{ borderColor: frame, boxShadow: `0 0 18px -8px ${frame}` }}>
-      <div className="flex items-center justify-center h-5 border-b" style={{ borderColor: frame + "55" }}>
-        <span className="text-[8px] font-display tracking-[0.22em] text-lime">TOLS CASINO</span>
-      </div>
-      <div className="relative p-2">
-        {card.is_new && <span className="absolute top-1.5 right-1.5 z-10 text-[7px] font-black px-1 rounded bg-lime text-black">NEW</span>}
-        <div className="relative h-24 flex items-center justify-center">
-          <div className="absolute w-16 h-16 rounded-full blur-xl" style={{ background: `${frame}33` }} />
-          <div className="relative w-12 h-12 rounded-full grid place-items-center border-2" style={{ borderColor: frame }}>
-            <span className="text-lg font-display" style={{ color: accent }}>{monogram}</span>
-          </div>
-        </div>
-        <div className="mt-1 rounded border px-1.5 py-1" style={{ borderColor: frame + "88", background: "rgba(0,0,0,0.4)" }}>
-          <p className="text-[11px] font-display text-white leading-none truncate">{(card.card_name || "").toUpperCase()}</p>
-        </div>
-        <div className="mt-1 flex items-center justify-between">
-          <span className="text-[8px] font-bold tracking-wider" style={{ color: frame }}>{rarityLabel(card.rarity).toUpperCase()}</span>
-          <span className="text-[8px] font-mono text-white/40">${Number(card.insured_value || 0).toLocaleString()}</span>
-        </div>
-      </div>
     </div>
   );
 }

@@ -3,10 +3,8 @@ import { Check, Lock, ChevronDown, Search, Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Image } from "@/components/ui/image";
 import CardDetailModal from "@/components/cards/CardDetailModal";
-import {
-  COLLECTIONS, COLLECTION_NAMES, collectionCardList, collectionAccent,
-  collectionImage, rarityColor, rarityLabel, ovrFor, nameParts,
-} from "@/lib/packs";
+import CardThumb from "@/components/cards/CardThumb";
+import { COLLECTION_NAMES, collectionCardList, collectionAccent } from "@/lib/packs";
 
 // "My Collection" — thematic set completion. Shows owned vs missing cards and
 // progress per collection. Owned cards open the detail modal; missing cards
@@ -152,7 +150,7 @@ function SetCard({ set, onOpen }) {
             <span className="text-xs font-bold text-white/60">Missing ({set.missing.length})</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-            {set.ownedCards.map((c) => <OwnedTile key={c.id + c.card_name} card={c} accent={set.accent} onClick={() => onOpen(c)} />)}
+            {set.ownedCards.map((c) => <CardThumb key={c.id + c.card_name} card={c} onClick={() => onOpen(c)} />)}
             {set.missing.map((name) => <MissingTile key={name} name={name} />)}
           </div>
         </div>
@@ -161,30 +159,11 @@ function SetCard({ set, onOpen }) {
   );
 }
 
-function OwnedTile({ card, accent, onClick }) {
-  const frame = rarityColor(card.rarity);
-  const img = collectionImage(card);
-  return (
-    <button onClick={onClick} className="relative rounded-lg overflow-hidden border-2 bg-[#0a0a0a] text-left" style={{ borderColor: frame, boxShadow: `0 0 14px -8px ${frame}` }}>
-      <div className="flex items-center justify-center h-5 border-b" style={{ borderColor: frame + "55" }}>
-        <span className="text-[8px] font-display tracking-[0.2em] text-lime">TOLS</span>
-      </div>
-      <div className="relative h-20 overflow-hidden">
-        {img ? <Image src={img} fittingType="fill" className="absolute inset-0 w-full h-full" /> : <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 50% 30%, ${accent}26, #0a0a0a 80%)` }} />}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%)" }} />
-        <span className="absolute bottom-0.5 left-1 text-[8px] font-black px-1 rounded" style={{ background: frame, color: "#0a0a0a" }}>{rarityLabel(card.rarity).toUpperCase()}</span>
-      </div>
-      <div className="px-1.5 pb-1.5">
-        <p className="text-[10px] font-display text-white leading-none truncate">{(card.card_name || "").toUpperCase()}</p>
-        <p className="text-[9px] font-mono text-white/40 mt-0.5">${Number(card.insured_value || 0).toLocaleString()}</p>
-      </div>
-    </button>
-  );
-}
+
 
 function MissingTile({ name }) {
   return (
-    <div className="relative rounded-lg overflow-hidden border-2 border-dashed border-white/10 bg-[#0c0c0c] flex flex-col items-center justify-center h-[112px]">
+    <div className="relative rounded-lg overflow-hidden border-2 border-dashed border-white/10 bg-[#0c0c0c] flex flex-col items-center justify-center min-h-[150px]">
       <Lock className="w-5 h-5 text-white/25 mb-1" />
       <p className="text-[10px] font-bold text-white/30 text-center px-1 leading-tight line-clamp-2">{name}</p>
     </div>

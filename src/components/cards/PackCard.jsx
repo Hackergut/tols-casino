@@ -1,16 +1,20 @@
 import React from "react";
 import { Boxes, Coins } from "lucide-react";
-import { collectionAccent } from "@/lib/packs";
+import { Image } from "@/components/ui/image";
+import { collectionAccent, COLLECTION_IMAGES } from "@/lib/packs";
 
 // Buyable pack tile in the shop grid.
 export default function PackCard({ pack, onOpen }) {
   const accent = collectionAccent(pack.collection);
   const initial = String(pack.collection || "★").trim().charAt(0).toUpperCase();
+  const art = pack.image || COLLECTION_IMAGES[pack.collection] || "";
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-[#161616] to-[#0d0d0d] flex flex-col">
       <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-3xl pointer-events-none" style={{ background: accent + "22" }} />
       <div className="relative h-36 flex items-center justify-center" style={{ background: `radial-gradient(circle at 50% 35%, ${accent}26, #0d0d0d 70%)` }}>
-        <div className="w-16 h-20 rounded-lg border-2 flex items-center justify-center text-2xl font-black" style={{ color: accent, borderColor: accent + "66", background: accent + "12", boxShadow: `0 0 24px -6px ${accent}` }}>{initial}</div>
+        <div className="relative w-16 h-20 rounded-lg overflow-hidden border-2 flex items-center justify-center text-2xl font-black" style={{ color: accent, borderColor: accent + "88", background: accent + "12", boxShadow: `0 0 24px -6px ${accent}` }}>
+          {art ? <Image src={art} fittingType="fill" className="absolute inset-0 w-full h-full" /> : initial}
+        </div>
         <span className="absolute top-2 left-2 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-black/60 text-white/70">{pack.collection}</span>
       </div>
       <div className="p-4 flex flex-col flex-1">

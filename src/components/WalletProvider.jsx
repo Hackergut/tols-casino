@@ -122,11 +122,11 @@ export function WalletProvider({ children }) {
   }, [wallet, updateBalance]);
 
   const requestWithdrawal = useCallback(async ({ amount, wallet_address, chain }) => {
-    if (!wallet) throw new Error("Wallet non disponibile");
+    if (!wallet) throw new Error("Wallet unavailable");
     const amt = +Number(amount).toFixed(2);
-    if (!amt || amt <= 0) throw new Error("Importo non valido");
-    if (!wallet_address || wallet_address.length < 8) throw new Error("Indirizzo wallet non valido");
-    if (amt > wallet.balance) throw new Error(`Saldo insufficiente. Disponibile: ${wallet.balance} ${wallet.currency}`);
+    if (!amt || amt <= 0) throw new Error("Invalid amount");
+    if (!wallet_address || wallet_address.length < 8) throw new Error("Invalid wallet address");
+    if (amt > wallet.balance) throw new Error(`Insufficient balance. Available: ${wallet.balance} ${wallet.currency}`);
 
     const balanceBefore = +wallet.balance.toFixed(2);
     const balanceAfter = +(balanceBefore - amt).toFixed(2);
