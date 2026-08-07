@@ -5,7 +5,7 @@ import { ShieldCheck } from "lucide-react";
 // shared by every TOLS original. Purely presentational.
 export default function GameFrame({ title, badge, children, stats, className = "", minH = "min-h-[300px] sm:min-h-[360px]" }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#101010] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
+    <div className="rounded-2xl border border-white/10 bg-[#0c1024] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
       {(title || badge) && (
         <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/5 bg-white/[0.02]">
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-white/40">{title}</span>
@@ -18,7 +18,7 @@ export default function GameFrame({ title, badge, children, stats, className = "
       )}
       <div
         className={`relative flex flex-col items-center justify-center p-4 sm:p-8 ${minH} ${className}`}
-        style={{ background: "radial-gradient(120% 90% at 50% 0%, #1b1b1b 0%, #101010 45%, #070707 100%)" }}
+        style={{ background: "radial-gradient(120% 90% at 50% 0%, #11182e 0%, #0c1024 45%, #060814 100%)" }}
       >
         <div className="absolute inset-0 bg-grid opacity-[0.05] pointer-events-none" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/30 to-transparent" />

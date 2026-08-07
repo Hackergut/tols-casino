@@ -10,7 +10,7 @@ export default function GameCard({ game }) {
   return (
     <Link
       to={`/game/${game.slug}`}
-      className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-b from-[#161616] to-[#0a0a0a] border border-white/10 hover:border-lime/50 transition-all duration-300 hover:-translate-y-1"
+      className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-b from-[#161d3a] to-[#0a0e22] border border-white/10 hover:border-lime/50 transition-all duration-300 hover:-translate-y-1"
     >
       <div className="absolute inset-0 bg-grid opacity-[0.06] group-hover:opacity-20 transition duration-300" />
       <div
@@ -21,7 +21,7 @@ export default function GameCard({ game }) {
         game.image ? (
           <Image src={game.image} fittingType="fill" className="absolute inset-0 w-full h-full group-hover:scale-105 transition duration-500" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a]">
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-[#1a2046] to-[#0a0e22]">
             <span className="text-2xl sm:text-3xl font-black italic px-2 text-center leading-tight" style={{ color: accent, textShadow: `0 0 28px ${accent}66` }}>
               {game.name.split(" ")[0]}
             </span>

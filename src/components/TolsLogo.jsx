@@ -15,18 +15,17 @@ export default function TolsLogo({ className = "", size = "md" }) {
   return (
     <span
       className={`inline-flex items-center justify-center rounded-lg px-2.5 py-1 leading-none ${className}`}
-      style={{ background: "radial-gradient(circle at center, #000000 0%, #1a1a1a 100%)" }}
+      style={{ background: "radial-gradient(circle at center, #161d3a 0%, #0a0e22 100%)" }}
     >
       <span
         className={`font-black tracking-tight ${sizeClass}`}
         style={{
           fontFamily: '"Archivo Black", "Inter", ui-sans-serif, system-ui, sans-serif',
-          color: "transparent",
-          WebkitTextStroke: "1.25px #ccff00",
-          textShadow: "0 0 8px rgba(204,255,0,0.25)",
+          color: "#ffffff",
+          letterSpacing: "0.01em",
         }}
       >
-        TOLS
+        T<span style={{ color: "#ccff00", textShadow: "0 0 10px rgba(204,255,0,0.5)" }}>O</span>LS
       </span>
     </span>
   );

@@ -17,7 +17,10 @@ export const GAMES = [
 export const CATEGORIES = [
   { id: "originals", label: "Originals", icon: "Sparkles" },
   { id: "slots", label: "Slots", icon: "Cherry" },
+  { id: "live", label: "Live Casino", icon: "Radio" },
   { id: "table", label: "Table Games", icon: "Spade" },
+  { id: "game-shows", label: "Game Shows", icon: "Tv" },
+  { id: "instant", label: "Instant Games", icon: "Zap" },
 ];
 
 export function getGame(slug) {

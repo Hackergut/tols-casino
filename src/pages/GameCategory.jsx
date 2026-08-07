@@ -6,7 +6,14 @@ import ProviderFilter from "@/components/ProviderFilter";
 import { GAMES } from "@/lib/games";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
-const TITLES = { originals: "TOLS Originals", slots: "Slots", table: "Table Games" };
+const TITLES = {
+  originals: "TOLS Originals",
+  slots: "Slots",
+  live: "Live Casino",
+  table: "Table Games",
+  "game-shows": "Game Shows",
+  instant: "Instant Games",
+};
 
 // Category (/games/category/:cat) and provider (/games/provider/:provider) listings.
 export default function GameCategory({ mode = "category" }) {
@@ -34,7 +41,7 @@ export default function GameCategory({ mode = "category" }) {
     : GAMES.filter((g) => g.category === cat);
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-5">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-white/50 hover:text-lime transition">
           <ArrowLeft className="w-4 h-4" /> Lobby

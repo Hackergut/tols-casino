@@ -1,6 +1,6 @@
 import {
   Home, Trophy, Sparkles, Gamepad2, Spade, Disc3, Crown, Users,
-  Newspaper, Headphones, MessageCircle, Coins,
+  Newspaper, Headphones, MessageCircle, Coins, Radio, Tv, Zap, Building2,
 } from "lucide-react";
 
 export const NAV_TOP = [
@@ -11,9 +11,11 @@ export const NAV_TOP = [
 export const NAV_CASINO = [
   { id: "originals", label: "Originals", icon: Sparkles, to: "/games/category/originals" },
   { id: "slots", label: "Slots", icon: Gamepad2, to: "/games/category/slots" },
+  { id: "live", label: "Live Casino", icon: Radio, to: "/games/category/live" },
   { id: "table", label: "Table Games", icon: Spade, to: "/games/category/table" },
-  { id: "roulette", label: "Roulette", icon: Disc3, to: "/game/roulette" },
-  { id: "baccarat", label: "Baccarat", icon: Spade, to: "/game/baccarat" },
+  { id: "game-shows", label: "Game Shows", icon: Tv, to: "/games/category/game-shows" },
+  { id: "instant", label: "Instant Games", icon: Zap, to: "/games/category/instant" },
+  { id: "providers", label: "Providers", icon: Building2, to: "/games/category/slots" },
 ];
 
 export const NAV_PROMOS = [

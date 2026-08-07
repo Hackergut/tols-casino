@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Spade, Flame, Star, Gamepad2 } from "lucide-react";
+import { Sparkles, Spade, Flame, Star, Gamepad2, Radio, Tv, Zap } from "lucide-react";
 import HeroBanners from "@/components/HeroBanners";
 import JackpotTicker from "@/components/JackpotTicker";
 import GameRail from "@/components/home/GameRail";
@@ -10,6 +10,8 @@ import ProvidersRail from "@/components/home/ProvidersRail";
 import AllGamesGrid from "@/components/home/AllGamesGrid";
 import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
+import TolsLogo from "@/components/TolsLogo";
+import SocialLinks from "@/components/SocialLinks";
 import { GAMES } from "@/lib/games";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
@@ -60,15 +62,18 @@ export default function Home() {
   const rails = [
     { id: "featured", title: "Featured Games", icon: Star, games: [...slotCards.slice(0, 6), ...originals.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "originals", title: "TOLS Originals", icon: Sparkles, games: originals, to: "/games/category/originals" },
-    { id: "new", title: "New Games", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
+    { id: "new", title: "New Releases", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
+    { id: "live", title: "Live Casino", icon: Radio, games: [], to: "/games/category/live", empty: "Live casino coming soon to TOLS.", lazy: true },
+    { id: "game-shows", title: "Game Shows", icon: Tv, games: [], to: "/games/category/game-shows", empty: "Game shows coming soon to TOLS.", lazy: true },
+    { id: "instant", title: "Instant Games", icon: Zap, games: [], to: "/games/category/instant", empty: "Instant games coming soon to TOLS.", lazy: true },
   ];
-  const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails;
+  const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails.filter((r) => !r.lazy);
 
   const showSkeleton = loading && !slotCards.length && !query;
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
         {/* Hero: global pot + promo banners */}
         <div className="flex gap-3 overflow-x-auto scrollbar-hide" data-no-swipe>
@@ -79,7 +84,7 @@ export default function Home() {
         </div>
 
         {/* Sticky lobby toolbar: search + category filter, stays under the header */}
-        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-[#0d0d0d]/85 backdrop-blur-md border-y border-white/5 space-y-3">
+        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/85 backdrop-blur-md border-y border-white/5 space-y-3">
           <LobbySearch value={query} onChange={setQuery} />
           <CategoryChips active={chip} onSelect={onChip} />
         </div>
@@ -115,13 +120,17 @@ export default function Home() {
         )}
       </main>
 
-      <footer className="border-t border-white/5 mt-12 py-8 px-4 text-center text-xs text-white/30 space-y-3">
-        <div className="flex items-center justify-center gap-5">
-          <Link to="/about" className="hover:text-lime transition">About</Link>
-          <Link to="/contact" className="hover:text-lime transition">Contact</Link>
-          <Link to="/affiliate" className="hover:text-lime transition">Refer and Earn</Link>
+      <footer className="border-t border-white/5 mt-12 py-8 px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-5">
+          <TolsLogo size="sm" />
+          <div className="flex items-center justify-center gap-5 text-xs text-white/40">
+            <Link to="/about" className="hover:text-lime transition">About</Link>
+            <Link to="/contact" className="hover:text-lime transition">Contact</Link>
+            <Link to="/affiliate" className="hover:text-lime transition">Refer and Earn</Link>
+          </div>
+          <SocialLinks />
         </div>
-        <p><span className="text-lime font-black">TOLS</span> · Crypto Casino · Provably Fair</p>
+        <p className="text-center text-xs text-white/30 mt-5">© 2026 TOLS · Crypto Casino · Provably Fair</p>
       </footer>
     </div>
   );
