@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import GameCard from "@/components/GameCard";
+import SectionHeader from "@/components/home/SectionHeader";
 
 // Full responsive grid of official game cards. Renders a capped preview for
 // performance (a 700-card grid is heavy), with a "Browse all" CTA to the
@@ -11,11 +12,7 @@ export default function AllGamesGrid({ title, games, limit = 48, viewAllTo }) {
 
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">{title}</h2>
-          <span className="text-xs font-bold text-white/25">{games.length}</span>
-        </div>
+      <SectionHeader title={title} count={games.length}>
         {viewAllTo && hasMore && (
           <Link
             to={viewAllTo}
@@ -24,7 +21,7 @@ export default function AllGamesGrid({ title, games, limit = 48, viewAllTo }) {
             View All
           </Link>
         )}
-      </div>
+      </SectionHeader>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2.5 sm:gap-3">
         {shown.map((g) => (

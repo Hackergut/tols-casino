@@ -7,8 +7,9 @@ import GameRail from "@/components/home/GameRail";
 import LobbySearch from "@/components/home/LobbySearch";
 import CategoryChips from "@/components/home/CategoryChips";
 import ProvidersRail from "@/components/home/ProvidersRail";
-import GameCard from "@/components/GameCard";
 import AllGamesGrid from "@/components/home/AllGamesGrid";
+import LobbySkeleton from "@/components/home/LobbySkeleton";
+import GameCard from "@/components/GameCard";
 import { GAMES } from "@/lib/games";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
@@ -16,7 +17,7 @@ const SLOTS_EMPTY = "No slots synced yet — an admin can sync the catalog from 
 
 export default function Home() {
   const navigate = useNavigate();
-  const { slots } = useSlotCatalog();
+  const { slots, loading } = useSlotCatalog();
   const [query, setQuery] = useState("");
   const [chip, setChip] = useState(null);
 
@@ -24,9 +25,9 @@ export default function Home() {
     () => slots.map((s) => ({ ...s, category: "slots", playable: true, accent: s.accent || "#ccff00" })),
     [slots]
   );
-  const originals = GAMES.filter((g) => g.category === "originals");
-  const table = GAMES.filter((g) => g.category === "table");
-  const all = useMemo(() => [...originals, ...table, ...slotCards], [slotCards]);
+  const originals = useMemo(() => GAMES.filter((g) => g.category === "originals"), []);
+  const table = useMemo(() => GAMES.filter((g) => g.category === "table"), []);
+  const all = useMemo(() => [...originals, ...table, ...slotCards], [originals, table, slotCards]);
 
   const providers = useMemo(
     () => Array.from(new Set(slots.map((s) => s.provider).filter(Boolean))).sort(),
@@ -41,7 +42,8 @@ export default function Home() {
 
   const onChip = (id) => {
     if (id === "lucky") {
-      const pick = all[Math.floor(Math.random() * all.length)];
+      const pool = all.length ? all : [...originals, ...table];
+      const pick = pool[Math.floor(Math.random() * pool.length)];
       if (pick) navigate(`/game/${pick.slug}`);
       return;
     }
@@ -56,9 +58,12 @@ export default function Home() {
   ];
   const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails;
 
+  const showSkeleton = loading && !slotCards.length && !query;
+
   return (
     <div className="min-h-screen bg-[#0d0d0d]">
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-6">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
+        {/* Hero: global pot + promo banners */}
         <div className="flex gap-3 overflow-x-auto scrollbar-hide" data-no-swipe>
           <JackpotTicker variant="card" />
           <div className="flex-1 min-w-[280px]">
@@ -66,8 +71,11 @@ export default function Home() {
           </div>
         </div>
 
-        <LobbySearch value={query} onChange={setQuery} />
-        <CategoryChips active={chip} onSelect={onChip} />
+        {/* Sticky lobby toolbar: search + category filter, stays under the header */}
+        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-[#0d0d0d]/85 backdrop-blur-md border-y border-white/5 space-y-3">
+          <LobbySearch value={query} onChange={setQuery} />
+          <CategoryChips active={chip} onSelect={onChip} />
+        </div>
 
         {results ? (
           <section className="space-y-3">
@@ -84,6 +92,8 @@ export default function Home() {
               </div>
             )}
           </section>
+        ) : showSkeleton ? (
+          <LobbySkeleton />
         ) : (
           <>
             {visibleRails.map((r) => (
