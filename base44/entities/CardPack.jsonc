@@ -1,0 +1,45 @@
+{
+  "name": "CardPack",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "collection": {
+      "type": "string",
+      "description": "Collection / brand the pack draws from (Pok\u00e9mon, NBA, FIFA, F1, UFC, Yu-Gi-Oh!)"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Pack price in USDT"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "cards_per_pack": {
+      "type": "number",
+      "default": 3,
+      "description": "How many cards each pack yields when opened"
+    },
+    "image": {
+      "type": "string",
+      "default": ""
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "name",
+    "collection",
+    "price"
+  ]
+}

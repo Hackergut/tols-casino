@@ -31,6 +31,7 @@ import About from '@/pages/About';
 import Contact from '@/pages/Contact';
 import Analytics from '@/pages/Analytics';
 import ResponsibleGaming from '@/pages/ResponsibleGaming';
+import Packs from '@/pages/Packs';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -83,6 +84,7 @@ const AuthenticatedApp = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/responsible-gaming" element={<ResponsibleGaming />} />
+          <Route path="/packs" element={<Packs />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>

@@ -1,0 +1,69 @@
+{
+  "name": "CollectibleCard",
+  "type": "object",
+  "properties": {
+    "collection": {
+      "type": "string",
+      "description": "Collection / brand (Pok\u00e9mon, NBA, FIFA, F1, UFC, Yu-Gi-Oh!)"
+    },
+    "card_name": {
+      "type": "string"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic"
+      ],
+      "default": "common"
+    },
+    "insured_value": {
+      "type": "number",
+      "default": 0,
+      "description": "Insured / market value in USDT"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USDT"
+    },
+    "token_id": {
+      "type": "string",
+      "default": "",
+      "description": "On-chain token id / authenticity serial"
+    },
+    "grading_company": {
+      "type": "string",
+      "default": "PSA"
+    },
+    "grading_id": {
+      "type": "string",
+      "default": ""
+    },
+    "image": {
+      "type": "string",
+      "default": "",
+      "description": "Front art URL (optional)"
+    },
+    "image_back": {
+      "type": "string",
+      "default": "",
+      "description": "Back art URL (optional)"
+    },
+    "pack_name": {
+      "type": "string",
+      "default": "",
+      "description": "Name of the pack the card was pulled from"
+    },
+    "is_new": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "collection",
+    "card_name"
+  ]
+}
