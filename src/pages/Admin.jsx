@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban, RefreshCw } from "lucide-react";
+import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, BarChart3, Clock, Ban, RefreshCw } from "lucide-react";
+import { Link } from "react-router-dom";
 import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
 import AggregatorSettings from "@/components/admin/AggregatorSettings";
@@ -183,6 +184,9 @@ export default function Admin() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Link to="/analytics" className="inline-flex items-center gap-2 px-4 h-9 rounded-full bg-white/5 border border-white/10 text-white/80 text-xs font-bold hover:border-lime/40 hover:text-lime transition">
+              <BarChart3 className="w-3.5 h-3.5" /> Full Analytics
+            </Link>
             <button
               onClick={syncCatalog}
               disabled={syncing}

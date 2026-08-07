@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Sparkles, Gamepad2, Radio, Spade, Trophy, Crown, Users, Wallet, MessageCircle, Headphones } from "lucide-react";
+import { Home, Sparkles, Gamepad2, Radio, Spade, Trophy, Crown, Users, Wallet, MessageCircle, Headphones, BarChart3 } from "lucide-react";
 
 const ITEMS = [
   { id: "home", icon: Home, to: "/" },
@@ -12,6 +12,7 @@ const ITEMS = [
   { id: "vip", icon: Crown, to: "/vip" },
   { id: "affiliate", icon: Users, to: "/affiliate" },
   { id: "wallet", icon: Wallet, to: "/wallet" },
+  { id: "analytics", icon: BarChart3, to: "/analytics" },
   { id: "community", icon: MessageCircle, to: "/community" },
   { id: "support", icon: Headphones, to: "/contact" },
 ];
