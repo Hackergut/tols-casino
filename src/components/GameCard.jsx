@@ -7,7 +7,7 @@ import GameArt from "@/components/GameArt";
 export default function GameCard({ game }) {
   const isSlot = game.category === "slots";
   return (
-    <Link to={`/game/${game.slug}`} className="group relative block aspect-[0.76/1] rounded-xl overflow-hidden bg-card border border-white/15 hover:border-lime/60 active:scale-[0.98] transition">
+    <Link to={`/game/${game.slug}`} className="group relative block aspect-[1.04/1] rounded-xl overflow-hidden bg-card border border-white/15 hover:border-lime/60 active:scale-[0.98] transition">
       {isSlot && game.image ? (
         <Image src={game.image} fittingType="fill" className="absolute inset-0 w-full h-full grayscale-[20%] group-hover:grayscale-0 group-hover:scale-[1.03] transition duration-500" />
       ) : (

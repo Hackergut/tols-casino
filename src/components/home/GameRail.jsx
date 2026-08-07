@@ -44,7 +44,7 @@ export default function GameRail({ title, icon: Icon, games, viewAllTo, emptyTex
       ) : (
         <div ref={scroller} data-no-swipe className="flex gap-3 overflow-x-auto scrollbar-hide snap-x pb-1">
           {games.map((g) => (
-            <div key={g.id || g.slug} className="snap-start shrink-0 w-[144px] sm:w-[158px] lg:w-[172px]">
+            <div key={g.id || g.slug} className="snap-start shrink-0 w-[168px] sm:w-[190px] lg:w-[210px]">
               <GameCard game={g} />
             </div>
           ))}

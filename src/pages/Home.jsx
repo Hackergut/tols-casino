@@ -85,9 +85,9 @@ export default function Home() {
         <RollyHero />
 
         {/* Sticky lobby toolbar: search + category filter, stays under the header */}
-        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 space-y-2">
-          <CategoryChips active={chip} onSelect={onChip} />
-          <div id="game-search"><LobbySearch value={query} onChange={setQuery} /></div>
+        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 flex flex-col xl:flex-row gap-3">
+          <div className="flex-1 min-w-0"><CategoryChips active={chip} onSelect={onChip} /></div>
+          <div className="xl:w-72 shrink-0"><LobbySearch value={query} onChange={setQuery} /></div>
         </div>
 
         {results ? (
