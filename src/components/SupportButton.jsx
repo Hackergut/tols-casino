@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Headphones, X, MessageCircle, Mail } from "lucide-react";
+import { Headphones, X, Mail } from "lucide-react";
 
 export default function SupportButton() {
   const [open, setOpen] = useState(false);
@@ -25,13 +25,7 @@ export default function SupportButton() {
                 <p className="text-xs text-white/40">support@tols.casino</p>
               </div>
             </a>
-            <a href="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition">
-              <MessageCircle className="w-4 h-4 text-lime" />
-              <div>
-                <p className="text-sm font-bold text-white">Live Chat</p>
-                <p className="text-xs text-white/40">Available 24/7</p>
-              </div>
-            </a>
+
             <p className="text-[11px] text-white/30 pt-1 text-center">Average reply &lt; 2 min</p>
           </div>
         </div>
