@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
+import { upsertSupabaseDeposit } from '../../shared/supabaseDeposits.ts';
 
 const CHAINS = {
   ethereum: { rpc: "https://eth.llamarpc.com", cg: "ethereum", rateKey: "rate_ethereum", opKey: "operator_address_ethereum", decimals: 18, kind: "evm" },
@@ -142,6 +143,14 @@ export default async function(req) {
     await base44.asServiceRole.entities.Deposit.update(depId, {
       status: "confirmed", credited: true, amount: usdt,
       from_address: fromOnChain, to_address: toOnChain,
+    });
+
+    // Ledger of record: the deposits table in Supabase
+    await upsertSupabaseDeposit(base44, {
+      id: depId, chain, tx_hash: dedupeKey, amount: usdt, currency: "USDT",
+      from_address: fromOnChain, to_address: toOnChain,
+      status: "confirmed", credited: true, referral_code: referralCode,
+      created_by_id: user.id,
     });
 
     return Response.json({ success: true, credited: usdt, newBalance, nativeAmount: amountNative, price });
