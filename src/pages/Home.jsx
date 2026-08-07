@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sparkles, Spade, Flame, Star, Gamepad2, Radio } from "lucide-react";
 import LiveWinsTicker from "@/components/LiveWinsTicker";
+import LivePullsTicker from "@/components/LivePullsTicker";
 import GameRail from "@/components/home/GameRail";
 import LobbySearch from "@/components/home/LobbySearch";
 import CategoryChips from "@/components/home/CategoryChips";
@@ -118,6 +119,7 @@ export default function Home() {
             <ProvidersRail providers={providers} />
           </>
         )}
+        <LivePullsTicker />
         <LiveWinsTicker />
       </main>
 

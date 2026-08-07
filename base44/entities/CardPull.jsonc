@@ -1,0 +1,42 @@
+{
+  "name": "CardPull",
+  "type": "object",
+  "properties": {
+    "collection": {
+      "type": "string",
+      "description": "Collection / brand (e.g. Pok\u00e9mon, NBA, FIFA, UFC, F1, Yu-Gi-Oh!)"
+    },
+    "card_name": {
+      "type": "string"
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic"
+      ],
+      "default": "common"
+    },
+    "pack_name": {
+      "type": "string",
+      "default": ""
+    },
+    "puller": {
+      "type": "string",
+      "default": "",
+      "description": "Alias of the user who pulled the card"
+    },
+    "image": {
+      "type": "string",
+      "default": "",
+      "description": "Optional card art URL"
+    }
+  },
+  "required": [
+    "collection",
+    "card_name"
+  ]
+}
