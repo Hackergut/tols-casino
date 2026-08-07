@@ -1,0 +1,40 @@
+{
+  "name": "Large Withdrawal Review",
+  "description": "When a withdrawal is created above the configured threshold, checks the player's wallet, flags it as pending review and emails the admin team.",
+  "trigger": {
+    "config": {
+      "trigger_type": "entity",
+      "entity_name": "Withdrawal",
+      "events": [
+        "create"
+      ]
+    },
+    "condition": "${ .trigger.data.status == \"pending\" }"
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "large_withdrawal_review",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "review_withdrawal": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "reviewLargeWithdrawal",
+            "args": {
+              "withdrawal_id": "${ .trigger.entity_id }"
+            }
+          },
+          "then": "end",
+          "x-base44": {
+            "title": "Check threshold, flag & notify",
+            "description": "Wallet check + admin email"
+          }
+        }
+      }
+    ]
+  }
+}
