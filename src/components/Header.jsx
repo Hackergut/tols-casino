@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown, Menu, MessageCircle } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowDownToLine, ChevronDown, DollarSign, LogOut, Menu, Search, Shield, User, Wallet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
@@ -8,110 +8,59 @@ import { VipProgressBadge, VipProgressCard } from "@/components/VipProgress";
 import TolsLogo from "@/components/TolsLogo";
 
 export default function Header({ onMenu }) {
-  const { wallet, vipTier } = useWallet();
+  const { wallet } = useWallet();
+  const { openWallet } = useWalletModal();
+  const navigate = useNavigate();
+  const menuRef = useRef(null);
+  const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const navigate = useNavigate();
-  const { openWallet } = useWalletModal();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const menuRef = useRef(null);
 
+  useEffect(() => { base44.auth.me().then(setUser).catch(() => setUser(null)); }, []);
   useEffect(() => {
-    base44.auth.me().then((u) => u && u.role === "admin" && setIsAdmin(true)).catch(() => {});
+    const close = (e) => menuRef.current && !menuRef.current.contains(e.target) && setOpen(false);
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
   }, []);
 
-  useEffect(() => {
-    const handler = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  const submitSearch = (e) => {
+    e.preventDefault();
+    navigate(`/?q=${encodeURIComponent(search.trim())}`);
+  };
 
   return (
-    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-4">
-        <button onClick={onMenu} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a1a1a] border border-white/5 text-white/70 hover:text-lime transition">
-          <Menu className="w-5 h-5" />
-        </button>
-        {/* Logo */}
-        <Link to="/" className="lg:hidden flex items-center gap-2 shrink-0">
-          <TolsLogo />
-          <span className="hidden sm:inline-flex items-center px-1.5 h-5 rounded bg-blue-600 text-[9px] font-black text-white tracking-wider">BETA</span>
-        </Link>
-
-        {/* Search */}
-        <div className="hidden md:flex flex-1 max-w-md mx-auto items-center gap-2 px-4 h-10 rounded-full bg-[#1a1a1a] border border-white/5">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-white/10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-3">
+        <button onClick={onMenu} className="lg:hidden grid place-items-center w-9 h-9 rounded-lg bg-card border border-white/10 text-white/70" aria-label="Open menu"><Menu className="w-5 h-5" /></button>
+        <Link to="/" className="lg:hidden"><TolsLogo size="sm" /></Link>
+        <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-md items-center gap-2 px-4 h-10 rounded-full bg-card border border-white/10 focus-within:border-lime/40">
           <Search className="w-4 h-4 text-white/30" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && navigate(`/?q=${encodeURIComponent(search.trim())}`)}
-            placeholder="Search games"
-            className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full"
-          />
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-          <VipProgressBadge />
-          <Link to="/login" className="hidden sm:flex items-center gap-1.5 h-10 px-5 rounded-full font-bold text-sm bg-lime text-black hover:opacity-90 transition">
-            <Wallet className="w-4 h-4" /> Sign in
-          </Link>
-          <div className="flex items-center gap-0">
-            <button onClick={() => openWallet({ tab: "deposit" })} className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-[#1a1a1a] border border-white/5 border-r-0 hover:border-lime/40 transition cursor-pointer">
-              <DollarSign className="w-4 h-4 text-lime" />
-              <span className="text-sm font-semibold text-white tabular-nums">
-                {wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}
-              </span>
-            </button>
-            <button
-              onClick={() => openWallet({ tab: "withdraw" })}
-              title="Withdraw winnings"
-              className="flex items-center justify-center h-10 px-3 rounded-r-full bg-[#1a1a1a] border border-white/5 hover:border-lime/40 hover:text-lime text-white/50 transition"
-            >
-              <ArrowDownToLine className="w-4 h-4" />
-            </button>
-          </div>
-          <Link to="/community" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/5 text-white/70 hover:text-lime hover:border-lime/40 transition">
-            <MessageCircle className="w-5 h-5" />
-          </Link>
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setOpen((o) => !o)}
-              className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-full bg-[#1a1a1a] border border-white/5 hover:border-white/20 transition"
-            >
-              <User className="w-4 h-4 text-white/80" />
-              <span className="hidden sm:inline text-sm font-semibold text-white/80">Profile</span>
-              <ChevronDown className="w-3.5 h-3.5 text-white/50" />
-            </button>
-            {open && (
-              <div className="absolute right-0 top-12 w-60 rounded-xl border border-white/10 bg-[#1a1a1a] shadow-2xl py-2 z-50">
-                <VipProgressCard />
-                <div className="border-t border-white/5 my-1" />
-                <Link to="/affiliate" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <Users className="w-4 h-4" /> Affiliate Panel
-                </Link>
-                <button onClick={() => { setOpen(false); openWallet({ tab: "withdraw" }); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <ArrowDownToLine className="w-4 h-4" /> Withdraw winnings
-                </button>
-                <Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 hover:text-lime transition">
-                  <Wallet className="w-4 h-4" /> My Wallet
-                </Link>
-                {isAdmin && (
-                  <>
-                    <div className="border-t border-white/5 my-1" />
-                    <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-lime hover:bg-lime/10 transition">
-                      <Shield className="w-4 h-4" /> Admin Dashboard
-                    </Link>
-                  </>
-                )}
-                <div className="border-t border-white/5 my-1" />
-                <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:bg-white/5 transition">
-                  <User className="w-4 h-4" /> Settings
-                </button>
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search games" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
+        </form>
+        <div className="flex items-center gap-2 ml-auto">
+          {!user ? (
+            <>
+              <Link to="/login" className="hidden sm:flex h-10 px-4 items-center text-sm font-semibold text-white/70 hover:text-white">Sign in</Link>
+              <Link to="/register" className="h-10 px-4 sm:px-5 inline-flex items-center rounded-full bg-lime text-black text-sm font-black">Sign up</Link>
+            </>
+          ) : (
+            <>
+              <VipProgressBadge />
+              <div className="flex items-center">
+                <button onClick={() => openWallet({ tab: "deposit" })} className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-card border border-white/10 border-r-0 hover:border-lime/40"><DollarSign className="w-4 h-4 text-lime" /><span className="text-sm font-semibold tabular-nums">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}</span></button>
+                <button onClick={() => openWallet({ tab: "withdraw" })} className="grid place-items-center h-10 px-3 rounded-r-full bg-card border border-white/10 text-white/50 hover:text-lime" aria-label="Withdraw"><ArrowDownToLine className="w-4 h-4" /></button>
               </div>
-            )}
-          </div>
+              <div className="relative" ref={menuRef}>
+                <button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 h-10 px-3 rounded-full bg-card border border-white/10"><User className="w-4 h-4" /><span className="hidden sm:inline text-sm font-semibold max-w-24 truncate">{user.full_name || "Profile"}</span><ChevronDown className="w-3.5 h-3.5 text-white/40" /></button>
+                {open && <div className="absolute right-0 top-12 w-60 rounded-xl border border-white/10 bg-card shadow-2xl py-2">
+                  <VipProgressCard /><div className="border-t border-white/10 my-1" />
+                  <Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/75 hover:text-lime"><Wallet className="w-4 h-4" /> My Wallet</Link>
+                  {user.role === "admin" && <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-lime"><Shield className="w-4 h-4" /> Admin Dashboard</Link>}
+                  <button onClick={() => base44.auth.logout("/")} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60 hover:text-white"><LogOut className="w-4 h-4" /> Sign out</button>
+                </div>}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>

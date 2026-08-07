@@ -13,8 +13,8 @@ export const NAV_CASINO = [
 ];
 
 export const NAV_PROMOS = [
-  { id: "vip", label: "TOLS Points", icon: Crown, to: "/vip" },
-  { id: "affiliate", label: "Refer and Earn", icon: Users, to: "/affiliate" },
+  { id: "vip", label: "VIP & Rewards", icon: Crown, to: "/vip" },
+  { id: "affiliate", label: "Affiliate", icon: Users, to: "/affiliate" },
 ];
 
 export const NAV_FOOTER = [
