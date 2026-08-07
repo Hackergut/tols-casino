@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, X, Coins, Sparkles, Check, Loader2, Eye } from "lucide-react";
+import { ArrowLeft, X, Sparkles, Check, Loader2, Eye, Minus, Plus, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
-import { openPack, rarityColor, rarityLabel } from "@/lib/packs";
+import { openPack, rarityColor, rarityLabel, RARITIES, RARITY_ORDER } from "@/lib/packs";
 import CardVisual from "@/components/cards/CardVisual";
 import CardDetailModal from "@/components/cards/CardDetailModal";
 
@@ -16,18 +16,29 @@ export default function PackOpenModal({ pack, onClose }) {
   const [revealed, setRevealed] = useState(0);
   const [detail, setDetail] = useState(null);
   const [error, setError] = useState("");
+  const [qty, setQty] = useState(1);
+  const [turbo, setTurbo] = useState(false);
 
   if (!pack) return null;
-  const canAfford = wallet && wallet.balance >= pack.price;
+  const unitCost = pack.price;
+  const totalCost = unitCost * qty;
+  const maxQty = wallet ? Math.max(1, Math.floor(wallet.balance / unitCost)) : 0;
+  const canAfford = wallet && wallet.balance >= totalCost && qty > 0;
+  // expected insured value per single card
+  const evPerCard = RARITY_ORDER.reduce((s, r) => {
+    const meta = RARITIES[r];
+    return s + (meta.weight / 100) * ((meta.min + meta.max) / 2);
+  }, 0);
 
   const confirm = async () => {
     if (!canAfford) { setError("Insufficient balance — deposit to open this pack."); return; }
     setError("");
     setPhase("opening");
     try {
-      const pulled = openPack(pack);
+      const pulled = [];
+      for (let i = 0; i < qty; i++) pulled.push(...openPack(pack));
       // deduct + record wagered
-      await updateBalance(-pack.price, pack.price);
+      await updateBalance(-totalCost, totalCost);
       // persist owned cards
       const saved = await base44.entities.CollectibleCard.bulkCreate(pulled);
       const list = Array.isArray(saved) ? saved : (saved?.data || []);
@@ -41,6 +52,7 @@ export default function PackOpenModal({ pack, onClose }) {
         );
       } catch {}
       setCards(list.length ? list : pulled);
+      setRevealed(turbo ? (list.length || pulled.length) : 0);
       setPhase("reveal");
     } catch (e) {
       setError(e?.message || "Failed to open pack");
@@ -61,22 +73,74 @@ export default function PackOpenModal({ pack, onClose }) {
 
       <div className="flex-1 overflow-y-auto px-4 pb-10 max-w-md w-full mx-auto">
         {phase === "confirm" && (
-          <div className="flex flex-col items-center pt-6">
-            <div className="w-44"><PackHero pack={pack} /></div>
-            <h2 className="text-2xl font-black text-white mt-5">{pack.name}</h2>
-            <p className="text-sm text-white/50 text-center mt-1">{pack.description}</p>
-            <div className="grid grid-cols-2 gap-3 w-full mt-6">
-              <Info label="Pack Price" value={`${pack.price} USDT`} />
-              <Info label="Cards Inside" value={pack.cards_per_pack} />
+          <div className="flex flex-col items-center pt-4">
+            {/* buyback badge */}
+            <div className="self-end mb-2 text-[10px] font-black tracking-wider px-2.5 py-1 rounded-full bg-lime/15 text-lime border border-lime/40">90% BUYBACK</div>
+
+            <div className="w-40"><PackHero pack={pack} /></div>
+
+            <div className="flex items-center gap-2 mt-4">
+              <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-white/55"><Check className="w-3.5 h-3.5 text-lime" /> Guaranteed Authenticity</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/8 text-white/55 border border-white/10">Limited time</span>
             </div>
-            <div className="w-full mt-4 rounded-2xl bg-[#1a1a1a] p-4 flex items-center justify-between">
-              <span className="text-sm text-white/50">Your balance</span>
-              <span className="text-sm font-black text-white tabular-nums">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"} USDT</span>
+            <h2 className="text-xl font-black text-white mt-2 text-center">{pack.name}</h2>
+            <p className="text-xs text-white/45 text-center mt-1">{pack.description}</p>
+
+            {/* rarity grid */}
+            <div className="w-full mt-4">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Insured Value</div>
+              <div className="grid grid-cols-2 gap-2">
+                {RARITY_ORDER.map((r) => {
+                  const meta = RARITIES[r];
+                  const c = meta.color;
+                  return (
+                    <div key={r} className="rounded-xl border bg-[#111] p-2.5" style={{ borderColor: c + "66", boxShadow: `0 0 16px -8px ${c}` }}>
+                      <div className="text-xs font-black" style={{ color: c }}>{meta.label}</div>
+                      <div className="text-[11px] text-white/80 tabular-nums mt-0.5">${meta.min.toLocaleString()} – ${meta.max.toLocaleString()}</div>
+                      <div className="text-[10px] text-white/40 mt-0.5">{meta.weight}% drop</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[9px] text-white/30 mt-1.5">Pricing data from ALT, eBay & major marketplaces. Subject to change.</p>
             </div>
+
+            {/* expected value + balance */}
+            <div className="w-full grid grid-cols-2 gap-2 mt-3">
+              <div className="rounded-xl bg-[#1a1a1a] p-3">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-white/40">Expected Value</div>
+                <div className="text-lg font-black text-white tabular-nums">${evPerCard.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+              </div>
+              <div className="rounded-xl bg-[#1a1a1a] p-3">
+                <div className="text-[9px] font-bold uppercase tracking-wider text-white/40">Your balance</div>
+                <div className="text-lg font-black text-white tabular-nums">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}</div>
+              </div>
+            </div>
+
+            {/* quantity stepper */}
+            <div className="w-full mt-3 flex items-center justify-between rounded-xl border border-white/10 bg-[#1a1a1a] px-2 h-11">
+              <div className="flex items-center gap-1">
+                <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-8 h-8 grid place-items-center rounded-lg hover:bg-white/10 text-white/70"><Minus className="w-4 h-4" /></button>
+                <span className="w-8 text-center text-base font-black text-white tabular-nums">{qty}</span>
+                <button onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="w-8 h-8 grid place-items-center rounded-lg hover:bg-white/10 text-white/70"><Plus className="w-4 h-4" /></button>
+              </div>
+              <button onClick={() => setQty(maxQty)} className="text-[10px] font-black tracking-wider px-3 h-8 rounded-lg bg-white/8 text-white/70 hover:bg-white/12">MAX</button>
+            </div>
+
             {error && <p className="text-sm text-rose-400 mt-3 text-center">{error}</p>}
-            <button onClick={confirm} disabled={!canAfford} className={`mt-5 w-full h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 ${canAfford ? "bg-lime text-black hover:opacity-90" : "bg-white/8 text-white/40"}`}>
-              <Coins className="w-4 h-4" /> Open Pack · {pack.price} USDT
+
+            {/* open now */}
+            <button onClick={confirm} disabled={!canAfford} className={`mt-3 w-full h-12 rounded-xl font-black text-sm flex items-center justify-center gap-2 ${canAfford ? "bg-lime text-black hover:opacity-90" : "bg-white/8 text-white/40"}`}>
+              <Zap className="w-4 h-4" /> Open now · {totalCost.toLocaleString()} USDT
             </button>
+
+            {/* turbo toggle */}
+            <div className="w-full mt-2 flex items-center justify-between px-1">
+              <span className="text-xs font-bold text-white/60">Turbo</span>
+              <button onClick={() => setTurbo((v) => !v)} className="relative w-10 h-6 rounded-full transition" style={{ background: turbo ? "#ccff00" : "rgba(255,255,255,0.15)" }}>
+                <span className="absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all" style={{ left: turbo ? "1.25rem" : "0.125rem" }} />
+              </button>
+            </div>
           </div>
         )}
 
