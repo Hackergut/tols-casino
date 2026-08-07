@@ -130,18 +130,29 @@ export default function Packs() {
 }
 
 function MiniCard({ card }) {
-  const color = rarityColor(card.rarity);
-  const initial = String(card.collection || "★").trim().charAt(0).toUpperCase();
+  const frame = rarityColor(card.rarity);
+  const accent = "#ccff00";
+  const monogram = String(card.card_name || card.collection || "T").charAt(0).toUpperCase();
   return (
-    <div className="relative rounded-xl overflow-hidden border-2" style={{ borderColor: color + "55" }}>
-      <div className="px-2 py-1 flex items-center justify-between" style={{ background: color + "22" }}>
-        <span className="text-[9px] font-black uppercase" style={{ color }}>{card.collection}</span>
-        {card.is_new && <span className="text-[8px] font-black px-1.5 rounded bg-lime text-black">NEW</span>}
+    <div className="relative rounded-lg overflow-hidden border-2 bg-[#0a0a0a] bg-grid" style={{ borderColor: frame, boxShadow: `0 0 18px -8px ${frame}` }}>
+      <div className="flex items-center justify-center h-5 border-b" style={{ borderColor: frame + "55" }}>
+        <span className="text-[8px] font-display tracking-[0.22em] text-lime">TOLS CASINO</span>
       </div>
-      <div className="aspect-[3/4] flex flex-col items-center justify-center p-3 text-center" style={{ background: `radial-gradient(circle at 50% 25%, ${color}22, #0a0a0a 75%)` }}>
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black border-2 mb-2" style={{ color, borderColor: color + "55", background: color + "12" }}>{initial}</div>
-        <p className="text-xs font-black text-white leading-tight">{card.card_name}</p>
-        <p className="text-[10px] text-white/40 mt-1">${Number(card.insured_value || 0).toLocaleString()}</p>
+      <div className="relative p-2">
+        {card.is_new && <span className="absolute top-1.5 right-1.5 z-10 text-[7px] font-black px-1 rounded bg-lime text-black">NEW</span>}
+        <div className="relative h-24 flex items-center justify-center">
+          <div className="absolute w-16 h-16 rounded-full blur-xl" style={{ background: `${frame}33` }} />
+          <div className="relative w-12 h-12 rounded-full grid place-items-center border-2" style={{ borderColor: frame }}>
+            <span className="text-lg font-display" style={{ color: accent }}>{monogram}</span>
+          </div>
+        </div>
+        <div className="mt-1 rounded border px-1.5 py-1" style={{ borderColor: frame + "88", background: "rgba(0,0,0,0.4)" }}>
+          <p className="text-[11px] font-display text-white leading-none truncate">{(card.card_name || "").toUpperCase()}</p>
+        </div>
+        <div className="mt-1 flex items-center justify-between">
+          <span className="text-[8px] font-bold tracking-wider" style={{ color: frame }}>{rarityLabel(card.rarity).toUpperCase()}</span>
+          <span className="text-[8px] font-mono text-white/40">${Number(card.insured_value || 0).toLocaleString()}</span>
+        </div>
       </div>
     </div>
   );

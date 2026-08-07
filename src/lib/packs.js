@@ -140,3 +140,38 @@ export function openPack(pack) {
 export const rarityColor = (r) => (RARITIES[r] || RARITIES.common).color;
 export const rarityLabel = (r) => (RARITIES[r] || RARITIES.common).label;
 export const collectionAccent = (c) => (COLLECTIONS[c] ? COLLECTIONS[c].accent : "#ccff00");
+
+// Thematic 3-code position/role stack shown under the OVR rating box.
+export const COLLECTION_CODES = {
+  Pokémon: ["HP", "TYPE", "STAGE"],
+  NBA: ["OVR", "POS", "TEAM"],
+  FIFA: ["OVR", "POS", "NAT"],
+  F1: ["OVR", "POS", "TEAM"],
+  UFC: ["OVR", "LW", "STRIKER"],
+  "Yu-Gi-Oh!": ["ATK", "DEF", "LVL"],
+};
+export const collectionCodes = (c) => COLLECTION_CODES[c] || ["OVR", "TOLS", "CARD"];
+
+// Derive a 70–99 overall rating from rarity + insured value percentile.
+const OVR_BASE = { common: 72, rare: 81, epic: 86, legendary: 92, mythic: 97 };
+export function ovrFor(card) {
+  const r = RARITIES[card.rarity] || RARITIES.common;
+  const base = OVR_BASE[card.rarity] ?? 75;
+  const v = Number(card.insured_value || 0);
+  const pct = r.max > r.min ? Math.min(1, Math.max(0, (v - r.min) / (r.max - r.min))) : 0.5;
+  return Math.min(99, Math.round(base + pct * 4));
+}
+
+// Split a card name into a short first label + a big last name for the nameplate.
+export function nameParts(card) {
+  const n = String(card.card_name || "").trim();
+  if (!n) return { first: "", last: "TOLS" };
+  const tokens = n.split(/\s+/);
+  if (tokens.length === 1) return { first: "", last: tokens[0].toUpperCase() };
+  return { first: tokens[0].toUpperCase(), last: tokens.slice(1).join(" ").toUpperCase() };
+}
+
+export function collectionAbbr(c) {
+  const s = String(c || "").replace(/[^a-zA-Z0-9]/g, "");
+  return s.slice(0, 3).toUpperCase() || "TOLS";
+}
