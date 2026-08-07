@@ -3,6 +3,7 @@ import { Trophy, Crown, Sparkles, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import TournamentCard from "@/components/tournaments/TournamentCard";
+import RacePromoCard from "@/components/tournaments/RacePromoCard";
 import Leaderboard from "@/components/tournaments/Leaderboard";
 import { buildLeaderboard } from "@/lib/tournaments";
 
@@ -122,24 +123,27 @@ export default function Tournaments() {
         </div>
 
         {tab === "tournaments" ? (
-          loading ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="h-72 rounded-2xl border border-white/10 bg-[#111] animate-pulse" />
-              ))}
-            </div>
-          ) : tournaments.length === 0 ? (
-            <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
-              <Trophy className="w-10 h-10 text-white/20 mx-auto mb-3" />
-              <p className="text-white/50">No tournaments available right now. Check back soon!</p>
-            </div>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tournaments.map((t) => (
-                <TournamentCard key={t.id} tournament={t} joined={joined} onJoin={join} />
-              ))}
-            </div>
-          )
+          <>
+            <div className="mb-6"><RacePromoCard totalPrize={totalPrize} activeCount={activeCount} /></div>
+            {loading ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="h-72 rounded-2xl border border-white/10 bg-[#111] animate-pulse" />
+                ))}
+              </div>
+            ) : tournaments.length === 0 ? (
+              <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
+                <Trophy className="w-10 h-10 text-white/20 mx-auto mb-3" />
+                <p className="text-white/50">No tournaments available right now. Check back soon!</p>
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tournaments.map((t) => (
+                  <TournamentCard key={t.id} tournament={t} joined={joined} onJoin={join} />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
           <div>
             <div className="flex items-center gap-2 mb-4 text-sm text-white/50">
