@@ -53,13 +53,12 @@ export default function Layout() {
         <div className="flex-1 min-w-0 flex flex-col">
           <Header onMenu={() => setMobileNav(true)} />
           <main className="flex-1">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence initial={false}>
               <motion.div
                 key={routeKey}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
               >
                 {outlet}
               </motion.div>
