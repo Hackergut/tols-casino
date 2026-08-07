@@ -72,7 +72,7 @@ export default function DiceGame() {
           </div>
           {/* slider track */}
           <div className="w-full max-w-md mt-8 relative">
-            <div className="relative h-2 rounded-full bg-gradient-to-r from-lime to-[#333]">
+            <div className="relative h-2 rounded-full bg-gradient-to-r from-red-500 via-[#333] to-lime">
               <input
                 type="range"
                 min="2"
@@ -120,7 +120,7 @@ export default function DiceGame() {
       </div>
 
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Roll"} />
+        <BetPanel amount={amount} setAmount={setAmount} onBet={play} disabled={busy} betLabel={busy ? "..." : "Roll"} profit={amount * multiplier - amount} />
       </div>
     </div>
   );
