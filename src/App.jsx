@@ -33,6 +33,8 @@ import Analytics from '@/pages/Analytics';
 import ResponsibleGaming from '@/pages/ResponsibleGaming';
 import Packs from '@/pages/Packs';
 import Collection from '@/pages/Collection';
+import Swap from '@/pages/Swap';
+import Marketplace from '@/pages/Marketplace';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -87,6 +89,8 @@ const AuthenticatedApp = () => {
           <Route path="/responsible-gaming" element={<ResponsibleGaming />} />
           <Route path="/packs" element={<Packs />} />
           <Route path="/collection" element={<Collection />} />
+          <Route path="/swap" element={<Swap />} />
+          <Route path="/marketplace" element={<Marketplace />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>

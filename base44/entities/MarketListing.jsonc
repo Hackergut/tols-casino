@@ -1,0 +1,67 @@
+{
+  "name": "MarketListing",
+  "type": "object",
+  "properties": {
+    "card_name": {
+      "type": "string"
+    },
+    "collection": {
+      "type": "string",
+      "default": ""
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "rare",
+        "epic",
+        "legendary",
+        "mythic"
+      ],
+      "default": "common"
+    },
+    "insured_value": {
+      "type": "number",
+      "default": 0
+    },
+    "image": {
+      "type": "string",
+      "default": ""
+    },
+    "listing_type": {
+      "type": "string",
+      "enum": [
+        "sale",
+        "swap"
+      ],
+      "default": "sale"
+    },
+    "price": {
+      "type": "number",
+      "default": 0,
+      "description": "Asking price in USDT (sale listings)"
+    },
+    "swap_for": {
+      "type": "string",
+      "default": "",
+      "description": "Collection / card desired in return (swap listings)"
+    },
+    "seller_alias": {
+      "type": "string",
+      "default": ""
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "sold",
+        "closed"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "card_name",
+    "listing_type"
+  ]
+}

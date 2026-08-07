@@ -1,4 +1,4 @@
-import { Home, Trophy, Sparkles, Gamepad2, Spade, Crown, Users, Newspaper, Headphones, MessageCircle, Radio, Layers, Album } from "lucide-react";
+import { Home, Trophy, Sparkles, Gamepad2, Spade, Crown, Users, Newspaper, Headphones, MessageCircle, Radio, Layers, Album, Repeat, Store } from "lucide-react";
 
 export const NAV_TOP = [
   { id: "home", label: "Home", icon: Home, to: "/" },
@@ -12,6 +12,8 @@ export const NAV_CASINO = [
   { id: "table", label: "Table Games", icon: Spade, to: "/games/category/table" },
   { id: "packs", label: "Card Packs", icon: Layers, to: "/packs" },
   { id: "collection", label: "La mia collezione", icon: Album, to: "/collection" },
+  { id: "swap", label: "Swap Cards", icon: Repeat, to: "/swap" },
+  { id: "marketplace", label: "Marketplace", icon: Store, to: "/marketplace" },
 ];
 
 export const NAV_PROMOS = [

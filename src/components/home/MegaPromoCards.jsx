@@ -18,7 +18,11 @@ const CARDS = [
     { icon: Trophy, t: "BE THE LEGEND", b: "Top players. Biggest wins." },
   ] },
   { img: IMGS.live, to: "/games/category/live", amount: "$25,000", brand: "TOLS", title: "LIVE DROP!", copy: "Roulette, slots & dice — provably fair, onchain.", cta: "SPIN. WIN. WIN." },
-  { img: IMGS.king, to: "/games/category/table", amount: "KING", brand: "OF THE", title: "TABLE!", copy: "Outplay the house. Rule the tables.", cta: "CLAIM. YOUR. WIN." },
+  { img: IMGS.mega, to: "/swap", amount: "SWAP", brand: "TOLS", title: "CARDS!", copy: "Estrazione gacha — chase mythic, completa i set tematici.", cta: "OPEN. PULL. COLLECT.", split: true, features: [
+    { icon: Gift, t: "GACHA PULL", b: "3 carte per pack" },
+    { icon: Trophy, t: "CHASE MYTHIC", b: "Rarità pesate" },
+    { icon: Target, t: "90% BUYBACK", b: "Valore garantito" },
+  ] },
 ];
 
 function Brand() {
