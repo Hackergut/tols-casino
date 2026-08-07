@@ -55,7 +55,8 @@ export default function RealDeposit({ chain = "solana" }) {
     if (!connected) { setError("Connect your wallet first"); return; }
     setBusy(true);
     try {
-      const res = await base44.functions.invoke("verifyDeposit", { chain, tx_hash: txHash.trim(), from_address: connectedAddress });
+      const referralCode = (typeof localStorage !== "undefined" && localStorage.getItem("tols_referral_code")) || "";
+      const res = await base44.functions.invoke("verifyDeposit", { chain, tx_hash: txHash.trim(), from_address: connectedAddress, referral_code: referralCode });
       const d = res.data;
       if (d && d.success) { setResult(d); await reload(); setTxHash(""); }
       else setError((d && d.error) || "Verification failed");

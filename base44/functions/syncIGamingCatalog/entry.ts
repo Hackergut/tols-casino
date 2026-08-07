@@ -14,7 +14,7 @@ function mapSlot(s) {
     volatility: VMAP[s.volatility] || s.volatility || "",
     external_id: s.slug,
     has_demo: !!s.demo_url,
-    has_real: false,
+    has_real: !!(s.real_url || s.demo_url),
     enabled: true,
     demo_url: s.demo_url || "",
   };

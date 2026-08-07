@@ -6,7 +6,8 @@ const FIELDS = [
   { key: "aggregator_api_base", label: "API Base URL", placeholder: "https://aggregator.example.com", type: "text", required: true },
   { key: "aggregator_api_key", label: "API Key", placeholder: "Bearer token", type: "password", required: true },
   { key: "aggregator_operator_id", label: "Operator / Merchant ID", placeholder: "optional", type: "text", required: false },
-  { key: "aggregator_api_secret", label: "API Secret", placeholder: "optional", type: "password", required: false },
+  { key: "aggregator_api_secret", label: "API Secret (used to sign real-money callbacks)", placeholder: "optional but required for real play", type: "password", required: false },
+  { key: "aggregator_callback_url", label: "Callback URL (real-money outcomes)", placeholder: "https://<your-app>/api/functions/slotTransactionCallback", type: "text", required: false },
 ];
 
 export default function AggregatorSettings() {

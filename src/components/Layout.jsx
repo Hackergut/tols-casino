@@ -29,6 +29,17 @@ export default function Layout() {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
+  // Capture the affiliate referral code from ?ref= on first visit, so it can be
+  // stamped onto the player's first deposit and earn the affiliate a commission.
+  useEffect(() => {
+    try {
+      const ref = new URLSearchParams(window.location.search).get("ref");
+      if (ref && !localStorage.getItem("tols_referral_code")) {
+        localStorage.setItem("tols_referral_code", ref);
+      }
+    } catch (e) { /* ignore */ }
+  }, []);
+
   // Blocca scroll body + chiudi con Escape quando il drawer è aperto
   useEffect(() => {
     if (mobileNav) {

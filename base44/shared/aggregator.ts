@@ -13,6 +13,7 @@ export async function getAggregatorConfig(base44) {
     apiKey: get("aggregator_api_key"),
     operatorId: get("aggregator_operator_id"),
     apiSecret: get("aggregator_api_secret"),
+    callbackUrl: get("aggregator_callback_url"),
   };
 }
 

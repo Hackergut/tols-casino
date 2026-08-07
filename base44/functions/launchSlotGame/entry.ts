@@ -69,7 +69,8 @@ export default async function(req) {
           player_id: user.id,
           player_name: user.full_name || user.email || user.id,
           currency: 'USDT',
-          return_url: '/'
+          return_url: '/',
+          callback_url: cfg.callbackUrl || ''
         })
       });
       if (!r.ok) return Response.json({ error: `Sessione non avviata (${r.status}).` }, { status: 502 });

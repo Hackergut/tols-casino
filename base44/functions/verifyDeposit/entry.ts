@@ -31,6 +31,7 @@ export default async function(req) {
     const chain = String(body.chain || "");
     const txHash = String(body.tx_hash || "").trim();
     const fromAddress = String(body.from_address || "").trim();
+    const referralCode = String(body.referral_code || "").trim();
     const cfg = CHAINS[chain];
     if (!cfg || !txHash) return Response.json({ error: "Invalid request" }, { status: 400 });
 
@@ -106,11 +107,28 @@ export default async function(req) {
     const newBalance = +(Number(w.balance || 0) + usdt).toFixed(2);
     await base44.asServiceRole.entities.UserWallet.update(w.id, { balance: newBalance });
 
+    // Create the deposit as "pending" first, then transition to "confirmed".
+    // The pending -> confirmed update fires the "Deposit Affiliate Commission"
+    // workflow (which watches Deposit updates into "confirmed"). Creating the
+    // record directly as "confirmed" would skip that trigger entirely.
+    let depId;
     if (existing.length) {
-      await base44.asServiceRole.entities.Deposit.update(existing[0].id, { status: "confirmed", credited: true, amount: usdt, from_address: fromOnChain, to_address: toOnChain });
+      depId = existing[0].id;
     } else {
-      await base44.asServiceRole.entities.Deposit.create({ chain, tx_hash: dedupeKey, amount: usdt, currency: "USDT", from_address: fromOnChain, to_address: toOnChain, status: "confirmed", credited: true });
+      const created = await base44.asServiceRole.entities.Deposit.create({
+        chain, tx_hash: dedupeKey, currency: "USDT",
+        status: "pending", credited: false, referral_code: referralCode,
+        from_address: fromOnChain, to_address: toOnChain,
+      });
+      depId = created.id;
     }
+    await base44.asServiceRole.entities.Deposit.update(depId, {
+      status: "pending", referral_code: referralCode,
+    });
+    await base44.asServiceRole.entities.Deposit.update(depId, {
+      status: "confirmed", credited: true, amount: usdt,
+      from_address: fromOnChain, to_address: toOnChain,
+    });
 
     return Response.json({ success: true, credited: usdt, newBalance, nativeAmount: amountNative, price });
   } catch (error) {
