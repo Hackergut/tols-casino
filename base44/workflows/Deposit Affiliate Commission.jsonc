@@ -25,7 +25,8 @@
           "with": {
             "function_name": "processDepositCommission",
             "args": {
-              "deposit_id": "${ .trigger.entity_id }"
+              "deposit_id": "${ .trigger.entity_id }",
+              "internal_token": "b44i_7f3e9c2a51d84b6f8e0a4c7d92135f6e_zQ8kXw41"
             }
           },
           "then": "end",

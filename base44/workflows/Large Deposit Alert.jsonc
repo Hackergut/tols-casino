@@ -1,5 +1,17 @@
 {
   "name": "Large Deposit Alert",
+  "description": "Notifies the admin team by email when a confirmed deposit exceeds the configured threshold (PlatformSetting: large_deposit_threshold).",
+  "trigger": {
+    "condition": "${ .trigger.data.status == \"confirmed\" }",
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create",
+        "update"
+      ],
+      "entity_name": "Deposit"
+    }
+  },
   "definition": {
     "document": {
       "dsl": "1.0.0",
@@ -14,7 +26,8 @@
           "with": {
             "function_name": "notifyLargeDeposit",
             "args": {
-              "deposit_id": "${ .trigger.entity_id }"
+              "deposit_id": "${ .trigger.entity_id }",
+              "internal_token": "b44i_7f3e9c2a51d84b6f8e0a4c7d92135f6e_zQ8kXw41"
             }
           },
           "then": "end",
@@ -25,17 +38,5 @@
         }
       }
     ]
-  },
-  "description": "Notifies the admin team by email when a confirmed deposit exceeds the configured threshold (PlatformSetting: large_deposit_threshold).",
-  "trigger": {
-    "condition": "${ .trigger.data.status == \"confirmed\" }",
-    "config": {
-      "trigger_type": "entity",
-      "events": [
-        "create",
-        "update"
-      ],
-      "entity_name": "Deposit"
-    }
   }
 }

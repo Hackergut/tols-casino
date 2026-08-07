@@ -5,11 +5,11 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Only the workflow (no user session) or an admin may put a withdrawal on hold.
-    const denied = await requireInternalCaller(base44);
-    if (denied) return denied;
-
     const body = await req.json().catch(() => ({}));
+
+    // Only the workflow (internal token) or an admin may put a withdrawal on hold.
+    const denied = await requireInternalCaller(base44, body.internal_token);
+    if (denied) return denied;
     const withdrawal_id = body.withdrawal_id || "";
     if (!withdrawal_id) return Response.json({ error: "withdrawal_id required" }, { status: 400 });
 

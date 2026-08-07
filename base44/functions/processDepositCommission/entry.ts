@@ -5,11 +5,11 @@ export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Only the workflow (no user session) or an admin may run commission payouts.
-    const denied = await requireInternalCaller(base44);
-    if (denied) return denied;
-
     const body = await req.json().catch(() => ({}));
+
+    // Only the workflow (internal token) or an admin may run commission payouts.
+    const denied = await requireInternalCaller(base44, body.internal_token);
+    if (denied) return denied;
     const deposit_id = body.deposit_id || "";
     if (!deposit_id) return Response.json({ processed: false, reason: "no_deposit_id" }, { status: 400 });
 
