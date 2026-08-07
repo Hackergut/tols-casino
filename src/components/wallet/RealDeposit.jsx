@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWeb3Wallet } from "@/hooks/useWeb3Wallet";
 import { QRCodeSVG } from "qrcode.react";
-import { Copy, Check, Loader2, AlertCircle, CheckCircle2, Wallet as WalletIcon, Link2, ShieldCheck } from "lucide-react";
+import {
+  Copy, Check, Loader2, AlertCircle, CheckCircle2,
+  Wallet as WalletIcon, Link2, Info, History,
+} from "lucide-react";
+import CoinSelect from "@/components/wallet/CoinSelect";
+import { coinById } from "@/components/wallet/coins";
 
-const CHAINS = [
-  { id: "solana", label: "Solana", color: "#9945FF", symbol: "SOL" },
-  { id: "ethereum", label: "Ethereum", color: "#627EEA", symbol: "ETH" },
-  { id: "polygon", label: "Polygon", color: "#8247E5", symbol: "POL" },
-];
-
-export default function RealDeposit({ chain = "solana" }) {
-  const { reload } = useWallet();
+export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
+  const { wallet, reload } = useWallet();
   const w3 = useWeb3Wallet();
   const [settings, setSettings] = useState({});
   const [copied, setCopied] = useState(false);
@@ -20,6 +20,11 @@ export default function RealDeposit({ chain = "solana" }) {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+
+  const balance = wallet ? wallet.balance : 0;
+  const chain = coin;
+  const active = coinById(coin);
+  const isEvm = chain === "ethereum" || chain === "polygon";
 
   const loadSettings = useCallback(async () => {
     try {
@@ -31,21 +36,27 @@ export default function RealDeposit({ chain = "solana" }) {
   }, []);
   useEffect(() => { loadSettings(); }, [loadSettings]);
 
-  const active = CHAINS.find((c) => c.id === chain);
-  const isEvm = chain === "ethereum" || chain === "polygon";
   const operator = settings[`operator_address_${chain}`] || "";
   const connectedAddress = isEvm ? w3.evmAddress : w3.solAddress;
   const connected = !!connectedAddress;
 
   const copy = () => {
-    if (operator) { navigator.clipboard && navigator.clipboard.writeText(operator); setCopied(true); setTimeout(() => setCopied(false), 1500); }
+    if (operator) {
+      navigator.clipboard && navigator.clipboard.writeText(operator);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
   };
 
   const connect = async () => {
     setError("");
     try {
-      if (isEvm) { await w3.connectEVM(); await w3.switchEVM(chain === "ethereum" ? "0x1" : "0x89"); }
-      else { await w3.connectSolana(); }
+      if (isEvm) {
+        await w3.connectEVM();
+        await w3.switchEVM(chain === "ethereum" ? "0x1" : "0x89");
+      } else {
+        await w3.connectSolana();
+      }
     } catch (e) { setError(w3.error || e.message || "Connection failed"); }
   };
 
@@ -67,66 +78,78 @@ export default function RealDeposit({ chain = "solana" }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-start gap-2 p-4 rounded-xl bg-lime/5 border border-lime/20 text-sm text-lime/80">
-        <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" />
-        <p>Send <b>{active.symbol}</b> from your connected wallet to the platform deposit address below. Funds are credited to your balance in <b>USDT</b> at live market rate after 1 confirmation.</p>
+      {/* Connect wallet */}
+      <div className="flex items-center justify-between gap-3 rounded-xl bg-[#1a1a1a] border border-white/10 px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">Your wallet</p>
+          {connected ? (
+            <p className="text-sm font-mono text-white/80 truncate mt-0.5">{connectedAddress}</p>
+          ) : (
+            <p className="text-sm text-white/40 mt-0.5">Not connected</p>
+          )}
+        </div>
+        {connected ? (
+          <button onClick={w3.disconnect} className="px-4 h-10 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white/70 hover:text-white shrink-0">Disconnect</button>
+        ) : (
+          <button onClick={connect} disabled={w3.connecting} className="px-4 h-10 rounded-xl bg-lime text-black text-sm font-black hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 shrink-0">
+            {w3.connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <WalletIcon className="w-4 h-4" />} Connect
+          </button>
+        )}
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wide">Your wallet</p>
-            {connected ? (
-              <p className="text-sm font-mono text-white/80 truncate mt-1">{connectedAddress}</p>
-            ) : (
-              <p className="text-sm text-white/40 mt-1">Not connected</p>
-            )}
-          </div>
-          {connected ? (
-            <button onClick={w3.disconnect} className="px-4 h-10 rounded-xl bg-white/5 border border-white/10 text-sm font-bold text-white/70 hover:text-white shrink-0">Disconnect</button>
-          ) : (
-            <button onClick={connect} disabled={w3.connecting} className="px-4 h-10 rounded-xl bg-lime text-black text-sm font-black hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2 shrink-0">
-              {w3.connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <WalletIcon className="w-4 h-4" />} Connect {active.label} wallet
-            </button>
-          )}
+      {/* Currency */}
+      <div>
+        <label className="text-[11px] font-semibold text-white/45">Currency</label>
+        <div className="mt-1.5"><CoinSelect value={coin} onChange={setCoin} balance={balance} /></div>
+      </div>
+
+      {/* Network */}
+      <div>
+        <label className="text-[11px] font-semibold text-white/45">Network</label>
+        <div className="mt-1.5 h-14 flex items-center gap-3 px-3.5 rounded-xl bg-[#1a1a1a] border border-white/10">
+          <span className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black text-black" style={{ background: active.color }}>{active.symbol}</span>
+          <span className="text-sm font-bold text-white">{active.network}</span>
         </div>
       </div>
 
+      {/* Address + QR */}
       {operator ? (
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
-          <div className="flex flex-col sm:flex-row gap-5">
-            <div className="flex flex-col items-center justify-center bg-[#0d0d0d] rounded-xl border border-white/10 p-4">
-              <QRCodeSVG value={operator} size={140} bgColor="#0d0d0d" fgColor="#ccff00" level="M" />
-              <span className="text-[10px] text-white/40 mt-2 uppercase tracking-wider">Scan to deposit</span>
+        <div className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 space-y-3">
+          <p className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">{active.name} ({active.network}) deposit address</p>
+          <div className="flex flex-col items-center">
+            <div className="rounded-xl bg-white p-3">
+              <QRCodeSVG value={operator} size={150} bgColor="#ffffff" fgColor="#0a0a0a" level="M" />
             </div>
-            <div className="flex-1">
-              <p className="text-xs font-semibold text-white/40 uppercase tracking-wide">Platform {active.label} deposit address</p>
-              <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#0d0d0d] border border-white/10 p-3">
-                <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{operator}</code>
-                <button onClick={copy} className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-lime hover:border-lime/30 transition">
-                  {copied ? <Check className="w-4 h-4 text-lime" /> : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-              <p className="text-xs text-white/30 mt-2">Send only <b className="text-white/60">{active.symbol}</b> on the {active.label} network. Other tokens or wrong networks will be lost.</p>
-            </div>
+            <span className="text-[10px] text-white/40 mt-2 uppercase tracking-wider">Scan to deposit</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl bg-[#0e0e0e] border border-white/10 p-3">
+            <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{operator}</code>
+            <button onClick={copy} className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-lime hover:border-lime/30 transition">
+              {copied ? <Check className="w-4 h-4 text-lime" /> : <Copy className="w-4 h-4" />}
+            </button>
+          </div>
+          <div className="flex items-start gap-2 text-xs text-lime/80">
+            <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <p>Your deposit must be sent on the {active.name} ({active.network}) network to be processed.</p>
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-5 text-sm text-yellow-200 flex items-start gap-2">
+        <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4 text-sm text-yellow-200 flex items-start gap-2">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-          <p>Deposit address for {active.label} not configured yet. An admin must set it under Admin → Payment settings.</p>
+          <p>Deposit address for {active.name} not configured yet. An admin must set it under Admin → Payment settings.</p>
         </div>
       )}
 
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-5 space-y-3">
+      {/* Verify */}
+      <div className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 space-y-3">
         <div>
-          <label className="text-xs font-semibold text-white/50 uppercase tracking-wide">Sent? Paste your transaction hash to credit your balance</label>
+          <label className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">Sent? Paste your transaction hash to credit your balance</label>
           <input value={txHash} onChange={(e) => setTxHash(e.target.value)} placeholder="0x... or transaction signature"
-            className="w-full h-12 mt-2 rounded-xl bg-[#1a1a1a] border border-white/10 px-4 text-sm font-mono text-white outline-none focus:border-lime/40 placeholder-white/20" />
+            className="w-full h-12 mt-2 rounded-xl bg-[#0e0e0e] border border-white/10 px-4 text-sm font-mono text-white outline-none focus:border-lime/40 placeholder-white/20" />
         </div>
         <button onClick={verify} disabled={busy || !txHash || !connected}
           className="w-full h-12 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-          {busy ? <><Loader2 className="w-5 h-5 animate-spin" /> Verifying on-chain...</> : <Link2 className="w-5 h-5" />} Verify & credit deposit
+          {busy ? <><Loader2 className="w-5 h-5 animate-spin" /> Verifying on-chain...</> : <Link2 className="w-5 h-5" />} Verify &amp; credit deposit
         </button>
         {error && <p className="flex items-center gap-1.5 text-xs text-red-300"><AlertCircle className="w-3.5 h-3.5 shrink-0" /> {error}</p>}
         {result && (
@@ -139,6 +162,10 @@ export default function RealDeposit({ chain = "solana" }) {
           </div>
         )}
       </div>
+
+      <Link to="/wallet" onClick={onClose} className="flex items-center justify-center gap-1.5 text-sm font-bold text-white/70 hover:text-lime transition">
+        <History className="w-4 h-4" /> Deposit history
+      </Link>
     </div>
   );
 }
