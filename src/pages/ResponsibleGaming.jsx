@@ -118,7 +118,7 @@ export default function ResponsibleGaming() {
         <LimitCard icon={<DollarSign />} title="Wager limit" desc="Max USDT you can wager per period." type="wager" limit={getLimit("wager")} busy={busy} onSave={saveLimit} onRemove={removeLimit} />
         <LimitCard icon={<Timer />} title="Session limit" desc="Max session length in minutes." type="session" limit={getLimit("session")} busy={busy} onSave={saveLimit} onRemove={removeLimit} sessionMode />
 
-        <p className="text-xs text-white/40 text-center pt-2">Need help? Contact <span className="text-lime">Base44 support</span>. These tools help you play responsibly but do not guarantee control.</p>
+        <p className="text-xs text-white/40 text-center pt-2">Need help? Contact <span className="text-lime">Tols.bet support</span>. These tools help you play responsibly but do not guarantee control.</p>
       </main>
     </div>
   );
