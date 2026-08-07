@@ -3,9 +3,12 @@ import { Image } from "@/components/ui/image";
 import { Link } from "react-router-dom";
 import { Lock, Play } from "lucide-react";
 import GameArt from "@/components/GameArt";
+import TolsGameCard from "@/components/cards/TolsGameCard";
 
 export default function GameCard({ game }) {
   const isSlot = game.category === "slots";
+  // TOLS mini games get the branded HUD tile everywhere on the platform.
+  if (!isSlot) return <TolsGameCard game={game} />;
   return (
     <Link
       to={`/game/${game.slug}`}
