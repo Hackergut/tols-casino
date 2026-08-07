@@ -72,7 +72,6 @@ export default async function(req) {
         if ((tx.to || "").toLowerCase() !== operator.toLowerCase())
           return Response.json({ error: "Funds were not sent to the platform deposit address" }, { status: 422 });
         if (fromAddress && (tx.from || "").toLowerCase() !== fromAddress.toLowerCase())
-          // sender check is an extra guard; ownership is enforced by the recipient address above
           return Response.json({ error: "Sender does not match your connected wallet" }, { status: 422 });
         const wei = BigInt(tx.value || "0x0");
         const dec = BigInt(cfg.decimals);

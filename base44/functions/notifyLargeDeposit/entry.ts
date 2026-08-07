@@ -3,13 +3,24 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Only the workflow (no user session) or an admin may trigger admin alerts.
+    const caller = await base44.auth.me().catch(() => null);
+    if (caller && caller.role !== "admin") return Response.json({ error: "Forbidden" }, { status: 403 });
+
     const body = await req.json().catch(() => ({}));
     const deposit_id = body.deposit_id || "";
-    let amount = Number(body.amount) || 0;
-    let chain = body.chain || "";
-    let currency = body.currency || "USDT";
-    let from_address = body.from_address || "";
-    let tx_hash = body.tx_hash || "";
+    if (!deposit_id) return Response.json({ notified: false, reason: "no_deposit_id" }, { status: 400 });
+
+    // Alert content comes from the stored deposit, never from the request body
+    const deposit = await base44.asServiceRole.entities.Deposit.get(deposit_id).catch(() => null);
+    if (!deposit) return Response.json({ notified: false, reason: "deposit_not_found" }, { status: 404 });
+
+    const amount = Number(deposit.amount) || 0;
+    const chain = deposit.chain || "";
+    const currency = deposit.currency || "USDT";
+    const from_address = deposit.from_address || "";
+    const tx_hash = deposit.tx_hash || "";
 
     // Configurable threshold from PlatformSetting (default 1000 USDT)
     let threshold = 1000;

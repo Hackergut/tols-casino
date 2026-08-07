@@ -14,12 +14,7 @@
           "with": {
             "function_name": "notifyLargeDeposit",
             "args": {
-              "deposit_id": "${ .trigger.entity_id }",
-              "amount": "${ .trigger.data.amount }",
-              "chain": "${ .trigger.data.chain }",
-              "currency": "${ .trigger.data.currency }",
-              "from_address": "${ .trigger.data.from_address }",
-              "tx_hash": "${ .trigger.data.tx_hash }"
+              "deposit_id": "${ .trigger.entity_id }"
             }
           },
           "then": "end",
@@ -31,13 +26,14 @@
       }
     ]
   },
-  "description": "Notifies the admin team by email when a deposit exceeds the configured threshold (PlatformSetting: large_deposit_threshold).",
+  "description": "Notifies the admin team by email when a confirmed deposit exceeds the configured threshold (PlatformSetting: large_deposit_threshold).",
   "trigger": {
-    "condition": null,
+    "condition": "${ .trigger.data.status == \"confirmed\" }",
     "config": {
       "trigger_type": "entity",
       "events": [
-        "create"
+        "create",
+        "update"
       ],
       "entity_name": "Deposit"
     }

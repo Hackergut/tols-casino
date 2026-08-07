@@ -3,6 +3,11 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+
+    // Only the workflow (no user session) or an admin may run commission payouts.
+    const caller = await base44.auth.me().catch(() => null);
+    if (caller && caller.role !== "admin") return Response.json({ error: "Forbidden" }, { status: 403 });
+
     const body = await req.json().catch(() => ({}));
     const deposit_id = body.deposit_id || "";
     if (!deposit_id) return Response.json({ processed: false, reason: "no_deposit_id" }, { status: 400 });
@@ -11,6 +16,12 @@ export default async function(req) {
     const deposit = await base44.asServiceRole.entities.Deposit.get(deposit_id).catch(() => null);
     if (!deposit) return Response.json({ processed: false, reason: "deposit_not_found" });
     if (deposit.status !== "confirmed") return Response.json({ processed: false, reason: "not_confirmed" });
+
+    // Idempotency: one commission per deposit, ever (blocks replayed invocations)
+    const alreadyLogged = await base44.asServiceRole.entities.CommissionLog.filter({ deposit_id });
+    if (alreadyLogged && alreadyLogged.length) {
+      return Response.json({ processed: false, reason: "already_processed", deposit_id });
+    }
 
     // The deposit must be linked to a referral (affiliate code stamped at deposit time)
     const refCode = (deposit.referral_code || "").trim();
