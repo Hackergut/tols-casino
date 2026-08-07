@@ -45,17 +45,21 @@ export default async function(req) {
 
     let launch_url = '';
     if (mode === 'demo') {
-      const r = await fetch(`${cfg.baseUrl}/api/games/${encodeURIComponent(slot.external_id)}/demo-url`, {
-        headers: {
-          'Authorization': `Bearer ${cfg.apiKey}`,
-          'X-Merchant-Id': cfg.operatorId,
-          'Accept': 'application/json'
-        }
-      });
-      if (!r.ok) return Response.json({ error: `Demo non disponibile (${r.status}).` }, { status: 502 });
-      const j = await r.json();
-      launch_url = j.url || j.launch_url || j.demo_url || '';
+      // i-gaming.tools exposes demo_url as a direct field on the slot record
+      // (populated by syncIGamingCatalog) — there is no session-launch endpoint.
+      launch_url = slot.demo_url || '';
+      if (!launch_url) {
+        return Response.json({ error: 'Demo URL non disponibile per questa slot.' }, { status: 409 });
+      }
     } else {
+      // i-gaming.tools is a catalog/metadata API only — it has no session or
+      // real-money callback endpoints. Real-money play requires a true game
+      // aggregator (SoftSwiss, Slotegrator, EveryMatrix…) configured here.
+      if (/i-gaming\.tools/i.test(cfg.baseUrl)) {
+        return Response.json({
+          error: 'L\'aggregatore configurato (i-gaming.tools) fornisce solo metadati del catalogo, non sessioni soldi veri. Configura un aggregatore di giochi reale (es. SoftSwiss, Slotegrator) in Admin → Slot aggregator.'
+        }, { status: 503 });
+      }
       const r = await fetch(`${cfg.baseUrl}/api/sessions`, {
         method: 'POST',
         headers: {
