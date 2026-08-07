@@ -18,6 +18,7 @@ export default function Marketplace() {
   const [myCards, setMyCards] = useState([]);
   const [myListings, setMyListings] = useState([]);
   const [myUserId, setMyUserId] = useState(null);
+  const [recent, setRecent] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const { wallet, updateBalance } = useWallet();
@@ -28,11 +29,13 @@ export default function Marketplace() {
     try {
       let me = null; try { me = await base44.auth.me(); } catch {}
       setMyUserId(me?.id || null);
-      const [active, owned] = await Promise.all([
+      const [active, owned, recent] = await Promise.all([
         base44.entities.MarketListing.filter({ status: "active" }, "-created_date", 100),
         base44.entities.CollectibleCard.list("-created_date", 100),
+        base44.entities.MarketListing.list("-updated_date", 200),
       ]);
       setListings(active || []);
+      setRecent(recent || []);
       setMyCards(owned || []);
       setMyListings((active || []).filter((l) => me && l.created_by_id === me.id));
     } catch (e) { /* ignore */ }
@@ -40,6 +43,22 @@ export default function Marketplace() {
   };
 
   useEffect(() => { loadAll(); /* eslint-disable-next-line */ }, []);
+
+  // Trades in the last 24h per card name — drives the dynamic "Hot" badge.
+  const trades24h = useMemo(() => {
+    const since = Date.now() - 24 * 60 * 60 * 1000;
+    const counts = {};
+    recent.forEach((l) => {
+      const t = new Date(l.updated_date || l.created_date).getTime();
+      if (t >= since) counts[l.card_name] = (counts[l.card_name] || 0) + 1;
+    });
+    return counts;
+  }, [recent]);
+
+  const hotNames = useMemo(() => {
+    const top = Object.entries(trades24h).filter(([, n]) => n >= 2).sort((a, b) => b[1] - a[1]).slice(0, 5);
+    return new Set(top.map(([name]) => name));
+  }, [trades24h]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -81,8 +100,16 @@ export default function Marketplace() {
             ) : filtered.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-12 text-center text-sm text-white/40">No {tab === "buy" ? "sale" : "swap"} listings right now.</div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filtered.map((l) => <ListingCard key={l.id} listing={l} onAction={tab === "buy" ? () => buyCard(l, loadAll, updateBalance, wallet, toast) : () => proposeSwap(l, loadAll, toast)} />)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filtered.map((l) => (
+                  <ListingCard
+                    key={l.id}
+                    listing={l}
+                    hot={hotNames.has(l.card_name)}
+                    trades24h={trades24h[l.card_name] || 0}
+                    onAction={tab === "buy" ? () => buyCard(l, loadAll, updateBalance, wallet, toast) : () => proposeSwap(l, loadAll, toast)}
+                  />
+                ))}
               </div>
             )}
           </>
@@ -92,19 +119,21 @@ export default function Marketplace() {
   );
 }
 
-function ListingCard({ listing, onAction }) {
+function ListingCard({ listing, onAction, hot, trades24h }) {
   const isSale = listing.listing_type === "sale";
   return (
     <MarketCardTile
       listing={listing}
-      actionLabel={isSale ? `Buy now · $${Number(listing.price || 0).toLocaleString()}` : "Propose swap"}
+      hot={hot}
+      trades24h={trades24h}
+      actionLabel={isSale ? "Buy now" : "Propose swap"}
       actionVariant={isSale ? "solid" : "outline"}
       onAction={onAction}
       footer={
         <div className="mt-2.5 flex items-center justify-between text-[11px]">
           <span className="text-white/40 truncate">{listing.seller_alias || "TOLS user"}</span>
           {isSale
-            ? <span className="font-black text-lime tabular-nums">${Number(listing.price || 0).toLocaleString()}</span>
+            ? <span className="text-white/40 tabular-nums">{trades24h || 0} trades · 24h</span>
             : <span className="text-white/60">Wants <span className="text-lime font-bold">{listing.swap_for || "any"}</span></span>}
         </div>
       }
