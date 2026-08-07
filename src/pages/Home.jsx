@@ -10,6 +10,7 @@ import ProvidersRail from "@/components/home/ProvidersRail";
 import AllGamesGrid from "@/components/home/AllGamesGrid";
 import MegaPromoCards from "@/components/home/MegaPromoCards";
 import CollectionPromo from "@/components/home/CollectionPromo";
+import CardsRail from "@/components/home/CardsRail";
 import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
 import TolsLogo from "@/components/TolsLogo";
@@ -116,6 +117,7 @@ export default function Home() {
             {visibleRails.map((r) => (
               <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} moreTile={r.moreTile} />
             ))}
+            {!chip && <CardsRail />}
             {!chip && bgamesGames.length > 0 && (
               <GameRail title="BGames" icon={Gamepad2} games={bgamesGames} viewAllTo="/games/provider/bgames" />
             )}
