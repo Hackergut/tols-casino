@@ -12,6 +12,7 @@ const ART = {
   wheel: { Icon: null, accent: "#b04fff", label: "WHEEL" },
   roulette: { Icon: null, accent: "#ff4f6a", label: "ROULETTE" },
   baccarat: { Icon: Spade, accent: "#ccff00", label: "BACCARAT" },
+  "neon-vault": { Icon: null, accent: "#b04fff", label: "NEON VAULT" },
 };
 
 export default function GameArt({ slug, className = "" }) {
@@ -25,7 +26,9 @@ export default function GameArt({ slug, className = "" }) {
       <div className="absolute inset-0 bg-grid opacity-10" />
       <span className="absolute -bottom-3 left-1 text-5xl font-black italic opacity-10" style={{ color: accent }}>{label[0]}</span>
       <div className="absolute inset-0 flex items-center justify-center">
-        {slug === "keno" ? (
+        {slug === "neon-vault" ? (
+          <SlotArt accent={accent} />
+        ) : slug === "keno" ? (
           <KenoArt accent={accent} />
         ) : slug === "plinko" ? (
           <PlinkoArt accent={accent} />
@@ -80,5 +83,23 @@ function WheelArt({ accent }) {
         background: `conic-gradient(${accent} 0 45deg, #ffffff14 45deg 90deg, ${accent} 90deg 135deg, #ffffff14 135deg 180deg, ${accent} 180deg 225deg, #ffffff14 225deg 270deg, ${accent} 270deg 315deg, #ffffff14 315deg 360deg)`,
       }}
     />
+  );
+}
+
+function SlotArt({ accent }) {
+  return (
+    <div className="flex gap-1.5">
+      {[0, 1, 2].map((reel) => (
+        <div key={reel} className="flex flex-col gap-1">
+          {[0, 1].map((row) => (
+            <span
+              key={row}
+              className="w-3.5 h-3.5 rounded-[3px] border"
+              style={{ borderColor: accent, background: reel === 1 && row === 0 ? `${accent}30` : "#ffffff10" }}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }

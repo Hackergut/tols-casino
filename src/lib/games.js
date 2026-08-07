@@ -11,6 +11,7 @@ export const GAMES = [
   { id: "wheel", name: "Wheel Tols", slug: "wheel", category: "originals", playable: true, accent: "#b04fff" },
   { id: "roulette", name: "Roulette Tols", slug: "roulette", category: "table", playable: true, accent: "#ff4f6a" },
   { id: "baccarat", name: "Baccarat Tols", slug: "baccarat", category: "table", playable: true, accent: "#ccff00" },
+  { id: "neon-vault", name: "Neon Vault", slug: "neon-vault", category: "originals", playable: true, accent: "#b04fff" },
 ];
 
 export const CATEGORIES = [

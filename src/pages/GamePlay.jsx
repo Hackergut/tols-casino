@@ -17,6 +17,7 @@ import CoinflipGame from "@/components/games/CoinflipGame";
 import KenoGame from "@/components/games/KenoGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
+import SlotMachine from "@/components/games/SlotMachine";
 import { RTP_ORIGINALS } from "@/lib/gameEngine";
 
 const GAMES_MAP = {
@@ -30,6 +31,7 @@ const GAMES_MAP = {
   keno: KenoGame,
   roulette: RouletteGame,
   baccarat: BaccaratGame,
+  "neon-vault": SlotMachine,
 };
 
 export default function GamePlay({ slug }) {
