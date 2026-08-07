@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sparkles, Spade, Flame, Star, Gamepad2, Radio } from "lucide-react";
-import RollyHero from "@/components/RollyHero";
 import LiveWinsTicker from "@/components/LiveWinsTicker";
 import GameRail from "@/components/home/GameRail";
 import LobbySearch from "@/components/home/LobbySearch";
@@ -82,7 +81,7 @@ export default function Home() {
     <div className="min-h-screen">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
         {/* Hero */}
-        <RollyHero />
+        <MegaPromoCards />
 
         {/* Sticky lobby toolbar: tabs on top, full-width search below */}
         <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 space-y-2">
@@ -109,7 +108,6 @@ export default function Home() {
           <LobbySkeleton />
         ) : (
           <>
-            <MegaPromoCards />
             {visibleRails.map((r) => (
               <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} moreTile={r.moreTile} />
             ))}
