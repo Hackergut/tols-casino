@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, Lock, LogIn, Wallet } from "lucide-react";
 import { getGame } from "@/lib/games";
 import { base44 } from "@/api/base44Client";
-import { useWallet } from "@/components/WalletProvider";
+import { useWallet, DemoWalletProvider } from "@/components/WalletProvider";
 import { useWalletModal } from "@/components/wallet/useWalletModal";
 import DemoSlotPlayer from "@/components/DemoSlotPlayer";
 import RealSlotPlayer from "@/components/RealSlotPlayer";
@@ -40,8 +40,10 @@ export default function GamePlay({ slug }) {
   const { wallet } = useWallet();
   const { openWallet } = useWalletModal();
   const isGuest = !wallet || wallet.id === "guest";
+  const realReady = !isGuest && !!wallet && wallet.balance > 0;
 
   const [mode, setMode] = useState("demo");
+  const [origMode, setOrigMode] = useState("demo");
   const [dbSlot, setDbSlot] = useState(null);
   const [dbLoading, setDbLoading] = useState(false);
 
@@ -91,12 +93,46 @@ export default function GamePlay({ slug }) {
 
         {game ? (
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-white mb-5">
-              <span className="text-lime">{game.name.split(" ")[0]}</span>{" "}
-              {game.name.split(" ").slice(1).join(" ")}
-            </h1>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+              <h1 className="text-2xl font-black tracking-tight text-white">
+                <span className="text-lime">{game.name.split(" ")[0]}</span>{" "}
+                {game.name.split(" ").slice(1).join(" ")}
+              </h1>
+              {Game && (
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-[#1a1a1a] border border-white/10 w-fit">
+                  <button
+                    onClick={() => setOrigMode("demo")}
+                    className={`px-4 h-9 rounded-lg text-xs font-black transition ${origMode === "demo" ? "bg-blue-500 text-white" : "text-white/50 hover:text-white"}`}
+                  >
+                    DEMO
+                  </button>
+                  <button
+                    onClick={() => setOrigMode("real")}
+                    className={`px-4 h-9 rounded-lg text-xs font-black transition ${origMode === "real" ? "bg-lime text-black" : "text-white/50 hover:text-white"}`}
+                  >
+                    REAL
+                  </button>
+                </div>
+              )}
+            </div>
+
             {Game ? (
-              <Game />
+              origMode === "real" && !realReady ? (
+                <RealPlayPrompt name={game.name} openWallet={openWallet} />
+              ) : (
+                <>
+                  {origMode === "demo" && (
+                    <div className="mb-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-[11px] font-bold text-blue-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" /> DEMO · fun money
+                    </div>
+                  )}
+                  {origMode === "demo" ? (
+                    <DemoWalletProvider><Game /></DemoWalletProvider>
+                  ) : (
+                    <Game />
+                  )}
+                </>
+              )
             ) : (
               <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
                 <h2 className="text-2xl font-black text-white">{game.name}</h2>
@@ -182,6 +218,29 @@ export default function GamePlay({ slug }) {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function RealPlayPrompt({ name, openWallet }) {
+  return (
+    <div className="max-w-md mx-auto rounded-2xl border border-lime/30 bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-8 text-center">
+      <div className="w-14 h-14 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center mx-auto mb-4">
+        <Lock className="w-7 h-7 text-lime" />
+      </div>
+      <h2 className="text-2xl font-black text-white">Real money play</h2>
+      <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
+        Log in and deposit crypto to play {name} for real. Every bet is provably fair and settled on your wallet.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-2 justify-center mt-5">
+        <Link to="/login" className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition">
+          <LogIn className="w-4 h-4" /> Log in
+        </Link>
+        <button onClick={() => openWallet({ tab: "deposit" })} className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-lime text-black font-black hover:opacity-90 transition glow-lime">
+          <Wallet className="w-4 h-4" /> Deposit
+        </button>
+      </div>
+      <p className="text-xs text-white/30 mt-4">Or switch to <span className="text-blue-400 font-bold">DEMO</span> to play with fun money.</p>
     </div>
   );
 }

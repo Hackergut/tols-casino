@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
 import { contributeToJackpot } from "@/lib/jackpot";
 
-const WalletContext = createContext(null);
+export const WalletContext = createContext(null);
 
 export function WalletProvider({ children }) {
   const [wallet, setWallet] = useState(null);
@@ -130,6 +130,42 @@ export function WalletProvider({ children }) {
   const vipTier = wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0];
   const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier };
 
+  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
+}
+
+// Demo (fun-money) wallet override for the TOLS originals. When a game is
+// wrapped in <DemoWalletProvider>, useWallet() resolves to this virtual wallet
+// so the real balance is never touched. recordBet is a no-op (no Bet /
+// HouseEarning / jackpot pollution). Balance auto-tops-up so demo stays fun.
+const DEMO_START = 5000;
+export function DemoWalletProvider({ children }) {
+  const [demo, setDemo] = useState(() => {
+    try {
+      const l = JSON.parse(localStorage.getItem("tols_demo_wallet") || "null");
+      if (l && typeof l.balance === "number") return l;
+    } catch {}
+    return { id: "demo", balance: DEMO_START, currency: "FUN", vip_level: 1, xp: 0, total_wagered: 0 };
+  });
+
+  const updateBalance = useCallback((delta, wagered = 0) => {
+    setDemo((prev) => {
+      const newWagered = +(prev.total_wagered + Math.abs(wagered)).toFixed(2);
+      let next = +(prev.balance + delta).toFixed(2);
+      if (next < 1) next = DEMO_START;
+      const w = { ...prev, balance: next, xp: Math.round(prev.xp + Math.abs(wagered)), total_wagered: newWagered };
+      try { localStorage.setItem("tols_demo_wallet", JSON.stringify(w)); } catch {}
+      return w;
+    });
+    return { bonus: 0, promoted: false, tier: VIP_TIERS[0] };
+  }, []);
+
+  const recordBet = useCallback(() => {}, []);
+  const requestWithdrawal = useCallback(() => { throw new Error("Not available in demo mode"); }, []);
+
+  const value = {
+    wallet: demo, loading: false, updateBalance, recordBet, requestWithdrawal,
+    reload: () => {}, vipTier: VIP_TIERS[0], isDemo: true,
+  };
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 }
 
