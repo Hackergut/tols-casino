@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { Send, Hash, Users, LogIn, Loader2 } from "lucide-react";
+import { Send, Hash, Users, LogIn, Loader2, Trophy } from "lucide-react";
+import CollectorLeaderboard from "@/components/community/CollectorLeaderboard";
 
 const CHANNELS = [
   { id: "generale", label: "General", desc: "Main community chat" },
@@ -209,6 +210,16 @@ export default function Community() {
               </form>
             )}
           </div>
+        </div>
+
+        {/* Collector leaderboard */}
+        <div className="mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Trophy className="w-5 h-5 text-lime" />
+            <h2 className="text-lg font-black text-white">Collector Leaderboard</h2>
+            <span className="text-xs text-white/40">Top collectors on TOLS</span>
+          </div>
+          <CollectorLeaderboard />
         </div>
       </div>
     </div>
