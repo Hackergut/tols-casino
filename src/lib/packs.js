@@ -87,9 +87,47 @@ export const COLLECTION_IMAGES = {
   "Yu-Gi-Oh!": "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/06dd27d82_generated_image.png",
 };
 
+// Per-card artwork: each named card gets its own portrait so two cards from the
+// same collection never look identical. Falls back to the collection art.
+const P = {
+  fireDragon: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/1b5e02973_generated_image.png",
+  electric: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/4eb4367cb_generated_image.png",
+  dunk: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/6cdaa506c_generated_image.png",
+  shooter: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/3fbb63c5b_generated_image.png",
+  striker: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/0524e41f3_generated_image.png",
+  winger: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/6c329aca0_generated_image.png",
+  driver: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/92bc11b61_generated_image.png",
+  raceCar: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/aa0314cdc_generated_image.png",
+  fighter: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/64eae1d46_generated_image.png",
+  champion: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/1e3da7f2d_generated_image.png",
+  whiteDragon: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/411a1f008_generated_image.png",
+  sorcerer: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/2bd46d056_generated_image.png",
+};
+
+export const CARD_IMAGES = {
+  // Pokémon
+  "Charizard ex": P.fireDragon, "Rayquaza VMAX": P.fireDragon, "Dragonite V": P.fireDragon,
+  "Pikachu VMAX": P.electric, "Pikachu V": P.electric, "Mewtwo ex": P.electric,
+  // NBA
+  "LeBron James #23": P.dunk, "Michael Jordan Rookie": P.dunk, "Giannis #34": P.dunk,
+  "Stephen Curry #30": P.shooter, "Kobe Bryant #24": P.shooter, "Devin Booker #1": P.shooter,
+  // FIFA
+  "Haaland Gold": P.striker, "Pelé Icon": P.striker, "Mbappé Icon": P.striker,
+  "Messi Flash": P.winger, "Maradona Icon": P.winger, "Vinícius Jr.": P.winger,
+  // F1
+  "Verstappen #1": P.driver, "Hamilton #44": P.driver, "Leclerc #16": P.driver,
+  "Senna Legend": P.raceCar, "Schumacher #1": P.raceCar, "Norris #4": P.raceCar,
+  // UFC
+  "Jon Jones Bones": P.fighter, "Israel Adesanya": P.fighter, "Alex Pereira": P.fighter,
+  "Khabib Nurmagomedov": P.champion, "Conor McGregor": P.champion, "Islam Makhachev": P.champion,
+  // Yu-Gi-Oh!
+  "Blue-Eyes White Dragon": P.whiteDragon, "Blue-Eyes Ultimate Dragon": P.whiteDragon, "Red-Eyes Black Dragon": P.whiteDragon,
+  "Dark Magician": P.sorcerer, "Dark Magician Girl": P.sorcerer, "Exodia": P.sorcerer, "Slifer the Sky Dragon": P.sorcerer,
+};
+
 export function collectionImage(card) {
   if (card?.image) return card.image;
-  return COLLECTION_IMAGES[card?.collection] || "";
+  return CARD_IMAGES[card?.card_name] || COLLECTION_IMAGES[card?.collection] || "";
 }
 
 const TOTAL_WEIGHT = Object.values(RARITIES).reduce((s, r) => s + r.weight, 0);
