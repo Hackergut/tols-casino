@@ -1,0 +1,50 @@
+{
+  "name": "ResponsibleLimit",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "self_exclusion",
+        "deposit",
+        "loss",
+        "wager",
+        "session"
+      ],
+      "description": "Kind of responsible-gaming control"
+    },
+    "limit_value": {
+      "type": "number",
+      "default": 0,
+      "description": "Numeric limit: USDT amount for deposit/loss/wager, minutes for session"
+    },
+    "period": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "permanent",
+        "custom"
+      ],
+      "default": "daily"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    },
+    "exclude_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "For self-exclusion: datetime until which the user is blocked from playing"
+    },
+    "description": {
+      "type": "string",
+      "default": "",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "type"
+  ]
+}
