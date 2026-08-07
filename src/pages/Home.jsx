@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Spade, Flame, Star } from "lucide-react";
+import { Sparkles, Spade, Flame, Star, Gamepad2 } from "lucide-react";
 import HeroBanners from "@/components/HeroBanners";
 import JackpotTicker from "@/components/JackpotTicker";
 import GameRail from "@/components/home/GameRail";
@@ -32,6 +32,13 @@ export default function Home() {
   const providers = useMemo(
     () => Array.from(new Set(slots.map((s) => s.provider).filter(Boolean))).sort(),
     [slots]
+  );
+
+  // Dedicated rail for the "bgames" provider — renders automatically once the
+  // aggregator syncs those slots into the catalog.
+  const bgamesGames = useMemo(
+    () => slotCards.filter((s) => (s.provider || "").toLowerCase() === "bgames"),
+    [slotCards]
   );
 
   const results = useMemo(() => {
@@ -99,6 +106,9 @@ export default function Home() {
             {visibleRails.map((r) => (
               <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} />
             ))}
+            {!chip && bgamesGames.length > 0 && (
+              <GameRail title="BGames" icon={Gamepad2} games={bgamesGames} viewAllTo="/games/provider/bgames" />
+            )}
             <AllGamesGrid title="All Slots & Games" games={all} limit={48} viewAllTo="/games/category/slots" />
             <ProvidersRail providers={providers} />
           </>
