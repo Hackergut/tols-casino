@@ -15,7 +15,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col shrink-0 sticky top-0 h-screen bg-[#0f0f0f] border-r border-white/5 z-40 transition-[width] duration-300 ${
+      className={`hidden lg:flex flex-col shrink-0 sticky top-0 h-screen bg-background border-r border-white/5 z-40 transition-[width] duration-300 ${
         collapsed ? "w-[76px]" : "w-64"
       }`}
     >

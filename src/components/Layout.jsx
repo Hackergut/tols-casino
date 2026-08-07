@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import CookieNotice from "@/components/CookieNotice";
 import SupportButton from "@/components/SupportButton";
 import OnboardingTour from "@/components/OnboardingTour";
+import BottomNav from "@/components/nav/BottomNav";
 import { useSwipe } from "@/hooks/useSwipe";
 
 export default function Layout() {
@@ -58,12 +59,12 @@ export default function Layout() {
   useSwipe({ onSwipeLeft: () => setMobileNav(false), disabled: !mobileNav, guardInteractive: false });
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-background">
       <div className="flex">
         <Sidebar />
         <div className="flex-1 min-w-0 flex flex-col">
           <Header onMenu={() => setMobileNav(true)} />
-          <main className="flex-1">
+          <main className="flex-1 pb-16 lg:pb-0">
             <AnimatePresence initial={false}>
               <motion.div
                 key={routeKey}
@@ -86,13 +87,15 @@ export default function Layout() {
       >
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileNav(false)} />
         <aside
-          className={`absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-[#0f0f0f] border-r border-white/10 overflow-y-auto scrollbar-hide transition-transform duration-300 ease-out ${
+          className={`absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-background border-r border-white/10 overflow-y-auto scrollbar-hide transition-transform duration-300 ease-out ${
             mobileNav ? "translate-x-0" : "-translate-x-full"
           }`}
         >
           <MobileNav onClose={() => setMobileNav(false)} />
         </aside>
       </div>
+
+      <BottomNav onMenu={() => setMobileNav(true)} />
 
       <CookieNotice />
       <SupportButton />

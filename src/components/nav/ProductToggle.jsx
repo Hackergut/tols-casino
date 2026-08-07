@@ -5,7 +5,7 @@ import React from "react";
 export default function ProductToggle({ collapsed }) {
   if (collapsed) return null;
   return (
-    <div className="mx-3 flex items-center p-1 rounded-xl bg-[#161616] border border-white/5">
+    <div className="mx-3 flex items-center p-1 rounded-xl bg-card border border-white/5">
       <span className="flex-1 h-8 rounded-lg bg-lime text-black text-[11px] font-black tracking-wider flex items-center justify-center">
         CASINO
       </span>

@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Spade, Flame, Star, Gamepad2, Radio, Tv, Zap } from "lucide-react";
-import HeroBanners from "@/components/HeroBanners";
-import JackpotTicker from "@/components/JackpotTicker";
+import RollyHero from "@/components/RollyHero";
+import LiveWinsTicker from "@/components/LiveWinsTicker";
 import GameRail from "@/components/home/GameRail";
 import LobbySearch from "@/components/home/LobbySearch";
 import CategoryChips from "@/components/home/CategoryChips";
@@ -75,13 +75,8 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
-        {/* Hero: global pot + promo banners */}
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide" data-no-swipe>
-          <JackpotTicker variant="card" />
-          <div className="flex-1 min-w-[280px]">
-            <HeroBanners />
-          </div>
-        </div>
+        {/* Hero */}
+        <RollyHero />
 
         {/* Sticky lobby toolbar: search + category filter, stays under the header */}
         <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/85 backdrop-blur-md border-y border-white/5 space-y-3">
@@ -118,6 +113,7 @@ export default function Home() {
             <ProvidersRail providers={providers} />
           </>
         )}
+        <LiveWinsTicker />
       </main>
 
       <footer className="border-t border-white/5 mt-12 py-8 px-4 sm:px-6">

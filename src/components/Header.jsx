@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown, Menu } from "lucide-react";
+import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown, Menu, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
@@ -27,14 +27,15 @@ export default function Header({ onMenu }) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-white/5">
+    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center gap-4">
         <button onClick={onMenu} className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a1a1a] border border-white/5 text-white/70 hover:text-lime transition">
           <Menu className="w-5 h-5" />
         </button>
         {/* Logo */}
-        <a href="/" className="flex items-center shrink-0">
+        <a href="/" className="flex items-center gap-2 shrink-0">
           <TolsLogo />
+          <span className="hidden sm:inline-flex items-center px-1.5 h-5 rounded bg-blue-600 text-[9px] font-black text-white tracking-wider">BETA</span>
         </a>
 
         {/* Search */}
@@ -48,9 +49,9 @@ export default function Header({ onMenu }) {
 
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
           <VipProgressBadge />
-          <button className="hidden sm:flex items-center gap-1.5 h-10 px-5 rounded-full font-bold text-sm bg-lime text-black hover:opacity-90 transition">
-            <Plus className="w-4 h-4" /> Sign up
-          </button>
+          <Link to="/login" className="hidden sm:flex items-center gap-1.5 h-10 px-5 rounded-full font-bold text-sm bg-lime text-black hover:opacity-90 transition">
+            <Wallet className="w-4 h-4" /> Sign in
+          </Link>
           <div className="flex items-center gap-0">
             <button onClick={() => openWallet({ tab: "deposit" })} className="flex items-center gap-2 h-10 px-3 sm:px-4 rounded-l-full bg-[#1a1a1a] border border-white/5 border-r-0 hover:border-lime/40 transition cursor-pointer">
               <DollarSign className="w-4 h-4 text-lime" />
@@ -66,6 +67,9 @@ export default function Header({ onMenu }) {
               <ArrowDownToLine className="w-4 h-4" />
             </button>
           </div>
+          <Link to="/community" className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/5 text-white/70 hover:text-lime hover:border-lime/40 transition">
+            <MessageCircle className="w-5 h-5" />
+          </Link>
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setOpen((o) => !o)}
