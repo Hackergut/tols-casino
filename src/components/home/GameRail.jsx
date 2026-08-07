@@ -31,7 +31,7 @@ export default function GameRail({ title, icon: Icon, games, viewAllTo, emptyTex
           ))}
           {moreTile && (
             <Link to={viewAllTo || "#"} className="snap-start shrink-0 w-[168px] sm:w-[190px] lg:w-[210px]">
-              <div className="group relative aspect-[1.04/1] rounded-xl overflow-hidden border border-dashed border-lime/30 bg-gradient-to-b from-lime/[0.06] to-[#0e0e0e] flex flex-col items-center justify-center gap-3 text-center p-4 hover:border-lime/60 transition">
+              <div className="group relative aspect-[9/6] sm:aspect-[1.04/1] rounded-xl overflow-hidden border border-dashed border-lime/30 bg-gradient-to-b from-lime/[0.06] to-[#0e0e0e] flex flex-col items-center justify-center gap-3 text-center p-4 hover:border-lime/60 transition">
                 <span className="grid place-items-center w-12 h-12 rounded-full bg-lime/10 border border-lime/30"><Sparkles className="w-6 h-6 text-lime" /></span>
                 <div>
                   <p className="font-display text-lg uppercase text-white leading-tight">More Originals</p>
