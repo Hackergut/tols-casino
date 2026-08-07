@@ -88,6 +88,23 @@ export function WalletProvider({ children }) {
         // every real wager feeds the global progressive pot (and can hit it)
         const jp = await contributeToJackpot(wager);
         if (jp.won && jp.prize > 0) await updateBalance(jp.prize, 0);
+
+        // Sync the player's real stats into every tournament they joined so
+        // the leaderboard reflects live, account-based wagering.
+        try {
+          const won = bet.result === "win";
+          const entries = await base44.entities.TournamentEntry.filter({});
+          if (entries && entries.length) {
+            await base44.entities.TournamentEntry.bulkUpdate(
+              entries.map((e) => ({
+                id: e.id,
+                wagered: +((e.wagered || 0) + wager).toFixed(2),
+                wins: (e.wins || 0) + (won ? 1 : 0),
+                biggest_win: Math.max(e.biggest_win || 0, payout),
+              }))
+            );
+          }
+        } catch (e) { /* ignore */ }
       }
     } catch (e) { /* ignore */ }
   }, [wallet, updateBalance]);

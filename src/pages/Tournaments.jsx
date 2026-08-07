@@ -28,22 +28,28 @@ export default function Tournaments() {
   }, []);
 
   const computeBoard = useCallback(async () => {
-    let username = "Guest";
-    let wagered = wallet?.total_wagered || 0;
-    let wins = 0;
-    let biggest = 0;
+    let currentUser = null;
     try {
       const user = await base44.auth.me();
       if (user) {
-        username = user.full_name || (user.email ? user.email.split("@")[0] : "Player");
         const bets = await base44.entities.Bet.filter({ created_by_id: user.id }, "-created_date", 300);
-        wins = bets.filter((b) => b.result === "win").length;
-        biggest = bets.reduce((m, b) => Math.max(m, b.payout || 0), 0);
+        currentUser = {
+          username: user.full_name || (user.email ? user.email.split("@")[0] : "Player"),
+          wagered: wallet?.total_wagered || 0,
+          wins: bets.filter((b) => b.result === "win").length,
+          biggest_win: bets.reduce((m, b) => Math.max(m, b.payout || 0), 0),
+        };
       }
     } catch {
       /* guest */
     }
-    setBoard(buildLeaderboard({ username, wagered, wins, biggest_win: biggest, avatar_color: "#ccff00" }));
+    let entries = [];
+    try {
+      entries = (await base44.entities.TournamentEntry.list("-wagered", 200)) || [];
+    } catch {
+      entries = [];
+    }
+    setBoard(buildLeaderboard(entries, currentUser));
   }, [wallet]);
 
   useEffect(() => {
