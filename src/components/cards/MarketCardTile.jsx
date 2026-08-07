@@ -1,13 +1,14 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
 import { ShieldCheck, Flame, TrendingUp, TrendingDown } from "lucide-react";
-import { collectionImage, rarityColor, rarityLabel } from "@/lib/packs";
+import { collectionImage, rarityColor, rarityLabel, rarityVisual } from "@/lib/packs";
 
 // Marketplace tile — graded-slab presentation: dark panel, floating card with
 // mirror reflection, rarity-tinted frame, then a spec table (insured value /
 // grade) and the primary action.
 export default function MarketCardTile({ listing, badge, actionLabel, actionVariant = "solid", onAction, footer, hot, trades24h = 0 }) {
   const frame = rarityColor(listing.rarity);
+  const visual = rarityVisual(listing.rarity);
   const img = collectionImage(listing);
   const insured = Number(listing.insured_value || 0);
   const market = Number(listing.price || 0) || insured;
@@ -17,8 +18,8 @@ export default function MarketCardTile({ listing, badge, actionLabel, actionVari
 
   return (
     <div
-      className="group relative rounded-2xl bg-[#16181c] border border-white/8 overflow-hidden transition hover:border-white/20"
-      style={{ boxShadow: `inset 0 0 0 1px ${frame}14` }}
+      className={`group relative rounded-2xl bg-[#16181c] overflow-hidden transition ${visual.animate ? "rarity-pulse" : ""}`}
+      style={{ border: `${visual.borderWidth}px solid ${visual.border}66`, boxShadow: visual.glow }}
     >
       {badge && (
         <span className="absolute top-2.5 right-2.5 z-20 text-[10px] font-black px-2 py-0.5 rounded-md bg-lime text-black">{badge}</span>
@@ -32,7 +33,7 @@ export default function MarketCardTile({ listing, badge, actionLabel, actionVari
 
       {/* Slab stage */}
       <div className="relative px-4 pt-4 pb-2" style={{ background: `radial-gradient(120% 80% at 50% 0%, ${frame}1f, transparent 70%)` }}>
-        <div className="relative mx-auto w-[64%] aspect-[3/4] rounded-lg overflow-hidden border-2 bg-[#0a0a0a]" style={{ borderColor: frame, boxShadow: `0 10px 30px -12px ${frame}` }}>
+        <div className="relative mx-auto w-[64%] aspect-[3/4] rounded-lg overflow-hidden bg-[#0a0a0a]" style={{ border: `${visual.borderWidth}px solid ${frame}`, boxShadow: `0 10px 30px -12px ${frame}` }}>
           {img ? (
             <Image src={img} fittingType="fill" className="absolute inset-0 w-full h-full" />
           ) : (

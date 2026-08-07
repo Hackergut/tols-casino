@@ -207,6 +207,52 @@ export function openPack(pack) {
 
 export const rarityColor = (r) => (RARITIES[r] || RARITIES.common).color;
 export const rarityLabel = (r) => (RARITIES[r] || RARITIES.common).label;
+
+// Dynamic border / glow visual recipe per rarity tier. Legendary and Mythic get
+// the full neon treatment (animated pulsing halo) so they pop instantly in
+// collection and marketplace grids. Returns:
+//  - border: CSS borderColor value
+//  - borderWidth: px
+//  - glow: box-shadow string (halo around the card)
+//  - haloColor: for radial background tints
+//  - animate: whether to pulse the halo (legendary+)
+//  - tier: 0..4 numeric rank (useful for sorting / opacity ramps)
+export function rarityVisual(rarity) {
+  const c = rarityColor(rarity);
+  switch (rarity) {
+    case "mythic":
+      return {
+        border: c, borderWidth: 3,
+        glow: `0 0 0 1px ${c}, 0 0 34px -2px ${c}, 0 0 60px -10px ${c}`,
+        haloColor: c, animate: true, tier: 4,
+      };
+    case "legendary":
+      return {
+        border: c, borderWidth: 3,
+        glow: `0 0 0 1px ${c}, 0 0 26px -3px ${c}, 0 0 48px -12px ${c}`,
+        haloColor: c, animate: true, tier: 3,
+      };
+    case "epic":
+      return {
+        border: c, borderWidth: 2,
+        glow: `0 0 0 1px ${c}66, 0 0 18px -6px ${c}`,
+        haloColor: c, animate: false, tier: 2,
+      };
+    case "rare":
+      return {
+        border: c, borderWidth: 2,
+        glow: `0 0 0 1px ${c}55, 0 0 12px -8px ${c}`,
+        haloColor: c, animate: false, tier: 1,
+      };
+    case "common":
+    default:
+      return {
+        border: c, borderWidth: 1,
+        glow: `0 0 0 1px ${c}33`,
+        haloColor: c, animate: false, tier: 0,
+      };
+  }
+}
 export const collectionAccent = (c) => (COLLECTIONS[c] ? COLLECTIONS[c].accent : "#ccff00");
 
 // Thematic 3-code position/role stack shown under the OVR rating box.

@@ -1,19 +1,20 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
-import { collectionImage, rarityColor, rarityLabel } from "@/lib/packs";
+import { collectionImage, rarityColor, rarityLabel, rarityVisual } from "@/lib/packs";
 
 // Compact collectible thumbnail shared by the vault grids (Packs collection
 // tab, My Collection sets). Rarity drives the frame color + glow.
 export default function CardThumb({ card, onClick }) {
   const frame = rarityColor(card.rarity);
+  const visual = rarityVisual(card.rarity);
   const img = collectionImage(card);
   const Tag = onClick ? "button" : "div";
 
   return (
     <Tag
       onClick={onClick}
-      className="relative block w-full text-left rounded-lg overflow-hidden border-2 bg-[#0a0a0a] transition hover:-translate-y-0.5"
-      style={{ borderColor: frame, boxShadow: `0 0 18px -8px ${frame}` }}
+      className={`relative block w-full text-left rounded-lg overflow-hidden bg-[#0a0a0a] transition hover:-translate-y-0.5 ${visual.animate ? "rarity-pulse" : ""}`}
+      style={{ border: `${visual.borderWidth}px solid ${visual.border}`, boxShadow: visual.glow }}
     >
       <div className="flex items-center justify-center h-5 border-b" style={{ borderColor: frame + "55" }}>
         <span className="text-[8px] font-display tracking-[0.22em] text-lime">TOLS CASINO</span>

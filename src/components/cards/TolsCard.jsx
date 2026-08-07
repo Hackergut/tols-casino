@@ -1,6 +1,6 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
-import { rarityColor, rarityLabel, collectionAccent, collectionCodes, ovrFor, nameParts, collectionAbbr, collectionImage } from "@/lib/packs";
+import { rarityColor, rarityLabel, rarityVisual, collectionAccent, collectionCodes, ovrFor, nameParts, collectionAbbr, collectionImage } from "@/lib/packs";
 
 // New TOLS CASINO neon-HUD collectible card. Thick glowing lime border with
 // circuit corners, framed "TOLS CASINO" header, OVR rating box, real artwork
@@ -8,6 +8,7 @@ import { rarityColor, rarityLabel, collectionAccent, collectionCodes, ovrFor, na
 // drives the border color + glow halo (visual rarity indicator).
 export default function TolsCard({ card, className = "" }) {
   const frame = rarityColor(card.rarity);
+  const visual = rarityVisual(card.rarity);
   const accent = collectionAccent(card.collection);
   const ovr = ovrFor(card);
   const codes = collectionCodes(card.collection);
@@ -19,8 +20,8 @@ export default function TolsCard({ card, className = "" }) {
 
   return (
     <div
-      className={`relative rounded-xl bg-[#0a0a0a] border-2 ${className}`}
-      style={{ borderColor: frame, boxShadow: `0 0 0 1px ${frame}, 0 0 28px -6px ${frame}` }}
+      className={`relative rounded-xl bg-[#0a0a0a] ${visual.animate ? "rarity-pulse" : ""} ${className}`}
+      style={{ border: `${visual.borderWidth}px solid ${visual.border}`, boxShadow: visual.glow }}
     >
       <Corner className="top-1 left-1" color={frame} />
       <Corner className="top-1 right-1 rotate-90" color={frame} />
