@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Gamepad2, ArrowRight, ShieldCheck } from "lucide-react";
+import { Gamepad2, ArrowRight, ShieldCheck, Play } from "lucide-react";
 import GameArt from "@/components/GameArt";
 
 const TOLS_GAMES = [
@@ -49,14 +49,15 @@ function TolsCard({ game }) {
   return (
     <Link
       to={`/game/${game.slug}`}
-      className="group relative aspect-[4/3] rounded-2xl overflow-hidden border border-white/10 bg-[#111] hover:border-lime/40 hover:-translate-y-0.5 transition-all duration-300"
+      className="group relative aspect-[4/3] rounded-xl overflow-hidden bg-[#161616] border border-white/20 hover:border-lime/60 active:scale-[0.98] transition"
     >
       <GameArt slug={game.slug} className="group-hover:scale-105 transition duration-500" />
-      <div className="absolute inset-x-0 bottom-0 p-2.5 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-        <p className="text-white text-xs sm:text-sm font-black uppercase tracking-tight">{game.name}</p>
-      </div>
-      <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-lime text-black text-[10px] font-black opacity-0 group-hover:opacity-100 transition">
-        ▶ PLAY
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-2.5 flex items-end justify-between gap-2">
+        <p className="font-display text-sm uppercase leading-none tracking-tight text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{game.name}</p>
+        <span className="shrink-0 flex items-center gap-0.5 px-2 py-1 rounded-full bg-lime text-black text-[9px] font-black uppercase leading-none">
+          <Play className="w-2.5 h-2.5 fill-black" /> Play
+        </span>
       </div>
     </Link>
   );
