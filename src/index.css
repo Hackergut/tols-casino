@@ -39,16 +39,24 @@
   }
   html, body, #root {
     height: 100%;
+    overscroll-behavior: none;
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
     background: radial-gradient(90% 55% at 55% -10%, #1c1f16 0%, #0b0b0b 45%, #070707 100%);
     background-attachment: fixed;
   }
+
+  button, a, [role="button"], [role="tab"], nav, summary, .tap-none {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer utilities {
   .text-lime { color: #ccff00; }
+  .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); background-color: black; }
   .bg-lime { background-color: #ccff00; }
   .border-lime { border-color: #ccff00; }
   .glow-lime { box-shadow: 0 0 24px -4px rgba(204, 255, 0, 0.45); }
