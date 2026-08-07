@@ -4,9 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import GameArt from "@/components/GameArt";
 
 const SLIDES = [
-  { eyebrow: "INSTANT", title: "VIP MATCH", copy: "Bring your VIP status and unlock TOLS rewards.", cta: "MATCH STATUS NOW", to: "/vip", slug: "dice" },
-  { eyebrow: "TOLS", title: "ORIGINALS", copy: "Provably fair games built for transparent play.", cta: "TRY NOW", to: "/games/category/originals", slug: "crash" },
-  { eyebrow: "EARN", title: "POINTS FASTER", copy: "Invite players and boost your affiliate rewards.", cta: "BOOST NOW", to: "/affiliate", slug: "plinko" },
+  { eyebrow: "INSTANT", title: "VIP MATCH", copy: "Bring your VIP status, claim rewards instantly.", cta: "MATCH STATUS NOW", to: "/vip", slug: "dice" },
+  { eyebrow: "TOLS", title: "ZK-ORIGINALS", copy: "First-ever games with logic, RTP & RNG proven onchain.", cta: "TRY NOW", to: "/games/category/originals", slug: "crash" },
+  { eyebrow: "EARN", title: "POINTS FASTER", copy: "Activate boosts and earn up to 20% more.", cta: "BOOST NOW", to: "/affiliate", slug: "plinko" },
 ];
 
 export default function PromoCarousel() {

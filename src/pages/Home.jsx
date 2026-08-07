@@ -67,12 +67,11 @@ export default function Home() {
   };
 
   const rails = [
-    { id: "originals", title: "TOLS Games", icon: Sparkles, games: originals, to: "/games/category/originals" },
+    { id: "originals", title: "TOLS Originals", icon: Gamepad2, games: originals, to: "/games/category/originals", moreTile: true },
     { id: "featured", title: "Featured Games", icon: Star, games: [...originals.slice(0, 6), ...slotCards.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "slots", title: "Slots", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
     { id: "live", title: "Live Casino", icon: Radio, games: [], to: "/games/category/live", empty: "Live casino coming soon to TOLS.", lazy: true },
-
   ];
   const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails.filter((r) => !r.lazy);
 
@@ -84,10 +83,10 @@ export default function Home() {
         {/* Hero */}
         <RollyHero />
 
-        {/* Sticky lobby toolbar: search + category filter, stays under the header */}
-        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 flex flex-col xl:flex-row gap-3">
-          <div className="flex-1 min-w-0"><CategoryChips active={chip} onSelect={onChip} /></div>
-          <div className="xl:w-72 shrink-0"><LobbySearch value={query} onChange={setQuery} /></div>
+        {/* Sticky lobby toolbar: tabs on top, full-width search below */}
+        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 space-y-2">
+          <CategoryChips active={chip} onSelect={onChip} />
+          <LobbySearch value={query} onChange={setQuery} />
         </div>
 
         {results ? (
@@ -110,7 +109,7 @@ export default function Home() {
         ) : (
           <>
             {visibleRails.map((r) => (
-              <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} />
+              <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} moreTile={r.moreTile} />
             ))}
             {!chip && bgamesGames.length > 0 && (
               <GameRail title="BGames" icon={Gamepad2} games={bgamesGames} viewAllTo="/games/provider/bgames" />
