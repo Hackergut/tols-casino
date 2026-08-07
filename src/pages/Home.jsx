@@ -8,6 +8,7 @@ import LobbySearch from "@/components/home/LobbySearch";
 import CategoryChips from "@/components/home/CategoryChips";
 import ProvidersRail from "@/components/home/ProvidersRail";
 import AllGamesGrid from "@/components/home/AllGamesGrid";
+import MegaPromoCards from "@/components/home/MegaPromoCards";
 import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
 import TolsLogo from "@/components/TolsLogo";
@@ -108,6 +109,7 @@ export default function Home() {
           <LobbySkeleton />
         ) : (
           <>
+            <MegaPromoCards />
             {visibleRails.map((r) => (
               <GameRail key={r.id} title={r.title} icon={r.icon} games={r.games} viewAllTo={r.to} emptyText={r.empty} moreTile={r.moreTile} />
             ))}
