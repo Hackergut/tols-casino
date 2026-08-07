@@ -37,8 +37,22 @@ export default async function(req) {
 
     const settings = await base44.asServiceRole.entities.PlatformSetting.filter({ category: "payments" });
     const get = (k) => { const s = settings.find(x => x.key === k); return s ? s.value : ""; };
-    const operator = get(cfg.opKey);
-    if (!operator) return Response.json({ error: "Operator deposit address not configured for this chain" }, { status: 503 });
+    // Per-user custodial deposit address (HD-derived for this user) is the
+    // preferred recipient. Falls back to the shared operator address for legacy.
+    const userWallets = await base44.asServiceRole.entities.UserWallet.filter({ created_by_id: user.id });
+    let expectedTo = "";
+    if (userWallets.length && userWallets[0].deposit_addresses) {
+      try {
+        const map = JSON.parse(userWallets[0].deposit_addresses);
+        if (map && map[chain]) expectedTo = String(map[chain]);
+      } catch {}
+    }
+    if (!expectedTo) {
+      const op = get(cfg.opKey);
+      if (!op) return Response.json({ error: "Deposit address not configured for this chain" }, { status: 503 });
+      expectedTo = op;
+    }
+    const operator = expectedTo;
 
     const dedupeKey = chain + ":" + txHash;
     const existing = await base44.asServiceRole.entities.Deposit.filter({ tx_hash: dedupeKey });

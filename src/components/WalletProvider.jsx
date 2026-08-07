@@ -9,16 +9,28 @@ export function WalletProvider({ children }) {
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const ensureDepositAddresses = useCallback(async (w) => {
+    if (w.deposit_addresses) return w;
+    try {
+      const res = await base44.functions.invoke("generateUserDepositAddresses", { wallet_id: w.id });
+      const d = res.data;
+      if (d && d.addresses) {
+        return { ...w, deposit_addresses: JSON.stringify(d.addresses), deposit_index: d.index || 0 };
+      }
+    } catch (e) { /* ignore — generated on demand */ }
+    return w;
+  }, []);
+
   const loadWallet = useCallback(async () => {
     try {
       const user = await base44.auth.me();
       if (!user) return;
       const list = await base44.entities.UserWallet.filter({ created_by_id: user.id });
       if (list && list.length) {
-        setWallet(list[0]);
+        setWallet(await ensureDepositAddresses(list[0]));
       } else {
         const created = await base44.entities.UserWallet.create({ balance: 1000, currency: "USDT", vip_level: 1, xp: 0, total_wagered: 0 });
-        setWallet(created);
+        setWallet(await ensureDepositAddresses(created));
       }
     } catch (e) {
       // user not authenticated — run in guest/local mode

@@ -22,6 +22,16 @@
       "type": "number",
       "default": 0
     },
+    "deposit_addresses": {
+      "type": "string",
+      "default": "",
+      "description": "JSON map chain -> per-user HD-derived custodial deposit address { ethereum, polygon, solana }"
+    },
+    "deposit_index": {
+      "type": "number",
+      "default": 0,
+      "description": "HD derivation index assigned to this user (unique per user)"
+    },
     "description": {
       "type": "string",
       "default": "",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
@@ -14,7 +14,6 @@ import { coinById } from "@/components/wallet/coins";
 export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
   const { wallet, reload } = useWallet();
   const w3 = useWeb3Wallet();
-  const [settings, setSettings] = useState({});
   const [copied, setCopied] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [busy, setBusy] = useState(false);
@@ -26,23 +25,18 @@ export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
   const active = coinById(coin);
   const isEvm = chain === "ethereum" || chain === "polygon";
 
-  const loadSettings = useCallback(async () => {
-    try {
-      const list = await base44.entities.PlatformSetting.filter({ category: "payments" });
-      const m = {};
-      list.forEach((s) => { m[s.key] = s.value; });
-      setSettings(m);
-    } catch { setSettings({}); }
-  }, []);
-  useEffect(() => { loadSettings(); }, [loadSettings]);
-
-  const operator = settings[`operator_address_${chain}`] || "";
+  // Per-user custodial deposit address (HD-derived for this user).
+  const depositMap = wallet && wallet.deposit_addresses
+    ? (() => { try { return JSON.parse(wallet.deposit_addresses); } catch { return null; } })()
+    : null;
+  const depositAddress = (depositMap && depositMap[chain]) || "";
+  const isGuest = !wallet || wallet.id === "guest";
   const connectedAddress = isEvm ? w3.evmAddress : w3.solAddress;
   const connected = !!connectedAddress;
 
   const copy = () => {
-    if (operator) {
-      navigator.clipboard && navigator.clipboard.writeText(operator);
+    if (depositAddress) {
+      navigator.clipboard && navigator.clipboard.writeText(depositAddress);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     }
@@ -113,30 +107,35 @@ export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
       </div>
 
       {/* Address + QR */}
-      {operator ? (
+      {isGuest ? (
+        <div className="rounded-2xl border border-lime/20 bg-lime/5 p-5 text-center space-y-3">
+          <p className="text-sm text-white/70">Sign in to generate your unique deposit address and QR code.</p>
+          <Link to="/login" onClick={onClose} className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-lime text-black text-sm font-black hover:opacity-90 transition">Sign in</Link>
+        </div>
+      ) : depositAddress ? (
         <div className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 space-y-3">
-          <p className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">{active.name} ({active.network}) deposit address</p>
+          <p className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">Your {active.name} ({active.network}) deposit address</p>
           <div className="flex flex-col items-center">
             <div className="rounded-xl bg-white p-3">
-              <QRCodeSVG value={operator} size={150} bgColor="#ffffff" fgColor="#0a0a0a" level="M" />
+              <QRCodeSVG value={depositAddress} size={150} bgColor="#ffffff" fgColor="#0a0a0a" level="M" />
             </div>
             <span className="text-[10px] text-white/40 mt-2 uppercase tracking-wider">Scan to deposit</span>
           </div>
           <div className="flex items-center gap-2 rounded-xl bg-[#0e0e0e] border border-white/10 p-3">
-            <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{operator}</code>
+            <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{depositAddress}</code>
             <button onClick={copy} className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-lime hover:border-lime/30 transition">
               {copied ? <Check className="w-4 h-4 text-lime" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
           <div className="flex items-start gap-2 text-xs text-lime/80">
             <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-            <p>Your deposit must be sent on the {active.name} ({active.network}) network to be processed.</p>
+            <p>Send only {active.symbol} to this address on the {active.name} ({active.network}) network. Your deposit is credited in USDT after on-chain confirmation.</p>
           </div>
         </div>
       ) : (
         <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4 text-sm text-yellow-200 flex items-start gap-2">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-          <p>Deposit address for {active.name} not configured yet. An admin must set it under Admin → Payment settings.</p>
+          <p>Your deposit address is being generated. Reopen the wallet in a moment.</p>
         </div>
       )}
 
