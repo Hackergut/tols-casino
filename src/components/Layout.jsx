@@ -5,7 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import MobileNav from "@/components/nav/MobileNav";
 import Header from "@/components/Header";
 import CookieNotice from "@/components/CookieNotice";
-import SupportButton from "@/components/SupportButton";
+
 import OnboardingTour from "@/components/OnboardingTour";
 import BottomNav from "@/components/nav/BottomNav";
 import { useSwipe } from "@/hooks/useSwipe";
@@ -98,7 +98,6 @@ export default function Layout() {
       <BottomNav onMenu={() => setMobileNav(true)} />
 
       <CookieNotice />
-      <SupportButton />
       <OnboardingTour />
     </div>
   );
