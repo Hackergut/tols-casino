@@ -1,10 +1,11 @@
 import React from "react";
-import { rarityColor, rarityLabel, collectionAccent, collectionCodes, ovrFor, nameParts, collectionAbbr } from "@/lib/packs";
+import { Image } from "@/components/ui/image";
+import { rarityColor, rarityLabel, collectionAccent, collectionCodes, ovrFor, nameParts, collectionAbbr, collectionImage } from "@/lib/packs";
 
 // New TOLS CASINO neon-HUD collectible card. Thick glowing lime border with
-// circuit corners, framed "TOLS CASINO" header, OVR rating box, neon-streak
-// portrait, slashed nameplate, footer branding. Used by the Swap extraction
-// game and the Marketplace.
+// circuit corners, framed "TOLS CASINO" header, OVR rating box, real artwork
+// portrait with neon streaks, slashed nameplate, footer branding. The rarity
+// drives the border color + glow halo (visual rarity indicator).
 export default function TolsCard({ card, className = "" }) {
   const frame = rarityColor(card.rarity);
   const accent = collectionAccent(card.collection);
@@ -14,16 +15,25 @@ export default function TolsCard({ card, className = "" }) {
   const abbr = collectionAbbr(card.collection);
   const monogram = String(last || card.collection || "T").charAt(0).toUpperCase();
   const tail = String(card.grading_id || card.token_id || "").slice(-2);
+  const img = collectionImage(card);
 
   return (
-    <div className={`relative rounded-xl bg-[#0a0a0a] border-2 ${className}`} style={{ borderColor: frame, boxShadow: `0 0 28px -8px ${frame}` }}>
+    <div
+      className={`relative rounded-xl bg-[#0a0a0a] border-2 ${className}`}
+      style={{ borderColor: frame, boxShadow: `0 0 0 1px ${frame}, 0 0 28px -6px ${frame}` }}
+    >
       <Corner className="top-1 left-1" color={frame} />
       <Corner className="top-1 right-1 rotate-90" color={frame} />
       <Corner className="bottom-1 left-1 -rotate-90" color={frame} />
       <Corner className="bottom-1 right-1 rotate-180" color={frame} />
 
+      {/* Rarity ribbon (top edge) */}
+      <div className="absolute -top-px left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-b-md text-[8px] font-black tracking-widest" style={{ background: frame, color: "#0a0a0a" }}>
+        {rarityLabel(card.rarity).toUpperCase()}
+      </div>
+
       {/* Header frame */}
-      <div className="relative mt-2 mx-2 rounded-md border px-2 py-1 text-center" style={{ borderColor: frame + "88", background: frame + "12" }}>
+      <div className="relative mt-3 mx-2 rounded-md border px-2 py-1 text-center" style={{ borderColor: frame + "88", background: frame + "12" }}>
         <span className="text-[11px] font-display tracking-[0.22em] text-lime">TOLS CASINO</span>
       </div>
 
@@ -44,17 +54,23 @@ export default function TolsCard({ card, className = "" }) {
           </div>
         </div>
 
-        {/* portrait with neon streaks */}
-        <div className="relative h-28 flex items-center justify-center overflow-hidden rounded-md mt-2" style={{ background: "radial-gradient(circle at 50% 30%, #141414, #050505)" }}>
-          <div className="absolute inset-0 flex justify-around opacity-60 pointer-events-none">
+        {/* Real artwork portrait with neon streaks */}
+        <div className="relative h-32 overflow-hidden rounded-md mt-2 border-2" style={{ borderColor: frame, background: "#050505" }}>
+          {img ? (
+            <Image src={img} fittingType="fill" className="absolute inset-0 w-full h-full" />
+          ) : (
+            <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 50% 30%, ${accent}26, #0a0a0a 80%)` }} />
+          )}
+          <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.75) 100%)" }} />
+          <div className="absolute inset-0 flex justify-around opacity-40 pointer-events-none">
             {[0, 1, 2, 3, 4].map((i) => <span key={i} className="w-px h-full" style={{ background: `linear-gradient(${accent}, transparent)`, opacity: 0.5 - i * 0.05 }} />)}
           </div>
-          <div className="absolute w-24 h-24 rounded-full blur-2xl" style={{ background: `${frame}33` }} />
-          <div className="relative w-20 h-20 rounded-full grid place-items-center border-2" style={{ borderColor: frame, background: `radial-gradient(circle at 50% 30%, ${accent}26, #0a0a0a 80%)` }}>
-            <span className="text-4xl font-display" style={{ color: accent, textShadow: `0 0 14px ${accent}66` }}>{monogram}</span>
-          </div>
-          <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] font-display tracking-[0.3em] text-white/70 [writing-mode:vertical-rl] rotate-180">{abbr}</span>
-          <span className="absolute left-1 bottom-1 text-[8px] font-black tracking-widest px-1.5 py-0.5 rounded-full" style={{ background: frame, color: "#0a0a0a" }}>{rarityLabel(card.rarity).toUpperCase()}</span>
+          {!img && (
+            <div className="absolute inset-0 grid place-items-center">
+              <span className="text-4xl font-display" style={{ color: accent, textShadow: `0 0 14px ${accent}66` }}>{monogram}</span>
+            </div>
+          )}
+          <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] font-display tracking-[0.3em] text-white/80 [writing-mode:vertical-rl] rotate-180">{abbr}</span>
         </div>
       </div>
 

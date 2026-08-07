@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ShoppingCart, Repeat, Tag, X, Plus, Search } from "lucide-react";
+import { ShoppingCart, Repeat, Tag, X, Search } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,6 +17,7 @@ export default function Marketplace() {
   const [listings, setListings] = useState([]);
   const [myCards, setMyCards] = useState([]);
   const [myListings, setMyListings] = useState([]);
+  const [myUserId, setMyUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const { wallet, updateBalance } = useWallet();
@@ -25,13 +26,15 @@ export default function Marketplace() {
   const loadAll = async () => {
     setLoading(true);
     try {
-      const [active, mine, owned] = await Promise.all([
+      let me = null; try { me = await base44.auth.me(); } catch {}
+      setMyUserId(me?.id || null);
+      const [active, owned] = await Promise.all([
         base44.entities.MarketListing.filter({ status: "active" }, "-created_date", 100),
         base44.entities.CollectibleCard.list("-created_date", 100),
       ]);
       setListings(active || []);
       setMyCards(owned || []);
-      setMyListings((active || []).filter((l) => l.created_by_id && l.created_by_id === (wallet?.id)));
+      setMyListings((active || []).filter((l) => me && l.created_by_id === me.id));
     } catch (e) { /* ignore */ }
     setLoading(false);
   };
@@ -40,7 +43,9 @@ export default function Marketplace() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return listings.filter((l) => (tab === "buy" ? l.listing_type === "sale" : l.listing_type === "swap")).filter((l) => !q || (l.card_name || "").toLowerCase().includes(q) || (l.collection || "").toLowerCase().includes(q));
+    return listings
+      .filter((l) => (tab === "buy" ? l.listing_type === "sale" : l.listing_type === "swap"))
+      .filter((l) => !q || (l.card_name || "").toLowerCase().includes(q) || (l.collection || "").toLowerCase().includes(q));
   }, [listings, tab, query]);
 
   return (
@@ -48,10 +53,9 @@ export default function Marketplace() {
       <main className="mx-auto max-w-5xl px-4 sm:px-6 py-5 space-y-5">
         <div>
           <h1 className="text-2xl sm:text-3xl font-display uppercase text-white tracking-tight">Marketplace</h1>
-          <p className="text-sm text-white/50 mt-0.5">Compra, vendi e scambia carte collezionabili TOLS.</p>
+          <p className="text-sm text-white/50 mt-0.5">Buy, sell and swap TOLS collectible cards.</p>
         </div>
 
-        {/* tabs */}
         <div className="flex items-center gap-2">
           {TABS.map((t) => {
             const Icon = t.icon;
@@ -69,16 +73,16 @@ export default function Marketplace() {
           <>
             <div className="flex items-center gap-2 px-3 h-11 rounded-xl bg-card border border-white/10">
               <Search className="w-4 h-4 text-white/30" />
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca carte o collezioni" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
+              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search cards or collections" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
             </div>
 
             {loading ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-72 rounded-xl border border-white/10 bg-[#111] animate-pulse" />)}</div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-12 text-center text-sm text-white/40">Nessuna offerta {tab === "buy" ? "in vendita" : "di scambio"} al momento.</div>
+              <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-12 text-center text-sm text-white/40">No {tab === "buy" ? "sale" : "swap"} listings right now.</div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                {filtered.map((l) => <ListingCard key={l.id} listing={l} onAction={tab === "buy" ? () => buyCard(l, loadAll, updateBalance, wallet, toast) : () => proposeSwap(l, loadAll, wallet, toast)} />)}
+                {filtered.map((l) => <ListingCard key={l.id} listing={l} onAction={tab === "buy" ? () => buyCard(l, loadAll, updateBalance, wallet, toast) : () => proposeSwap(l, loadAll, toast)} />)}
               </div>
             )}
           </>
@@ -109,8 +113,8 @@ function ListingCard({ listing, onAction }) {
           </>
         ) : (
           <>
-            <div className="text-[11px] text-white/60 mt-1">Vuole: <span className="text-lime font-bold">{listing.swap_for || "qualsiasi"}</span></div>
-            <button onClick={onAction} className="mt-2 w-full h-9 rounded-lg border border-lime/40 text-lime font-black text-sm">Proponi scambio</button>
+            <div className="text-[11px] text-white/60 mt-1">Wants: <span className="text-lime font-bold">{listing.swap_for || "any"}</span></div>
+            <button onClick={onAction} className="mt-2 w-full h-9 rounded-lg border border-lime/40 text-lime font-black text-sm">Propose swap</button>
           </>
         )}
       </div>
@@ -128,7 +132,7 @@ function SellForm({ myCards, myListings, onChange }) {
 
   const submit = async () => {
     const card = myCards.find((c) => c.id === selectedId);
-    if (!card) { toast({ title: "Seleziona una carta", variant: "destructive" }); return; }
+    if (!card) { toast({ title: "Select a card", variant: "destructive" }); return; }
     setBusy(true);
     try {
       let me = null; try { me = await base44.auth.me(); } catch {}
@@ -141,11 +145,11 @@ function SellForm({ myCards, myListings, onChange }) {
         swap_for: mode === "swap" ? swapFor : "",
       };
       await base44.entities.MarketListing.create(payload);
-      toast({ title: "Inserzione pubblicata", description: mode === "sale" ? "La tua carta è in vendita." : "La tua carta è disponibile per lo scambio." });
+      toast({ title: "Listing published", description: mode === "sale" ? "Your card is now for sale." : "Your card is available for swap." });
       setPrice(""); setSwapFor(""); setSelectedId("");
       onChange();
     } catch (e) {
-      toast({ title: "Errore", description: "Pubblicazione non riuscita.", variant: "destructive" });
+      toast({ title: "Error", description: "Publishing failed.", variant: "destructive" });
     } finally { setBusy(false); }
   };
 
@@ -158,43 +162,43 @@ function SellForm({ myCards, myListings, onChange }) {
       <div className="rounded-2xl bg-card border border-white/10 p-4 space-y-3">
         <div className="flex items-center gap-2">
           {["sale", "swap"].map((m) => (
-            <button key={m} onClick={() => setMode(m)} className={`h-8 px-3 rounded-full text-xs font-black ${mode === m ? "bg-lime text-black" : "bg-white/8 text-white/60"}`}>{m === "sale" ? "Vendi" : "Scambia"}</button>
+            <button key={m} onClick={() => setMode(m)} className={`h-8 px-3 rounded-full text-xs font-black ${mode === m ? "bg-lime text-black" : "bg-white/8 text-white/60"}`}>{m === "sale" ? "Sell" : "Swap"}</button>
           ))}
         </div>
-        <label className="block text-xs font-bold text-white/50">Seleziona una tua carta</label>
+        <label className="block text-xs font-bold text-white/50">Select one of your cards</label>
         <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} className="w-full h-10 rounded-lg bg-[#0a0a0a] border border-white/15 px-2 text-sm text-white">
-          <option value="">— scegli —</option>
+          <option value="">— choose —</option>
           {myCards.map((c) => <option key={c.id} value={c.id}>{c.card_name} · {c.collection} · {rarityLabel(c.rarity)}</option>)}
         </select>
         {mode === "sale" ? (
           <div>
-            <label className="block text-xs font-bold text-white/50 mb-1">Prezzo (USDT)</label>
-            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="es. 1200" className="w-full h-10 rounded-lg bg-[#0a0a0a] border border-white/15 px-3 text-sm text-white" />
+            <label className="block text-xs font-bold text-white/50 mb-1">Price (USDT)</label>
+            <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="e.g. 1200" className="w-full h-10 rounded-lg bg-[#0a0a0a] border border-white/15 px-3 text-sm text-white" />
           </div>
         ) : (
           <div>
-            <label className="block text-xs font-bold text-white/50 mb-1">Cosa cerchi in cambio</label>
+            <label className="block text-xs font-bold text-white/50 mb-1">What you want in return</label>
             <select value={swapFor} onChange={(e) => setSwapFor(e.target.value)} className="w-full h-10 rounded-lg bg-[#0a0a0a] border border-white/15 px-2 text-sm text-white">
-              <option value="">Qualsiasi collezione</option>
+              <option value="">Any collection</option>
               {COLLECTION_NAMES.map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
         )}
-        <button onClick={submit} disabled={busy} className="w-full h-11 rounded-xl bg-lime text-black font-black text-sm disabled:opacity-60">Pubblica inserzione</button>
+        <button onClick={submit} disabled={busy} className="w-full h-11 rounded-xl bg-lime text-black font-black text-sm disabled:opacity-60">Publish listing</button>
       </div>
 
       <div>
-        <h3 className="text-sm font-black text-white mb-2">Le tue inserzioni</h3>
+        <h3 className="text-sm font-black text-white mb-2">Your listings</h3>
         {myListings.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/10 bg-[#111] py-8 text-center text-sm text-white/40">Nessuna inserzione attiva.</div>
+          <div className="rounded-xl border border-dashed border-white/10 bg-[#111] py-8 text-center text-sm text-white/40">No active listings.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {myListings.map((l) => (
               <div key={l.id} className="rounded-xl bg-card border border-white/10 p-2">
                 <TolsCard card={{ collection: l.collection, card_name: l.card_name, rarity: l.rarity, insured_value: l.insured_value, grading_company: "PSA", grading_id: l.id?.slice(-6), token_id: l.id }} />
                 <div className="mt-2 flex items-center justify-between text-[11px]">
-                  <span className="text-white/60">{l.listing_type === "sale" ? `$${Number(l.price||0).toLocaleString()}` : `Swap · ${l.swap_for || "any"}`}</span>
-                  <button onClick={() => cancelListing(l.id)} className="text-white/40 hover:text-red-400 inline-flex items-center gap-1"><X className="w-3 h-3" /> Chiudi</button>
+                  <span className="text-white/60">{l.listing_type === "sale" ? `$${Number(l.price || 0).toLocaleString()}` : `Swap · ${l.swap_for || "any"}`}</span>
+                  <button onClick={() => cancelListing(l.id)} className="text-white/40 hover:text-red-400 inline-flex items-center gap-1"><X className="w-3 h-3" /> Close</button>
                 </div>
               </div>
             ))}
@@ -207,7 +211,7 @@ function SellForm({ myCards, myListings, onChange }) {
 
 async function buyCard(listing, reload, updateBalance, wallet, toast) {
   const price = Number(listing.price || 0);
-  if (!wallet || wallet.balance < price) { toast({ title: "Saldo insufficiente", variant: "destructive" }); return; }
+  if (!wallet || wallet.balance < price) { toast({ title: "Insufficient balance", variant: "destructive" }); return; }
   try {
     await updateBalance(-price, 0);
     await base44.entities.CollectibleCard.create({
@@ -217,12 +221,12 @@ async function buyCard(listing, reload, updateBalance, wallet, toast) {
       pack_name: "Marketplace", is_new: true,
     });
     await base44.entities.MarketListing.update(listing.id, { status: "sold" });
-    toast({ title: "Acquisto completato", description: `${listing.card_name} aggiunta alla collezione.` });
+    toast({ title: "Purchase complete", description: `${listing.card_name} added to your collection.` });
     reload();
-  } catch (e) { toast({ title: "Errore", description: "Acquisto non riuscito.", variant: "destructive" }); }
+  } catch (e) { toast({ title: "Error", description: "Purchase failed.", variant: "destructive" }); }
 }
 
-async function proposeSwap(listing, reload, wallet, toast) {
+async function proposeSwap(listing, reload, toast) {
   try {
     await base44.entities.MarketListing.update(listing.id, { status: "closed" });
     await base44.entities.CollectibleCard.create({
@@ -231,7 +235,7 @@ async function proposeSwap(listing, reload, wallet, toast) {
       grading_company: "PSA", grading_id: String(listing.id || "").slice(-8), image: listing.image || "",
       pack_name: "Marketplace Swap", is_new: true,
     });
-    toast({ title: "Scambio proposto", description: "Carta ricevuta nella tua collezione." });
+    toast({ title: "Swap proposed", description: "Card received in your collection." });
     reload();
-  } catch (e) { toast({ title: "Errore", description: "Scambio non riuscito.", variant: "destructive" }); }
+  } catch (e) { toast({ title: "Error", description: "Swap failed.", variant: "destructive" }); }
 }

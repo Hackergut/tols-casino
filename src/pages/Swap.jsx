@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Zap, Plus, Minus, Info, X, Check, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, Zap, Plus, Minus, Info, X, Check, ShieldCheck } from "lucide-react";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
 import { base44 } from "@/api/base44Client";
@@ -78,7 +78,7 @@ export default function Swap() {
 
   const handleOpen = async () => {
     if (!wallet || wallet.balance < cost) {
-      toast({ title: "Saldo insufficiente", description: `Servono ${cost.toLocaleString()} USDT. Ricarica il wallet.`, variant: "destructive" });
+      toast({ title: "Insufficient balance", description: `You need ${cost.toLocaleString()} USDT. Top up your wallet.`, variant: "destructive" });
       return;
     }
     setPulling(true);
@@ -88,7 +88,7 @@ export default function Swap() {
       try { await base44.entities.CollectibleCard.bulkCreate(pulled); } catch (e) { /* ignore persistence */ }
       setReveal(pulled);
     } catch (e) {
-      toast({ title: "Errore", description: "Apertura non riuscita.", variant: "destructive" });
+      toast({ title: "Error", description: "Open failed.", variant: "destructive" });
     } finally {
       setPulling(false);
     }
@@ -98,11 +98,11 @@ export default function Swap() {
     <div className="min-h-screen pb-32">
       <main className="mx-auto max-w-3xl px-4 sm:px-6 py-5 space-y-5">
         <button onClick={() => navigate(-1)} className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
-          <ArrowLeft className="w-4 h-4" /> Indietro
+          <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <h1 className="text-2xl sm:text-3xl font-display uppercase text-white tracking-tight">Swap Cards</h1>
-        <p className="text-sm text-white/50 -mt-3">Estrazione gacha — apri il pack, colleziona le chase, completa i set.</p>
+        <p className="text-sm text-white/50 -mt-3">Gacha extraction — open the pack, chase the mythics, complete the sets.</p>
 
         {/* Pack hero */}
         <div className="relative rounded-2xl border border-lime/30 bg-gradient-to-b from-[#1a1c10] to-[#0a0a0a] p-4 sm:p-5 overflow-hidden">
@@ -118,35 +118,38 @@ export default function Swap() {
                 <span className="text-[10px] font-black text-black px-2 py-0.5 rounded-full bg-lime">Limited time</span>
               </div>
               <h2 className="text-lg font-black text-white leading-tight">TOLS Swap Pack</h2>
-              <p className="text-xs text-white/50 mt-0.5">3 carte per pack · rarità pesate · chase mythic</p>
+              <p className="text-xs text-white/50 mt-0.5">3 cards per pack · weighted rarities · mythic chases</p>
             </div>
           </div>
         </div>
 
-        {/* Rarity tiers grid */}
-        <div className="grid grid-cols-2 gap-2.5">
-          {tiers.map((t) => {
-            const r = RARITIES[t.key];
-            const pct = t.extra ? t.pct + RARITIES[t.extra].weight : t.pct;
-            return (
-              <div key={t.key} className="rounded-xl bg-[#1e2023] border border-white/10 p-3">
-                <div className="text-sm font-black" style={{ color: r.color }}>{r.label}</div>
-                <div className="text-[11px] text-white/55 mt-0.5">${r.min.toLocaleString()} – ${r.max.toLocaleString()} · {pct}%</div>
-              </div>
-            );
-          })}
+        {/* Rarity tiers grid (drop probabilities) */}
+        <div>
+          <h3 className="text-sm font-black text-white mb-2">Drop rates</h3>
+          <div className="grid grid-cols-2 gap-2.5">
+            {tiers.map((t) => {
+              const r = RARITIES[t.key];
+              const pct = t.extra ? t.pct + RARITIES[t.extra].weight : t.pct;
+              return (
+                <div key={t.key} className="rounded-xl bg-[#1e2023] border-2 p-3" style={{ borderColor: r.color + "55" }}>
+                  <div className="text-sm font-black" style={{ color: r.color }}>{r.label}</div>
+                  <div className="text-[11px] text-white/55 mt-0.5">${r.min.toLocaleString()} – ${r.max.toLocaleString()} · {pct}%</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Available cards */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-black text-white">Available cards</h3>
-            <span className="text-[11px] text-white/40">{CHASE_CARDS.length} chase mythic</span>
+            <span className="text-[11px] text-white/40">{CHASE_CARDS.length} mythic chases</span>
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             {CHASE_CARDS.map((c, i) => (
               <button key={i} onClick={() => setSelected(i)} className="relative text-left rounded-xl bg-[#1e2023] border-2 p-2 transition" style={{ borderColor: selected === i ? "#fcfc03" : "transparent" }}>
-                {i === 0 && <span className="absolute top-1.5 right-1.5 text-[9px] font-black text-black px-1.5 py-0.5 rounded bg-[#fcfc03]">NEW</span>}
+                {i === 0 && <span className="absolute top-1.5 right-1.5 text-[9px] font-black text-black px-1.5 py-0.5 rounded bg-[#fcfc03] z-10">NEW</span>}
                 <div className="aspect-[3/4]"><TolsCard card={c} className="h-full" /></div>
                 <div className="mt-2 grid grid-cols-2 gap-1 text-[10px]">
                   <div><div className="text-white/40">Insured value</div><div className="font-black text-white">${c.insured_value.toLocaleString()}</div></div>
@@ -199,11 +202,11 @@ export default function Swap() {
               ))}
             </div>
             <div className="mx-auto max-w-2xl mt-5 flex items-center justify-center gap-2 text-xs text-white/50">
-              <Check className="w-4 h-4 text-lime" /> Aggiunte alla tua collezione · 90% buyback garantito
+              <Check className="w-4 h-4 text-lime" /> Added to your collection · 90% buyback guaranteed
             </div>
             <div className="mx-auto max-w-2xl mt-4 flex gap-2">
-              <button onClick={() => setReveal(null)} className="flex-1 h-11 rounded-xl bg-lime text-black font-black text-sm">Continua</button>
-              <button onClick={handleOpen} disabled={pulling} className="flex-1 h-11 rounded-xl border border-lime/40 text-lime font-black text-sm disabled:opacity-60">Apri un altro</button>
+              <button onClick={() => setReveal(null)} className="flex-1 h-11 rounded-xl bg-lime text-black font-black text-sm">Continue</button>
+              <button onClick={handleOpen} disabled={pulling} className="flex-1 h-11 rounded-xl border border-lime/40 text-lime font-black text-sm disabled:opacity-60">Open another</button>
             </div>
           </div>
         </div>

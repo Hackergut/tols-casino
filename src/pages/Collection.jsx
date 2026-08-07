@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Layers, Check, Lock, ChevronDown, Search, Trophy } from "lucide-react";
+import { Check, Lock, ChevronDown, Search, Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { Image } from "@/components/ui/image";
 import CardDetailModal from "@/components/cards/CardDetailModal";
 import {
   COLLECTIONS, COLLECTION_NAMES, collectionCardList, collectionAccent,
-  rarityColor, rarityLabel, ovrFor, nameParts,
+  collectionImage, rarityColor, rarityLabel, ovrFor, nameParts,
 } from "@/lib/packs";
 
-// "La mia collezione" — thematic set completion. Shows owned vs missing cards
-// and progress per collection. Owned cards open the detail modal; missing
-// cards render as locked placeholders to chase.
+// "My Collection" — thematic set completion. Shows owned vs missing cards and
+// progress per collection. Owned cards open the detail modal; missing cards
+// render as locked placeholders to chase.
 export default function Collection() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +23,6 @@ export default function Collection() {
       .finally(() => setLoading(false));
   }, []);
 
-  // unique owned card names per collection
   const ownedByCollection = useMemo(() => {
     const map = {};
     cards.forEach((c) => {
@@ -64,11 +64,10 @@ export default function Collection() {
   return (
     <div className="min-h-screen">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-display uppercase text-white tracking-tight">La mia collezione</h1>
-            <p className="text-sm text-white/50 mt-0.5">Completa i set tematici e sblocca il tuo vault.</p>
+            <h1 className="text-2xl sm:text-3xl font-display uppercase text-white tracking-tight">My Collection</h1>
+            <p className="text-sm text-white/50 mt-0.5">Complete the thematic sets and build your vault.</p>
           </div>
           <div className="flex items-center gap-2 rounded-full bg-card border border-white/10 px-4 h-11">
             <Trophy className="w-4 h-4 text-lime" />
@@ -76,18 +75,16 @@ export default function Collection() {
           </div>
         </div>
 
-        {/* Overall stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <Stat label="Carte possedute" value={totalOwned} />
-          <Stat label="Carte uniche" value={uniqueOwned} />
-          <Stat label="Valore vault" value={`$${vaultValue.toLocaleString()}`} />
-          <Stat label="Completamento" value={`${overallPct}%`} />
+          <Stat label="Cards owned" value={totalOwned} />
+          <Stat label="Unique cards" value={uniqueOwned} />
+          <Stat label="Vault value" value={`$${vaultValue.toLocaleString()}`} />
+          <Stat label="Completion" value={`${overallPct}%`} />
         </div>
 
-        {/* overall progress bar */}
         <div className="rounded-2xl bg-card border border-white/10 p-4">
           <div className="flex items-center justify-between text-xs text-white/50 mb-2">
-            <span>Progresso globale</span>
+            <span>Overall progress</span>
             <span className="font-black text-white">{uniqueOwned} / {totalCards}</span>
           </div>
           <div className="h-2.5 rounded-full bg-white/8 overflow-hidden">
@@ -95,10 +92,9 @@ export default function Collection() {
           </div>
         </div>
 
-        {/* search */}
         <div className="flex items-center gap-2 px-3 h-11 rounded-xl bg-card border border-white/10">
           <Search className="w-4 h-4 text-white/30" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca una collezione" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search a collection" className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full" />
         </div>
 
         {loading ? (
@@ -151,13 +147,13 @@ function SetCard({ set, onOpen }) {
         <div className="px-4 pb-4 border-t border-white/5 pt-3">
           <div className="flex items-center gap-2 mb-3">
             <Check className="w-4 h-4 text-lime" />
-            <span className="text-xs font-bold text-white/60">Possedute ({set.ownedCards.length})</span>
+            <span className="text-xs font-bold text-white/60">Owned ({set.ownedCards.length})</span>
             <Lock className="w-4 h-4 text-white/30 ml-3" />
-            <span className="text-xs font-bold text-white/60">Mancanti ({set.missing.length})</span>
+            <span className="text-xs font-bold text-white/60">Missing ({set.missing.length})</span>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
             {set.ownedCards.map((c) => <OwnedTile key={c.id + c.card_name} card={c} accent={set.accent} onClick={() => onOpen(c)} />)}
-            {set.missing.map((name) => <MissingTile key={name} name={name} accent={set.accent} />)}
+            {set.missing.map((name) => <MissingTile key={name} name={name} />)}
           </div>
         </div>
       )}
@@ -167,17 +163,16 @@ function SetCard({ set, onOpen }) {
 
 function OwnedTile({ card, accent, onClick }) {
   const frame = rarityColor(card.rarity);
-  const monogram = String(nameParts(card).last || card.card_name).charAt(0).toUpperCase();
+  const img = collectionImage(card);
   return (
-    <button onClick={onClick} className="relative rounded-lg overflow-hidden border-2 bg-[#0a0a0a] bg-grid text-left" style={{ borderColor: frame, boxShadow: `0 0 16px -8px ${frame}` }}>
+    <button onClick={onClick} className="relative rounded-lg overflow-hidden border-2 bg-[#0a0a0a] text-left" style={{ borderColor: frame, boxShadow: `0 0 14px -8px ${frame}` }}>
       <div className="flex items-center justify-center h-5 border-b" style={{ borderColor: frame + "55" }}>
         <span className="text-[8px] font-display tracking-[0.2em] text-lime">TOLS</span>
       </div>
-      <div className="relative h-20 flex items-center justify-center">
-        <div className="absolute w-14 h-14 rounded-full blur-xl" style={{ background: `${frame}33` }} />
-        <div className="relative w-11 h-11 rounded-full grid place-items-center border-2" style={{ borderColor: frame }}>
-          <span className="text-base font-display" style={{ color: accent }}>{monogram}</span>
-        </div>
+      <div className="relative h-20 overflow-hidden">
+        {img ? <Image src={img} fittingType="fill" className="absolute inset-0 w-full h-full" /> : <div className="absolute inset-0" style={{ background: `radial-gradient(circle at 50% 30%, ${accent}26, #0a0a0a 80%)` }} />}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%)" }} />
+        <span className="absolute bottom-0.5 left-1 text-[8px] font-black px-1 rounded" style={{ background: frame, color: "#0a0a0a" }}>{rarityLabel(card.rarity).toUpperCase()}</span>
       </div>
       <div className="px-1.5 pb-1.5">
         <p className="text-[10px] font-display text-white leading-none truncate">{(card.card_name || "").toUpperCase()}</p>
@@ -187,7 +182,7 @@ function OwnedTile({ card, accent, onClick }) {
   );
 }
 
-function MissingTile({ name, accent }) {
+function MissingTile({ name }) {
   return (
     <div className="relative rounded-lg overflow-hidden border-2 border-dashed border-white/10 bg-[#0c0c0c] flex flex-col items-center justify-center h-[112px]">
       <Lock className="w-5 h-5 text-white/25 mb-1" />

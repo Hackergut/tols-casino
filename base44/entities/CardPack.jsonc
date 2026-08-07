@@ -32,6 +32,11 @@
       "default": "",
       "maxLength": 1000
     },
+    "drop_rates": {
+      "type": "string",
+      "default": "",
+      "description": "JSON map rarity -> weight overriding global odds, e.g. {\"common\":50,\"rare\":30,\"epic\":15,\"legendary\":4,\"mythic\":1}"
+    },
     "enabled": {
       "type": "boolean",
       "default": true

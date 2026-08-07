@@ -77,15 +77,44 @@ export const COLLECTIONS = {
   },
 };
 
+// Real artwork used as the card portrait when a card has no explicit image.
+export const COLLECTION_IMAGES = {
+  Pokémon: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/65f40b6cc_generated_image.png",
+  NBA: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/a42e9308c_generated_image.png",
+  FIFA: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/77f5c3b45_generated_image.png",
+  F1: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/9b5db9a50_generated_image.png",
+  UFC: "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/8175ff251_generated_image.png",
+  "Yu-Gi-Oh!": "https://media.base44.com/images/public/6a70afdaacf94647fa24a4a4/06dd27d82_generated_image.png",
+};
+
+export function collectionImage(card) {
+  if (card?.image) return card.image;
+  return COLLECTION_IMAGES[card?.collection] || "";
+}
+
 const TOTAL_WEIGHT = Object.values(RARITIES).reduce((s, r) => s + r.weight, 0);
 
-export function rollRarity() {
-  let roll = Math.random() * TOTAL_WEIGHT;
+// rollRarity accepts optional per-pack drop rates (rarity -> weight). When
+// omitted, the global RARITIES weights are used.
+export function rollRarity(rates) {
+  const weights = rates && typeof rates === "object" ? rates : null;
+  const total = weights
+    ? RARITY_ORDER.reduce((s, k) => s + (weights[k] ?? RARITIES[k].weight), 0)
+    : TOTAL_WEIGHT;
+  let roll = Math.random() * total;
   for (const key of RARITY_ORDER) {
-    roll -= RARITIES[key].weight;
+    roll -= weights ? (weights[key] ?? RARITIES[key].weight) : RARITIES[key].weight;
     if (roll < 0) return key;
   }
   return "common";
+}
+
+// Resolve a pack's drop rates (stored as a JSON string on the entity).
+export function packDropRates(pack) {
+  const dr = pack?.drop_rates;
+  if (!dr) return null;
+  if (typeof dr === "string") { try { return JSON.parse(dr); } catch { return null; } }
+  return dr;
 }
 
 export function rollInsuredValue(rarity) {
@@ -116,9 +145,10 @@ function pickCardName(collection, rarity) {
 // Open a pack: returns an array of generated card objects (not yet persisted).
 export function openPack(pack) {
   const count = pack.cards_per_pack || 3;
+  const rates = packDropRates(pack);
   const cards = [];
   for (let i = 0; i < count; i++) {
-    const rarity = rollRarity();
+    const rarity = rollRarity(rates);
     cards.push({
       collection: pack.collection,
       card_name: pickCardName(pack.collection, rarity),
