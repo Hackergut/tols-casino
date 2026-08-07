@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Search, DollarSign, User, ChevronDown, Plus, Users, Wallet, ArrowDownToLine, Shield, Crown, Menu, MessageCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWalletModal } from "@/components/wallet/useWalletModal";
@@ -10,6 +10,8 @@ import TolsLogo from "@/components/TolsLogo";
 export default function Header({ onMenu }) {
   const { wallet, vipTier } = useWallet();
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const { openWallet } = useWalletModal();
   const [isAdmin, setIsAdmin] = useState(false);
   const menuRef = useRef(null);
@@ -33,16 +35,19 @@ export default function Header({ onMenu }) {
           <Menu className="w-5 h-5" />
         </button>
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 shrink-0">
+        <Link to="/" className="lg:hidden flex items-center gap-2 shrink-0">
           <TolsLogo />
           <span className="hidden sm:inline-flex items-center px-1.5 h-5 rounded bg-blue-600 text-[9px] font-black text-white tracking-wider">BETA</span>
-        </a>
+        </Link>
 
         {/* Search */}
         <div className="hidden md:flex flex-1 max-w-md mx-auto items-center gap-2 px-4 h-10 rounded-full bg-[#1a1a1a] border border-white/5">
           <Search className="w-4 h-4 text-white/30" />
           <input
-            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && navigate(`/?q=${encodeURIComponent(search.trim())}`)}
+            placeholder="Search games"
             className="bg-transparent outline-none text-sm text-white/80 placeholder-white/30 w-full"
           />
         </div>

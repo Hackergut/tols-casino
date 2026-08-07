@@ -23,7 +23,7 @@ export default function AllGamesGrid({ title, games, limit = 48, viewAllTo }) {
         )}
       </SectionHeader>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-2.5 sm:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
         {shown.map((g) => (
           <GameCard key={g.id || g.slug} game={g} />
         ))}

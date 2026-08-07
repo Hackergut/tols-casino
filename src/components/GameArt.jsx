@@ -3,16 +3,16 @@ import { Dices, Bomb, Coins, Rocket, ArrowUp, Spade, Gem } from "lucide-react";
 
 const ART = {
   dice: { Icon: Dices, accent: "#ccff00", label: "DICE" },
-  mines: { Icon: Bomb, accent: "#ff4f6a", label: "MINES" },
-  keno: { Icon: null, accent: "#4f8aff", label: "KENO" },
-  plinko: { Icon: null, accent: "#ff8a4f", label: "PLINKO" },
+  mines: { Icon: Bomb, accent: "#ccff00", label: "MINES" },
+  keno: { Icon: null, accent: "#ccff00", label: "KENO" },
+  plinko: { Icon: null, accent: "#ccff00", label: "PLINKO" },
   coinflip: { Icon: Coins, accent: "#ccff00", label: "COINFLIP" },
-  crash: { Icon: Rocket, accent: "#ff4f2a", label: "CRASH" },
-  limbo: { Icon: ArrowUp, accent: "#4fa3ff", label: "LIMBO" },
-  wheel: { Icon: null, accent: "#b04fff", label: "WHEEL" },
-  roulette: { Icon: null, accent: "#ff4f6a", label: "ROULETTE" },
+  crash: { Icon: Rocket, accent: "#ccff00", label: "CRASH" },
+  limbo: { Icon: ArrowUp, accent: "#ccff00", label: "LIMBO" },
+  wheel: { Icon: null, accent: "#ccff00", label: "WHEEL" },
+  roulette: { Icon: null, accent: "#ccff00", label: "ROULETTE" },
   baccarat: { Icon: Spade, accent: "#ccff00", label: "BACCARAT" },
-  "neon-vault": { Icon: null, accent: "#b04fff", label: "NEON VAULT" },
+  "neon-vault": { Icon: null, accent: "#ccff00", label: "NEON VAULT" },
 };
 
 export default function GameArt({ slug, className = "" }) {
@@ -21,7 +21,7 @@ export default function GameArt({ slug, className = "" }) {
   return (
     <div
       className={`relative w-full h-full overflow-hidden ${className}`}
-      style={{ background: `radial-gradient(circle at 50% 35%, ${accent}24, transparent 70%), linear-gradient(160deg, #181818, #0a0a0a)` }}
+      style={{ background: `radial-gradient(ellipse at 50% 78%, ${accent}20, transparent 48%), radial-gradient(circle at 50% 35%, ${accent}12, transparent 60%), linear-gradient(160deg, #171717, #080808)` }}
     >
       <div className="absolute inset-0 bg-grid opacity-10" />
       <span className="absolute -bottom-3 left-1 text-5xl font-black italic opacity-10" style={{ color: accent }}>{label[0]}</span>
@@ -35,7 +35,7 @@ export default function GameArt({ slug, className = "" }) {
         ) : slug === "wheel" || slug === "roulette" ? (
           <WheelArt accent={accent} />
         ) : Icon ? (
-          <Icon style={{ color: accent }} strokeWidth={1.5} className="w-12 h-12 sm:w-14 sm:h-14 drop-shadow-[0_0_18px_currentColor]" />
+          <Icon style={{ color: accent }} strokeWidth={1.25} className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-[0_0_18px_currentColor]" />
         ) : (
           <Gem style={{ color: accent }} className="w-12 h-12" />
         )}

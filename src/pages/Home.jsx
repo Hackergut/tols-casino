@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, Spade, Flame, Star, Gamepad2, Radio, Tv, Zap } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Sparkles, Spade, Flame, Star, Gamepad2, Radio } from "lucide-react";
 import RollyHero from "@/components/RollyHero";
 import LiveWinsTicker from "@/components/LiveWinsTicker";
 import GameRail from "@/components/home/GameRail";
@@ -18,10 +18,14 @@ import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 const SLOTS_EMPTY = "No slots synced yet — an admin can sync the catalog from the Admin panel.";
 
 export default function Home() {
-  const navigate = useNavigate();
+  const location = useLocation();
   const { slots, loading } = useSlotCatalog();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get("q") || "");
   const [chip, setChip] = useState(null);
+
+  useEffect(() => {
+    setQuery(new URLSearchParams(location.search).get("q") || "");
+  }, [location.search]);
 
   const byPlayable = (a, b) =>
     Boolean(b.playable) - Boolean(a.playable) || String(a.name).localeCompare(String(b.name));
@@ -55,23 +59,20 @@ export default function Home() {
   }, [query, all]);
 
   const onChip = (id) => {
-    if (id === "lucky") {
-      const pool = all.length ? all : [...originals, ...table];
-      const pick = pool[Math.floor(Math.random() * pool.length)];
-      if (pick) navigate(`/game/${pick.slug}`);
+    if (id === "home") {
+      setChip(null);
       return;
     }
-    setChip((c) => (c === id ? null : id));
+    setChip((current) => (current === id ? null : id));
   };
 
   const rails = [
+    { id: "originals", title: "TOLS Games", icon: Sparkles, games: originals, to: "/games/category/originals" },
     { id: "featured", title: "Featured Games", icon: Star, games: [...originals.slice(0, 6), ...slotCards.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
-    { id: "originals", title: "TOLS Originals", icon: Sparkles, games: originals, to: "/games/category/originals" },
-    { id: "new", title: "New Releases", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
+    { id: "slots", title: "Slots", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
     { id: "live", title: "Live Casino", icon: Radio, games: [], to: "/games/category/live", empty: "Live casino coming soon to TOLS.", lazy: true },
-    { id: "game-shows", title: "Game Shows", icon: Tv, games: [], to: "/games/category/game-shows", empty: "Game shows coming soon to TOLS.", lazy: true },
-    { id: "instant", title: "Instant Games", icon: Zap, games: [], to: "/games/category/instant", empty: "Instant games coming soon to TOLS.", lazy: true },
+
   ];
   const visibleRails = chip ? rails.filter((r) => r.id === chip) : rails.filter((r) => !r.lazy);
 
@@ -84,9 +85,9 @@ export default function Home() {
         <RollyHero />
 
         {/* Sticky lobby toolbar: search + category filter, stays under the header */}
-        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/85 backdrop-blur-md border-y border-white/5 space-y-3">
-          <LobbySearch value={query} onChange={setQuery} />
-          <CategoryChips active={chip} onSelect={onChip} />
+        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 flex flex-col xl:flex-row gap-3">
+          <div className="flex-1 min-w-0"><CategoryChips active={chip} onSelect={onChip} /></div>
+          <div className="xl:w-72 shrink-0"><LobbySearch value={query} onChange={setQuery} /></div>
         </div>
 
         {results ? (
@@ -99,7 +100,7 @@ export default function Home() {
                 No game matches your search
               </div>
             ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-2.5 sm:gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
                 {results.map((g) => <GameCard key={g.id} game={g} />)}
               </div>
             )}
