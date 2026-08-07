@@ -1,11 +1,18 @@
-import { secrets } from "base44:runtime";
-
-export function getAggregatorConfig() {
+// Aggregator credentials are stored as PlatformSetting records (category
+// "aggregator") so admins can manage them from the Admin panel without
+// touching platform secrets. Backend functions read them with the service
+// role client, which bypasses RLS.
+export async function getAggregatorConfig(base44) {
+  const list = await base44.asServiceRole.entities.PlatformSetting.filter({ category: "aggregator" });
+  const get = (k) => {
+    const s = (list || []).find((x) => x.key === k);
+    return s ? s.value || "" : "";
+  };
   return {
-    baseUrl: (secrets.get("AGGREGATOR_API_BASE") || "").replace(/\/$/, ""),
-    apiKey: secrets.get("AGGREGATOR_API_KEY") || "",
-    operatorId: secrets.get("AGGREGATOR_OPERATOR_ID") || "",
-    apiSecret: secrets.get("AGGREGATOR_API_SECRET") || "",
+    baseUrl: get("aggregator_api_base").replace(/\/$/, ""),
+    apiKey: get("aggregator_api_key"),
+    operatorId: get("aggregator_operator_id"),
+    apiSecret: get("aggregator_api_secret"),
   };
 }
 

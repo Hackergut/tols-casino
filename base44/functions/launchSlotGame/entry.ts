@@ -17,10 +17,10 @@ export default async function(req) {
       return Response.json({ error: 'Login richiesto per la modalità soldi veri.' }, { status: 401 });
     }
 
-    const cfg = getAggregatorConfig();
+    const cfg = await getAggregatorConfig(base44);
     if (!isConfigured(cfg)) {
       return Response.json({
-        error: 'Aggregatore non configurato. Aggiungi le credenziali in Settings → Secrets.'
+        error: 'Slot aggregator not configured. An admin must add the aggregator credentials in the Admin panel.'
       }, { status: 503 });
     }
 

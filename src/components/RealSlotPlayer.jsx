@@ -46,8 +46,7 @@ export default function RealSlotPlayer({ game, mode }) {
             <p className="text-sm font-bold text-white">Slot reale non disponibile</p>
             <p className="text-xs text-white/50 max-w-md">{error}</p>
             <p className="text-[11px] text-white/30 max-w-md mt-2">
-              Configura le credenziali dell'aggregatore (AGGREGATOR_API_BASE, AGGREGATOR_API_KEY) in Settings → Secrets,
-              poi sincronizza il catalogo dal pannello Admin.
+              Ask an admin to configure the slot aggregator credentials in the Admin panel, then retry.
             </p>
           </div>
         ) : (

@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Shield, TrendingUp, Wallet, Users, Activity, DollarSign, ArrowDownToLine, Clock, Ban, RefreshCw } from "lucide-react";
 import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
+import AggregatorSettings from "@/components/admin/AggregatorSettings";
 import HouseMargin from "@/components/admin/HouseMargin";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
@@ -373,6 +374,7 @@ export default function Admin() {
         </div>
         <PaymentSettings />
         <div className="mt-4"><CatalogSettings /></div>
+        <div className="mt-4"><AggregatorSettings /></div>
       </main>
     </div>
   );

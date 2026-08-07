@@ -23,11 +23,11 @@ export default async function(req) {
 
     // Sync games on explicit request, otherwise just acknowledge the callback.
     if (body && body.action === "sync") {
-      const cfg = getAggregatorConfig();
+      const cfg = await getAggregatorConfig(base44);
       if (!isConfigured(cfg)) {
         return Response.json({
           ok: false,
-          error: "Aggregatore non configurato. Imposta AGGREGATOR_API_BASE e AGGREGATOR_API_KEY.",
+          error: "Slot aggregator not configured. An admin must add the aggregator credentials in the Admin panel.",
         }, { status: 503 });
       }
 
