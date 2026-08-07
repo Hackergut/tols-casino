@@ -1,0 +1,50 @@
+{
+  "name": "DemoSession",
+  "type": "object",
+  "properties": {
+    "day": {
+      "type": "string",
+      "description": "UTC day key YYYY-MM-DD the demo session belongs to"
+    },
+    "player_alias": {
+      "type": "string",
+      "default": "guest"
+    },
+    "bets": {
+      "type": "number",
+      "default": 0
+    },
+    "wagered": {
+      "type": "number",
+      "default": 0,
+      "description": "Total fun-money wagered during the day"
+    },
+    "payout": {
+      "type": "number",
+      "default": 0,
+      "description": "Total fun-money paid back to the player"
+    },
+    "refills": {
+      "type": "number",
+      "default": 0,
+      "description": "How many demo balance top-ups were consumed today"
+    },
+    "exhausted": {
+      "type": "boolean",
+      "default": false,
+      "description": "True once the player hit the daily demo limit"
+    },
+    "game_stats": {
+      "type": "string",
+      "default": "",
+      "description": "JSON map game_id -> { n, w, p } used to compute demo RTP per game"
+    },
+    "currency": {
+      "type": "string",
+      "default": "FUN"
+    }
+  },
+  "required": [
+    "day"
+  ]
+}

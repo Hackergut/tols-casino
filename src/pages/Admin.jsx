@@ -6,6 +6,7 @@ import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
 import AggregatorSettings from "@/components/admin/AggregatorSettings";
 import HouseMargin from "@/components/admin/HouseMargin";
+import DemoMonitor from "@/components/admin/DemoMonitor";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
@@ -297,6 +298,9 @@ export default function Admin() {
 
         {/* House margin comparison */}
         <HouseMargin earnings={earnings} />
+
+        {/* Demo (fun-money) monitoring */}
+        <DemoMonitor />
 
         {/* Tables */}
         <div className="grid lg:grid-cols-2 gap-4">
