@@ -22,7 +22,7 @@ export default function Home() {
   const [chip, setChip] = useState(null);
 
   const slotCards = useMemo(
-    () => slots.map((s) => ({ ...s, category: "slots", playable: true, accent: s.accent || "#ccff00" })),
+    () => slots.map((s) => ({ ...s, category: "slots", playable: !!(s.demo_url), accent: s.accent || "#ccff00" })),
     [slots]
   );
   const originals = useMemo(() => GAMES.filter((g) => g.category === "originals"), []);
