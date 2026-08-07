@@ -175,3 +175,14 @@ export function collectionAbbr(c) {
   const s = String(c || "").replace(/[^a-zA-Z0-9]/g, "");
   return s.slice(0, 3).toUpperCase() || "TOLS";
 }
+
+// Unique card names that make up a thematic set (across all rarities).
+export function collectionCardList(c) {
+  const col = COLLECTIONS[c];
+  if (!col) return [];
+  const set = new Set();
+  Object.values(col.cards).forEach((arr) => arr.forEach((n) => set.add(n)));
+  return Array.from(set).sort();
+}
+
+export const COLLECTION_NAMES = Object.keys(COLLECTIONS);

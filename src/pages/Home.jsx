@@ -9,6 +9,7 @@ import CategoryChips from "@/components/home/CategoryChips";
 import ProvidersRail from "@/components/home/ProvidersRail";
 import AllGamesGrid from "@/components/home/AllGamesGrid";
 import MegaPromoCards from "@/components/home/MegaPromoCards";
+import CollectionPromo from "@/components/home/CollectionPromo";
 import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
 import TolsLogo from "@/components/TolsLogo";
@@ -83,6 +84,9 @@ export default function Home() {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
         {/* Hero */}
         <MegaPromoCards />
+
+        {/* Collection feature */}
+        <CollectionPromo />
 
         {/* Sticky lobby toolbar: tabs on top, full-width search below */}
         <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 space-y-2">
