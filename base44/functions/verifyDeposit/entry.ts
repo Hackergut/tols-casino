@@ -38,6 +38,8 @@ export default async function(req) {
     if (!cfg || !txHash) return Response.json({ error: "Invalid request" }, { status: 400 });
 
     const integrations = await getIntegrationSettings(base44);
+    // Sandbox gate happens before on-chain lookup so no real deposit is ever
+    // credited unless an admin explicitly enabled live payments.
     if (!integrations.livePaymentsEnabled) {
       return Response.json({
         error: "Live deposits are disabled in sandbox mode. This UI is integration-ready; enable live payments only after legal, KYC/AML, custody, and payment-provider review."

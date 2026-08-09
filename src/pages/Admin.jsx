@@ -6,6 +6,7 @@ import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
 import AggregatorSettings from "@/components/admin/AggregatorSettings";
 import IntegrationSettings from "@/components/admin/IntegrationSettings";
+import TelegramSettings from "@/components/admin/TelegramSettings";
 import HouseMargin from "@/components/admin/HouseMargin";
 import DemoMonitor from "@/components/admin/DemoMonitor";
 import WithdrawalReview from "@/components/admin/WithdrawalReview";
@@ -385,6 +386,7 @@ export default function Admin() {
         <WithdrawalReview />
 
         <IntegrationSettings />
+        <div className="mt-4"><TelegramSettings /></div>
         <div className="mt-4"><PaymentSettings /></div>
         <div className="mt-4"><CatalogSettings /></div>
         <div className="mt-4"><AggregatorSettings /></div>

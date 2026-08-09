@@ -4,6 +4,7 @@ import { useWallet } from "@/components/WalletProvider";
 import { Crown, ArrowLeft, Wallet as WalletIcon, ArrowDownToLine, ArrowUpFromLine, History } from "lucide-react";
 import WalletDrawer from "@/components/wallet/WalletDrawer";
 import TransactionHistory from "@/components/wallet/TransactionHistory";
+import DailyStreakWidget from "@/components/DailyStreakWidget";
 import SandboxNotice from "@/components/SandboxNotice";
 import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 
@@ -58,6 +59,10 @@ export default function Wallet() {
               <p className="text-xs text-white/30 mt-2">{mode.livePaymentsEnabled ? "Live payments enabled" : "Sandbox wallet"}</p>
             </div>
           </div>
+        </div>
+
+        <div className="mb-5">
+          <DailyStreakWidget />
         </div>
 
         {/* Tabs */}

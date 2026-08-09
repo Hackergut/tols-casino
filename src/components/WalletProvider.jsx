@@ -105,6 +105,17 @@ export function WalletProvider({ children }) {
         const jp = await contributeToJackpot(wager);
         if (jp.won && jp.prize > 0) await updateBalance(jp.prize, 0);
 
+        // Surface notable wins in the notification bell.
+        if (bet.result === "win" && Number(bet.payout || 0) >= 5) {
+          base44.entities.AppNotification.create({
+            type: "win",
+            title: "Big win",
+            message: `${bet.game_name || bet.game_id || "Game"} paid ${Number(bet.multiplier || 0).toFixed(2)}×`,
+            amount: Number(bet.payout || 0),
+            link: `/game/${bet.game_id || ""}`,
+          }).catch(() => {});
+        }
+
         // Sync the player's real stats into every tournament they joined so
         // the leaderboard reflects live, account-based wagering.
         try {
@@ -133,33 +144,31 @@ export function WalletProvider({ children }) {
     const amt = +Number(amount).toFixed(2);
     if (!amt || amt <= 0) throw new Error("Invalid amount");
     if (!wallet_address || wallet_address.length < 8) throw new Error("Invalid wallet address");
-    if (amt > wallet.balance) throw new Error(`Insufficient balance. Available: ${wallet.balance} ${wallet.currency}`);
 
-    const balanceBefore = +wallet.balance.toFixed(2);
-    const balanceAfter = +(balanceBefore - amt).toFixed(2);
-
-    // create withdrawal record (auth users) or local stub (guest)
-    let record;
+    // Authenticated users go through the server-authoritative function which
+    // validates the address/amount, holds the balance and fires the review
+    // workflow + Telegram alert. Guests keep a local stub.
     if (wallet.id !== "guest") {
-      record = await base44.entities.Withdrawal.create({
-        amount: amt,
-        currency: wallet.currency,
-        wallet_address,
-        chain,
-        status: "pending",
-        balance_before: balanceBefore,
-        balance_after: balanceAfter,
+      const res = await base44.functions.invoke("createWithdrawal", {
+        amount: amt, wallet_address, chain,
       });
-    } else {
-      record = { id: "local_" + Date.now(), amount: amt, currency: wallet.currency, wallet_address, chain, status: "pending", balance_before: balanceBefore, balance_after: balanceAfter, created_date: new Date().toISOString() };
-      const hist = JSON.parse(localStorage.getItem("tols_withdrawals") || "[]");
-      hist.unshift(record);
-      localStorage.setItem("tols_withdrawals", JSON.stringify(hist));
+      const d = res.data || {};
+      if (!d.success) throw new Error(d.error || "Withdrawal failed");
+      setWallet((prev) => prev ? { ...prev, balance: d.balance } : prev);
+      return d.withdrawal;
     }
 
-    // deduct balance immediately (held until processed)
+    if (amt > wallet.balance) throw new Error(`Insufficient balance. Available: ${wallet.balance} ${wallet.currency}`);
+    const record = {
+      id: "local_" + Date.now(), amount: amt, currency: wallet.currency,
+      wallet_address, chain, status: "pending",
+      balance_before: wallet.balance, balance_after: +(wallet.balance - amt).toFixed(2),
+      created_date: new Date().toISOString(),
+    };
+    const hist = JSON.parse(localStorage.getItem("tols_withdrawals") || "[]");
+    hist.unshift(record);
+    localStorage.setItem("tols_withdrawals", JSON.stringify(hist));
     await updateBalance(-amt, 0);
-
     return record;
   }, [wallet, updateBalance, mode.livePaymentsEnabled]);
 

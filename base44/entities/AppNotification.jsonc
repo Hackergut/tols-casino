@@ -1,0 +1,28 @@
+{
+  "name": "AppNotification",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["win", "deposit", "withdrawal", "bonus", "system", "social", "achievement"],
+      "default": "system"
+    },
+    "title": { "type": "string" },
+    "message": { "type": "string", "default": "" },
+    "amount": { "type": "number", "default": 0 },
+    "link": { "type": "string", "default": "" },
+    "read": { "type": "boolean", "default": false }
+  },
+  "required": ["type", "title"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "created_by_id": "{{user.id}}" },
+    "update": {
+      "$or": [
+        { "created_by_id": "{{user.id}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
