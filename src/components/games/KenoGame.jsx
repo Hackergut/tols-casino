@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { KENO_GRID, KENO_PICKS, kenoPaytable, RTP } from "@/lib/gameEngine";
@@ -73,11 +74,16 @@ export default function KenoGame() {
             const isDrawn = drawn.includes(n);
             const isHit = isPicked && isDrawn;
             return (
-              <button
+              <motion.button
                 key={n}
                 onClick={() => togglePick(n)}
                 disabled={playing}
-                className={`aspect-square rounded-lg text-xs font-bold transition ${
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.005 }}
+                whileHover={!playing ? { scale: 1.05 } : {}}
+                whileTap={!playing ? { scale: 0.95 } : {}}
+                className={`aspect-square rounded-lg text-xs font-bold ${
                   isHit
                     ? "bg-lime text-black border-lime"
                     : isPicked
@@ -85,11 +91,17 @@ export default function KenoGame() {
                     : isDrawn
                     ? "bg-white/10 text-white/60 border-white/20"
                     : "bg-[#1a1a1a] text-white/50 border-white/5 hover:border-lime/30"
-                }`}
-                style={isDrawn ? { animation: "kenoPop 0.3s both" } : undefined}
+                } border`}
               >
-                {n}
-              </button>
+                <AnimatePresence>
+                  {isDrawn && (
+                    <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}>
+                      {n}
+                    </motion.span>
+                  )}
+                  {!isDrawn && n}
+                </AnimatePresence>
+              </motion.button>
             );
           })}
         </div>

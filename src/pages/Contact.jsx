@@ -14,7 +14,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-[#080808]">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-white/60 hover:text-lime transition mb-6">
           <ArrowLeft className="w-4 h-4" /> Lobby
@@ -33,7 +33,7 @@ export default function Contact() {
           <Channel icon={<MessageCircle className="w-5 h-5" />} label="Telegram" value="@tols_support" href="#" />
         </div>
 
-        <form onSubmit={submit} className="mt-8 rounded-2xl border border-white/10 bg-[#111] p-5 space-y-4">
+        <form onSubmit={submit} className="mt-8 rounded-2xl border border-white/[0.06] bg-[#121212] p-5 space-y-4">
           <div className="flex items-center gap-2 text-sm font-bold text-white">
             <MessageSquare className="w-4 h-4 text-lime" /> Send us a message
           </div>
@@ -95,7 +95,7 @@ function Channel({ icon, label, value, href }) {
   return (
     <a
       href={href}
-      className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#111] p-4 hover:border-lime/40 transition"
+      className="flex items-center gap-3 rounded-xl border border-white/[0.06] bg-[#121212] p-4 hover:border-lime/40 transition"
     >
       <div className="w-9 h-9 rounded-lg bg-lime/10 flex items-center justify-center text-lime shrink-0">{icon}</div>
       <div className="min-w-0">

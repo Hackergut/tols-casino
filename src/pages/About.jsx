@@ -4,7 +4,7 @@ import { ArrowLeft, ShieldCheck, Zap, Coins, Trophy, Users, Layers } from "lucid
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-[#080808]">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-white/60 hover:text-lime transition mb-6">
           <ArrowLeft className="w-4 h-4" /> Lobby
@@ -55,7 +55,7 @@ export default function About() {
             <Feature icon={<Users className="w-5 h-5" />} title="Affiliate" sub="Revshare & CPA" />
           </div>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#111] p-5 flex items-center gap-3">
+          <div className="mt-8 rounded-2xl border border-white/[0.06] bg-[#121212] p-5 flex items-center gap-3">
             <Layers className="w-6 h-6 text-lime shrink-0" />
             <p className="text-sm text-white/60">
               Questions or feedback? Visit our <Link to="/contact" className="text-lime font-bold hover:underline">Contact page</Link>.
@@ -69,7 +69,7 @@ export default function About() {
 
 function Feature({ icon, title, sub }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[#111] p-4">
+    <div className="rounded-xl border border-white/[0.06] bg-[#121212] p-4">
       <div className="w-9 h-9 rounded-lg bg-lime/10 flex items-center justify-center text-lime mb-2">{icon}</div>
       <p className="text-sm font-black text-white">{title}</p>
       <p className="text-xs text-white/40 mt-0.5">{sub}</p>

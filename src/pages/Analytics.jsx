@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { BarChart3, Users, Activity, DollarSign, ArrowDownToLine, ArrowUpFromLine, TrendingUp, Ban, RefreshCw, Coins } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, Line, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, CartesianGrid } from "recharts";
 
@@ -156,7 +156,7 @@ export default function Analytics() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white flex items-center gap-2 mb-4"><Activity className="w-4 h-4 text-lime" /> Wagering vs Payout</h3>
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={m.wagerSeries}>
@@ -171,7 +171,7 @@ export default function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white flex items-center gap-2 mb-4"><DollarSign className="w-4 h-4 text-lime" /> Deposits vs Withdrawals</h3>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={m.cashSeries}>
@@ -187,7 +187,7 @@ export default function Analytics() {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-4">
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white mb-4">Deposits by chain</h3>
             {m.chainData.length ? (
               <>
@@ -206,7 +206,7 @@ export default function Analytics() {
             ) : <Empty />}
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white mb-4">Deposit status</h3>
             <div className="space-y-3 mt-4">
               {m.statusData.map((s) => {
@@ -222,11 +222,11 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2"><TrendingUp className="w-4 h-4 text-lime" /> Top games (volume)</h3>
             <div className="space-y-1.5 max-h-52 overflow-y-auto scrollbar-hide">
               {m.topGames.map((g) => (
-                <div key={g.name} className="flex items-center justify-between rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2">
+                <div key={g.name} className="flex items-center justify-between rounded-lg bg-[#080808] border border-white/5 px-3 py-2">
                   <span className="text-sm font-semibold text-white truncate max-w-[120px]">{g.name}</span>
                   <div className="text-right"><span className="text-sm font-bold text-lime">{g.wagered}</span><span className={`text-xs ml-2 ${g.ggr >= 0 ? "text-lime/70" : "text-red-400"}`}>{g.ggr >= 0 ? "+" : ""}{g.ggr}</span></div>
                 </div>
@@ -236,7 +236,7 @@ export default function Analytics() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
           <h3 className="font-bold text-white mb-3 flex items-center gap-2"><ArrowUpFromLine className="w-4 h-4 text-lime" /> Recent deposits</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -265,7 +265,7 @@ export default function Analytics() {
 
 function Kpi({ icon, label, value, sub, accent, warn }) {
   return (
-    <div className={`rounded-2xl border p-4 sm:p-5 ${accent ? "border-lime/30 bg-gradient-to-br from-lime/10 to-[#111]" : warn ? "border-yellow-500/30 bg-yellow-500/5" : "border-white/10 bg-[#111]"}`}>
+    <div className={`rounded-2xl border p-4 sm:p-5 ${accent ? "border-lime/30 bg-gradient-to-br from-lime/10 to-[#111]" : warn ? "border-yellow-500/30 bg-yellow-500/5" : "border-white/10 bg-[#121212]"}`}>
       <div className="flex items-center gap-2 text-white/50 text-xs font-semibold uppercase tracking-wide">
         <span className={accent ? "text-lime" : "text-white/40"}>{React.cloneElement(icon, { className: "w-4 h-4" })}</span>
         {label}

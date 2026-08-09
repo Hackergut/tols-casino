@@ -60,7 +60,7 @@ export default function GameCategory({ mode = "category" }) {
             <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
           </div>
         ) : games.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-16 text-center text-sm text-white/40">
+          <div className="rounded-2xl border border-dashed border-white/10 bg-[#121212] py-16 text-center text-sm text-white/40">
             No games in this category yet
           </div>
         ) : (

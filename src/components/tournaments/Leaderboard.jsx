@@ -8,7 +8,7 @@ export default function Leaderboard({ board }) {
     return <div className="text-center text-white/40 py-12">No data yet — start playing to appear here.</div>;
   }
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
       <div className="grid grid-cols-[60px_1fr_120px_90px_120px] gap-2 px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-white/40 border-b border-white/5">
         <span>Rank</span>
         <span>Player</span>

@@ -1,4 +1,4 @@
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 
 // Global progressive pot: every real wager feeds it, and every wager has a
 // small chance to hit it (jackpot.bet-style "play any game to win the pot").

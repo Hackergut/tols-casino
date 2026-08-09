@@ -5,7 +5,7 @@ import { computeCommission } from "@/lib/affiliate";
 export default function ReferralTable({ referrals, plan, commission_rate = 25, cpa_amount = 50 }) {
   if (!referrals.length) {
     return (
-      <div className="rounded-2xl border border-white/10 bg-[#111] p-8 sm:p-12 text-center">
+      <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-8 sm:p-12 text-center">
         <Users className="w-10 h-10 mx-auto text-white/15 mb-3" />
         <p className="text-white/40 font-medium">No invited players yet</p>
         <p className="text-xs text-white/30 mt-1">Share your link to start earning</p>
@@ -14,7 +14,7 @@ export default function ReferralTable({ referrals, plan, commission_rate = 25, c
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
       <div className="flex items-center gap-2 p-4 sm:p-5 border-b border-white/5">
         <Users className="w-5 h-5 text-lime shrink-0" />
         <h3 className="font-bold text-white">Invited players</h3>
@@ -89,7 +89,7 @@ export default function ReferralTable({ referrals, plan, commission_rate = 25, c
 
 function Metric({ label, value }) {
   return (
-    <div className="rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2">
+    <div className="rounded-lg bg-[#080808] border border-white/5 px-3 py-2">
       <p className="text-[10px] text-white/40 uppercase tracking-wide">{label}</p>
       <p className="text-sm font-bold text-white/70 tabular-nums mt-0.5">{value}</p>
     </div>

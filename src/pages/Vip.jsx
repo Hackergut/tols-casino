@@ -15,7 +15,7 @@ export default function Vip() {
   const remaining = next ? Math.max(0, next.min_wagered - wagered) : 0;
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] text-white">
+    <div className="min-h-screen bg-[#080808] text-white">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/50 hover:text-lime transition mb-6">
           <ChevronLeft className="w-4 h-4" /> Back to lobby
@@ -62,7 +62,7 @@ export default function Vip() {
                 <span>Next tier: <b style={{ color: next.color }}>{next.name}</b></span>
                 <span className="tabular-nums">{remaining.toLocaleString()} USDT to go</span>
               </div>
-              <div className="h-3 rounded-full bg-[#0d0d0d] border border-white/10 overflow-hidden">
+              <div className="h-3 rounded-full bg-[#080808] border border-white/10 overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${current.color}, ${next.color})`, boxShadow: `0 0 16px ${next.color}66` }}

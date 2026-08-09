@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockPlatformSettings, setMockPlatformSetting } from "@/lib/mockAdmin";
 import { Settings, Save, Check, Loader2 } from "lucide-react";
 
 const FIELDS = [
@@ -23,8 +24,20 @@ export default function PaymentSettings() {
       const list = await base44.entities.PlatformSetting.filter({ category: "payments" });
       const m = {}; const id = {};
       list.forEach((s) => { m[s.key] = s.value; id[s.key] = s.id; });
+      // merge mock if empty
+      if (!list.length) {
+        const mock = getMockPlatformSettings("payments");
+        mock.forEach((s)=> { m[s.key]=s.value; id[s.key]=s.id; });
+      }
       setMap(m); setIds(id);
-    } catch (e) { setMsg("Load failed: " + (e.message || "error")); }
+      if (Object.keys(m).length && !list.length) setMsg("Demo mode — saved locally");
+    } catch (e) { 
+      const mock = getMockPlatformSettings("payments");
+      const m={}; const id={};
+      mock.forEach((s)=> { m[s.key]=s.value; id[s.key]=s.id; });
+      setMap(m); setIds(id);
+      setMsg("Demo mode — localStorage");
+    }
   };
   useEffect(() => { load(); }, []);
 
@@ -33,20 +46,25 @@ export default function PaymentSettings() {
     try {
       for (const f of FIELDS) {
         const v = (map[f.key] || "").trim();
-        if (ids[f.key]) {
-          if (v) await base44.entities.PlatformSetting.update(ids[f.key], { value: v });
-        } else if (v) {
-          const r = await base44.entities.PlatformSetting.create({ key: f.key, value: v, category: "payments" });
-          setIds((p) => ({ ...p, [f.key]: r.id }));
-        }
+        // always persist locally
+        setMockPlatformSetting(f.key, v, "payments");
+        try {
+          if (ids[f.key] && !String(ids[f.key]).startsWith("mock_")) {
+            if (v) await base44.entities.PlatformSetting.update(ids[f.key], { value: v });
+          } else if (v) {
+            const r = await base44.entities.PlatformSetting.create({ key: f.key, value: v, category: "payments" });
+            setIds((p) => ({ ...p, [f.key]: r.id }));
+          }
+        } catch {}
       }
+      await load();
       setSaved(true); setTimeout(() => setSaved(false), 2000);
     } catch (e) { setMsg("Save failed: " + (e.message || "error")); }
     finally { setSaving(false); }
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
       <h3 className="font-bold text-white mb-1 flex items-center gap-2"><Settings className="w-4 h-4 text-lime" /> Payment settings</h3>
       <p className="text-xs text-white/40 mb-4">Real wallet addresses where player deposits are collected, and fallback conversion rates (used only if the live price API is unreachable).</p>
       <div className="grid sm:grid-cols-2 gap-3">

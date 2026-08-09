@@ -1,39 +1,37 @@
 import React from "react";
 import { Image } from "@/components/ui/image";
 import { Link } from "react-router-dom";
-import { Lock, Play } from "lucide-react";
+import { Lock, ExternalLink } from "lucide-react";
 import GameArt from "@/components/GameArt";
 import TolsGameCard from "@/components/cards/TolsGameCard";
 
 export default function GameCard({ game }) {
   const isSlot = game.category === "slots";
-  // TOLS mini games get the branded HUD tile everywhere on the platform.
   if (!isSlot) return <TolsGameCard game={game} />;
   return (
     <Link
       to={`/game/${game.slug}`}
-      className="group relative block aspect-[9/6] sm:aspect-[1.04/1] rounded-xl overflow-hidden bg-[#161616] border border-white/20 hover:border-lime/60 active:scale-[0.98] transition"
+      className="group relative block aspect-[3/4] rounded-xl overflow-hidden bg-[#121212] border border-white/[0.06] hover:border-white/15 hover:-translate-y-0.5 transition duration-200 motion-safe:transform"
     >
       {isSlot && game.image ? (
-        <Image src={game.image} fittingType="fill" className="absolute inset-0 w-full h-full grayscale-[15%] group-hover:grayscale-0 group-hover:scale-[1.04] transition duration-500" />
+        <Image src={game.image} fittingType="fill" className="absolute inset-0 w-full h-full group-hover:scale-[1.04] transition duration-500" />
       ) : (
         <GameArt slug={game.slug} className="absolute inset-0 group-hover:scale-[1.04] transition duration-500" />
       )}
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+      <div className="absolute top-2 right-2 w-7 h-7 grid place-items-center rounded-full bg-black/60 border border-white/10 text-white/70 opacity-0 group-hover:opacity-100 transition">
+        <ExternalLink className="w-3.5 h-3.5" />
+      </div>
       {game.playable === false && (
-        <span className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-black/80 text-[9px] font-bold text-white/70">
+        <span className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-black/70 text-[9px] font-bold text-white/60 border border-white/10">
           <Lock className="w-2.5 h-2.5" /> SOON
         </span>
       )}
-      <div className="absolute inset-x-0 bottom-0 p-2.5 sm:p-3 flex items-end justify-between gap-2">
-        <p className="font-display text-base sm:text-lg uppercase leading-none tracking-tight text-white line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-2">
+        <p className="text-[12px] font-bold leading-tight text-white line-clamp-2 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
           {game.name}
         </p>
-        {game.playable !== false && (
-          <span className="shrink-0 flex items-center gap-0.5 px-2 py-1 rounded-full bg-lime text-black text-[9px] font-black uppercase leading-none">
-            <Play className="w-2.5 h-2.5 fill-black" /> Play
-          </span>
-        )}
+        <p className="text-[10px] text-white/40 truncate">{game.provider || "TOLS"}</p>
       </div>
     </Link>
   );

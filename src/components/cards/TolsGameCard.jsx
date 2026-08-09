@@ -1,70 +1,111 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Lock, Play, ShieldCheck } from "lucide-react";
-import GameArt from "@/components/GameArt";
+import { Lock, ExternalLink } from "lucide-react";
 
-// TOLS mini-game tile — same graded-slab language as the trading-card
-// marketplace tiles: dark panel, floating framed art with mirror reflection,
-// spec row and a primary action.
+const VISUALS = {
+  limbo: { bg: "radial-gradient(80% 60% at 50% 0%, #1a1a1a 0%, #080808 80%)", accent: "#fff", decor: "limbo" },
+  plinko: { bg: "radial-gradient(60% 50% at 50% 30%, #1a2a1a 0%, #080808 80%)", accent: "#fff", decor: "plinko" },
+  mines: { bg: "radial-gradient(60% 50% at 50% 30%, #0f1a0f 0%, #080808 80%)", accent: "#ccff00", decor: "mines" },
+  dice: { bg: "radial-gradient(60% 50% at 50% 30%, #1a1a1a 0%, #080808 80%)", accent: "#fff", decor: "dice" },
+  keno: { bg: "radial-gradient(60% 50% at 50% 30%, #0f0f0f 0%, #080808 80%)", accent: "#fff", decor: "keno" },
+  wheel: { bg: "radial-gradient(60% 50% at 50% 30%, #1a1a0a 0%, #080808 80%)", accent: "#fff", decor: "wheel" },
+  crash: { bg: "radial-gradient(60% 50% at 50% 0%, #1a0f0f 0%, #080808 80%)", accent: "#ff4f2a", decor: "crash" },
+  coinflip: { bg: "radial-gradient(60% 50% at 50% 30%, #1a1a1a 0%, #080808 80%)", accent: "#ccff00", decor: "coinflip" },
+  slide: { bg: "#080808", accent: "#fff", decor: "slide" },
+  blitz: { bg: "#080808", accent: "#fff", decor: "blitz" },
+  hilo: { bg: "#080808", accent: "#fff", decor: "hilo" },
+  tower: { bg: "#080808", accent: "#fff", decor: "tower" },
+  chicken: { bg: "#080808", accent: "#fff", decor: "chicken" },
+};
+
+function Decor({ type }) {
+  if (type === "limbo") return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center">
+      <div className="w-20 h-28 rounded-t-full border-2 border-white/10 bg-gradient-to-b from-white/5 to-transparent relative overflow-hidden">
+        <div className="absolute bottom-0 inset-x-0 h-8 bg-[#0a0a0a] flex items-end justify-center pb-1">
+          <div className="w-3 h-6 bg-black rounded-full" />
+        </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-lime/20 blur-xl" />
+      </div>
+      <div className="mt-2 flex gap-1">
+        {Array.from({length: 8}).map((_,i)=> <div key={i} className="w-2 h-2 rounded-full bg-lime/80" />)}
+      </div>
+    </div>
+  );
+  if (type === "plinko") return (
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 pt-4">
+      {Array.from({length: 6}).map((_,r)=> (
+        <div key={r} className="flex gap-2">
+          {Array.from({length: 6 - r}).map((_,c)=> <div key={c} className="w-1.5 h-1.5 rounded-full bg-lime/70" />)}
+        </div>
+      ))}
+      <div className="w-16 h-6 rounded bg-gradient-to-b from-white/10 to-transparent mt-1 border border-white/5" />
+    </div>
+  );
+  if (type === "mines") return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-16 h-16 rotate-45 bg-gradient-to-br from-lime via-green-400 to-green-600 rounded-lg shadow-[0_0_20px_rgba(204,255,0,0.5)] border border-white/20 flex items-center justify-center">
+        <div className="w-8 h-8 bg-white/20 rounded rotate-12" />
+      </div>
+    </div>
+  );
+  if (type === "dice") return (
+    <div className="absolute inset-0 flex items-center justify-center gap-3">
+      <div className="w-12 h-12 rounded-lg bg-white border-2 border-white/20 grid grid-cols-2 gap-1 p-2 rotate-3 shadow-lg">
+        <div className="w-2 h-2 rounded-full bg-black" /><div className="w-2 h-2 rounded-full bg-black" /><div className="w-2 h-2 rounded-full bg-black" /><div className="w-2 h-2 rounded-full bg-black" /><div className="w-2 h-2 rounded-full bg-black col-span-2 mx-auto" />
+      </div>
+      <div className="w-10 h-10 rounded-lg bg-white border-2 border-white/20 grid place-items-center -rotate-6 shadow-lg">
+        <div className="w-3 h-3 rounded-full bg-black" /><div className="w-3 h-3 rounded-full bg-black" />
+      </div>
+    </div>
+  );
+  if (type === "keno") return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-16 h-16 rounded-full bg-black border-2 border-white/10 flex items-center justify-center relative">
+        <span className="text-2xl font-black text-white">7</span>
+        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-lime flex items-center justify-center text-[10px] font-black text-black">K</div>
+      </div>
+    </div>
+  );
+  if (type === "wheel") return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-20 h-20 rounded-full border-4 border-white/10 bg-conic from-lime via-yellow-400 to-lime relative overflow-hidden">
+        <div className="absolute inset-2 rounded-full bg-[#121212] flex items-center justify-center">
+          <span className="w-8 h-8 rounded-full bg-lime text-black grid place-items-center font-black text-sm">T</span>
+        </div>
+      </div>
+    </div>
+  );
+  return <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />;
+}
+
 export default function TolsGameCard({ game }) {
   const soon = game.playable === false;
-  const frame = "#ccff00";
-
+  const v = VISUALS[game.slug] || { bg: "#080808", accent: "#fff", decor: "generic" };
+  const isLimeTitle = game.slug === "mines";
   return (
     <Link
       to={`/game/${game.slug}`}
-      className="group relative block rounded-2xl bg-[#16181c] border border-white/8 overflow-hidden transition hover:border-lime/40 active:scale-[0.99]"
-      style={{ boxShadow: `inset 0 0 0 1px ${frame}14` }}
+      className="group relative block aspect-[3/4] rounded-xl overflow-hidden bg-[#0a0a0a] border border-white/[0.06] hover:border-white/15 hover:-translate-y-0.5 transition duration-200"
+      style={{ background: v.bg }}
     >
+      <Decor type={v.decor} />
+      <div className="absolute top-2 right-2 w-7 h-7 grid place-items-center rounded-full bg-black/60 border border-white/10 text-white/60 opacity-0 group-hover:opacity-100 transition">
+        <ExternalLink className="w-3.5 h-3.5" />
+      </div>
       {soon && (
-        <span className="absolute top-2.5 right-2.5 z-20 inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-md bg-black/85 text-white/70">
-          <Lock className="w-3 h-3" /> SOON
+        <span className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-black/70 text-[9px] font-bold text-white/60 border border-white/10">
+          <Lock className="w-2.5 h-2.5" /> SOON
         </span>
       )}
-
-      {/* Slab stage */}
-      <div className="relative px-4 pt-4 pb-2" style={{ background: `radial-gradient(120% 80% at 50% 0%, ${frame}1f, transparent 70%)` }}>
-        <div
-          className="relative mx-auto w-[64%] aspect-[3/4] rounded-lg overflow-hidden border-2 bg-[#0a0a0a]"
-          style={{ borderColor: frame, boxShadow: `0 10px 30px -12px ${frame}` }}
-        >
-          <GameArt slug={game.slug} className="absolute inset-0 group-hover:scale-[1.05] transition duration-500" />
-          <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-white/20 to-transparent" />
-        </div>
-        {/* reflection */}
-        <div className="relative mx-auto w-[64%] h-8 mt-0.5 overflow-hidden opacity-25 [transform:scaleY(-1)]">
-          <GameArt slug={game.slug} className="absolute inset-x-0 bottom-0 w-full h-24" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#16181c] via-[#16181c]/70 to-transparent" />
-        </div>
-      </div>
-
-      {/* Meta */}
-      <div className="px-4 pb-4">
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-black uppercase tracking-wider text-lime">TOLS Original</span>
-          <span className="text-[10px] text-white/30">·</span>
-          <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider truncate">Mini game</span>
-        </div>
-        <h4 className="mt-1 font-display text-lg uppercase tracking-tight text-white leading-snug line-clamp-1">{game.name}</h4>
-
-        <div className="mt-3 pt-3 border-t border-white/8 flex items-end justify-between">
-          <div>
-            <div className="text-[11px] text-white/40">House edge</div>
-            <div className="text-sm font-black text-white tabular-nums">1%</div>
-          </div>
-          <div className="text-right">
-            <div className="text-[11px] text-white/40">Fairness</div>
-            <div className="text-sm font-black text-white inline-flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-lime" />Provable</div>
-          </div>
-        </div>
-
-        <span
-          className={`mt-3 w-full h-10 rounded-xl text-sm font-black transition inline-flex items-center justify-center gap-1 ${
-            soon ? "border-2 border-white/15 text-white/40" : "bg-lime text-black group-hover:opacity-90"
-          }`}
-        >
-          {soon ? "Coming soon" : <><Play className="w-4 h-4 fill-black" /> Play now</>}
-        </span>
+      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black via-black/60 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-3">
+        <h3 className="text-[18px] font-black tracking-tighter leading-none" style={{ color: isLimeTitle ? v.accent : "#fff", fontFamily: "Archivo Black, Inter, sans-serif", textShadow: "0 1px 0 rgba(0,0,0,0.8)" }}>
+          {game.name.toUpperCase()}
+        </h3>
+        <p className="text-[10px] font-bold tracking-widest text-lime/80 mt-1 flex items-center gap-1">
+          <span className="w-3 h-3 rounded bg-lime text-black grid place-items-center text-[8px] font-black">T</span> TOLS Originals
+        </p>
       </div>
     </Link>
   );

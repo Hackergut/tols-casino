@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { Bomb, Gem } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { minesMultiplier } from "@/lib/gameEngine";
 import GameFrame from "@/components/games/GameFrame";
 
@@ -81,11 +82,16 @@ export default function MinesGame() {
             const isBomb = bombs.includes(i);
             const showBomb = busted && isBomb;
             return (
-              <button
+              <motion.button
                 key={i}
                 onClick={() => reveal(i)}
                 disabled={!active || isRevealed}
-                className={`aspect-square rounded-xl border flex items-center justify-center transition ${
+                whileHover={active && !isRevealed ? { scale: 1.04 } : {}}
+                whileTap={active && !isRevealed ? { scale: 0.96 } : {}}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.01, type: "spring", stiffness: 400, damping: 25 }}
+                className={`aspect-square rounded-xl border flex items-center justify-center ${
                   isRevealed
                     ? showBomb
                       ? "bg-red-500/15 border-red-500/40"
@@ -93,11 +99,13 @@ export default function MinesGame() {
                     : "bg-[#1a1a1a] border-white/10 hover:border-lime/30 hover:bg-white/5"
                 }`}
               >
-                {isRevealed && (showBomb
-                  ? <Bomb className="w-6 h-6 text-red-400" style={{ animation: "popIn 0.35s both" }} />
-                  : <Gem className="w-6 h-6 text-lime" style={{ animation: "gemPop 0.4s both" }} />)}
+                <AnimatePresence>
+                  {isRevealed && (showBomb
+                    ? <motion.div initial={{ scale: 0, rotate: -20 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}><Bomb className="w-6 h-6 text-red-400" /></motion.div>
+                    : <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 15 }}><Gem className="w-6 h-6 text-lime" /></motion.div>)}
+                </AnimatePresence>
                 {!isRevealed && active && <span className="w-2 h-2 rounded-full bg-white/10" />}
-              </button>
+              </motion.button>
             );
           })}
         </div>

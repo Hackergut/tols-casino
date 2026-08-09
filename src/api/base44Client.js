@@ -1,14 +1,5 @@
-import { createClient } from '@base44/sdk';
-import { appParams } from '@/lib/app-params';
-
-const { appId, token, functionsVersion, appBaseUrl } = appParams;
-
-//Create a client with authentication required
-export const base44 = createClient({
-  appId,
-  token,
-  functionsVersion,
-  serverUrl: '',
-  requiresAuth: false,
-  appBaseUrl
-});
+// Deprecated: kept for backward compatibility — now re-exports professional TOLS client
+// Migrated: all imports now use @/api/client — this file is deprecated wrapper, will be removed in v2
+import { tols } from './client.js';
+export const base44 = tols;
+export default tols;

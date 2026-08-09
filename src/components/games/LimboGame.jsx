@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, ResultBadge, useProvablyFair } from "@/components/games/shared";
 import { limboWinChance, limboResultFromFloat } from "@/lib/gameEngine";
@@ -18,16 +19,18 @@ export default function LimboGame() {
 
   const animate = (to, done) => {
     timers.current.forEach(clearTimeout);
-    const steps = 30;
-    let i = 0;
-    const run = () => {
-      i++;
-      const e = 1 - Math.pow(1 - i / steps, 3);
+    // Shuffle-like fluid: rAF with expo ease
+    let start = null;
+    const duration = 600;
+    const tick = (now) => {
+      if (!start) start = now;
+      const p = Math.min(1, (now - start) / duration);
+      const e = 1 - Math.pow(1 - p, 3);
       setDisplay(1 + (to - 1) * e);
-      if (i < steps) timers.current.push(setTimeout(run, 22));
+      if (p < 1) timers.current.push(requestAnimationFrame(tick));
       else { setDisplay(to); done(); }
     };
-    timers.current.push(setTimeout(run, 22));
+    timers.current.push(requestAnimationFrame(tick));
   };
 
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
@@ -60,12 +63,16 @@ export default function LimboGame() {
           ]}
         >
           <div className="text-xs font-semibold text-white/40 mb-2">RESULT</div>
-          <div
+          <motion.div
+            key={shown}
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
             className={`text-6xl sm:text-7xl font-black tabular-nums ${shown == null ? "text-white/20" : last && last.won ? "text-lime" : "text-white/70"}`}
             style={shown != null && last && last.won ? { textShadow: "0 0 28px rgba(204,255,0,0.55)" } : undefined}
           >
             {shown != null ? `${shown.toFixed(2)}x` : "1.00x"}
-          </div>
+          </motion.div>
           <div className="mt-3 text-sm text-white/40">Target: {target.toFixed(2)}x</div>
         </GameFrame>
         {last && <ResultBadge result={last.won ? "win" : "lose"} multiplier={last.multiplier} payout={last.won ? last.payout - amount : -amount} />}

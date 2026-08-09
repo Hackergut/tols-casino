@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockChat, addMockChat } from "@/lib/mockAdmin";
 import { Send, Hash, Users, LogIn, Loader2, Trophy } from "lucide-react";
 import CollectorLeaderboard from "@/components/community/CollectorLeaderboard";
 
@@ -54,9 +55,10 @@ export default function Community() {
     setLoading(true);
     try {
       const list = await base44.entities.ChatMessage.filter({ channel: ch }, "-created_date", 50);
-      setMessages((list || []).reverse());
+      if (list && list.length) setMessages((list || []).reverse());
+      else setMessages(getMockChat(ch));
     } catch {
-      setMessages([]);
+      setMessages(getMockChat(ch));
     } finally {
       setLoading(false);
     }
@@ -84,18 +86,20 @@ export default function Community() {
     e.preventDefault();
     const msg = text.trim();
     if (!msg || !user || sending) return;
-    if (user.id === "guest") return;
     setSending(true);
     setText("");
-    try {
-      await base44.entities.ChatMessage.create({
+    const payload = {
         username: user.full_name || user.email || "Anonymous",
         avatar_color: userColor(user.full_name || user.email || "x"),
         message: msg.slice(0, 500),
         channel,
-      });
+    };
+    try {
+      await base44.entities.ChatMessage.create(payload);
     } catch {
-      setText(msg);
+      // mock fallback — show locally
+      const list = addMockChat(channel, payload.message, payload);
+      setMessages(list);
     } finally {
       setSending(false);
     }
@@ -104,7 +108,7 @@ export default function Community() {
   const isGuest = user && user.id === "guest";
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-[#080808]">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6">
         <div className="mb-5">
           <h1 className="text-2xl font-black tracking-tight text-white">
@@ -115,7 +119,7 @@ export default function Community() {
 
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] grid-rows-[auto_1fr] lg:grid-rows-1 gap-3 lg:gap-4 h-[68vh] lg:h-[calc(100vh-180px)] min-h-[440px]">
           {/* Canali */}
-          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden min-h-0">
+          <div className="flex flex-col rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden min-h-0">
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-white/40 shrink-0">
               <Hash className="w-3.5 h-3.5" /> Channels
             </div>
@@ -143,7 +147,7 @@ export default function Community() {
           </div>
 
           {/* Chat */}
-          <div className="flex flex-col rounded-2xl border border-white/10 bg-[#111] overflow-hidden min-h-0">
+          <div className="flex flex-col rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden min-h-0">
             <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
               <Hash className="w-4 h-4 text-lime" />
               <span className="text-sm font-black text-white">{CHANNELS.find((c) => c.id === channel)?.label}</span>

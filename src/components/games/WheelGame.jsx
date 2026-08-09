@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { WHEEL_SEGMENTS } from "@/lib/gameEngine";
@@ -58,13 +59,13 @@ export default function WheelGame() {
           { label: "Max win", value: `${Math.max(...WHEEL_SEGMENTS[risk]).toFixed(2)}x` },
         ]}
       >
-        <div className="relative aspect-square w-full max-w-[260px]">
+        <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300, damping: 25 }} className="relative aspect-square w-full max-w-[260px]">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-0 h-0 border-l-8 border-r-8 border-t-[14px] border-l-transparent border-r-transparent border-t-lime animate-pulse" style={{ filter: "drop-shadow(0 0 6px rgba(204,255,0,0.8))" }} />
-          <div
+          <motion.div
             className="w-full h-full rounded-full border-4 border-white/10"
+            animate={{ rotate: rotation }}
+            transition={{ duration: 3, ease: [0.2, 0.8, 0.1, 1] }}
             style={{
-              transform: `rotate(${rotation}deg)`,
-              transition: spinning ? "transform 3s cubic-bezier(0.2,0.8,0.1,1)" : "none",
               background: `conic-gradient(${segments
                 .map((s, i) => `${s.color} ${(i / n) * 360}deg ${((i + 1) / n) * 360}deg`)
                 .join(",")})`,
@@ -82,9 +83,9 @@ export default function WheelGame() {
                 {s.label}
               </div>
             ))}
-          </div>
+          </motion.div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-[#1a1a1a] border-2 border-lime" />
-        </div>
+        </motion.div>
         {last && !spinning && (
           <p className="mt-6 text-lg font-bold" style={{ animation: "popIn 0.3s both" }}>
             Result: <span className={last.mul >= 1 ? "text-lime" : "text-red-400"}>{last.label}</span>

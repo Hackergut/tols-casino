@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { X } from "lucide-react";
 import RealDeposit from "@/components/wallet/RealDeposit";
 import WithdrawForm from "@/components/wallet/WithdrawForm";
+import SwapForm from "@/components/wallet/SwapForm";
+import BuyCryptoForm from "@/components/wallet/BuyCryptoForm";
+import TipForm from "@/components/wallet/TipForm";
 import { COINS as _COINS } from "@/components/wallet/coins";
 // Back-compat re-export (previously defined here)
 export const COINS = _COINS;
@@ -10,6 +13,7 @@ const TABS = [
   { id: "deposit", label: "Deposit" },
   { id: "withdraw", label: "Withdraw" },
   { id: "buy", label: "Buy Crypto" },
+  { id: "swap", label: "Swap" },
   { id: "tip", label: "Tip" },
 ];
 
@@ -18,9 +22,9 @@ export default function WalletDrawer({ initialTab = "deposit", initialCoin = "so
   const [coin, setCoin] = useState(initialCoin);
 
   return (
-    <div className="flex flex-col h-full max-h-[92vh] bg-[#121212]">
+    <div className="flex flex-col h-full max-h-[92vh] bg-[#080808]">
       {/* Tabs (underline) + close */}
-      <div className="flex items-center gap-1 px-3 border-b border-white/10 shrink-0">
+      <div className="flex items-center gap-1 px-3 border-b border-white/[0.06] shrink-0">
         <div className="flex gap-5 overflow-x-auto scrollbar-hide">
           {TABS.map((t) => (
             <button
@@ -48,12 +52,12 @@ export default function WalletDrawer({ initialTab = "deposit", initialCoin = "so
           <RealDeposit coin={coin} setCoin={setCoin} onClose={onClose} />
         ) : tab === "withdraw" ? (
           <WithdrawForm coin={coin} setCoin={setCoin} onClose={onClose} />
+        ) : tab === "swap" ? (
+          <SwapForm />
+        ) : tab === "buy" ? (
+          <BuyCryptoForm />
         ) : (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-[#1a1a1a] py-16 text-center">
-            <p className="text-sm text-white/50">
-              {tab === "buy" ? "Buy crypto" : "Tip"} coming soon.
-            </p>
-          </div>
+          <TipForm />
         )}
       </div>
     </div>

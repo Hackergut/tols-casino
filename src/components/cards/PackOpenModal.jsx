@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, X, Sparkles, Check, Loader2, Eye, Minus, Plus, Zap } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { addMockCollectibleCards } from "@/lib/mockAdmin";
 import { useWallet } from "@/components/WalletProvider";
 import { openPack, rarityColor, rarityLabel, RARITIES, RARITY_ORDER, COLLECTION_IMAGES } from "@/lib/packs";
 import { Image } from "@/components/ui/image";
@@ -40,9 +41,10 @@ export default function PackOpenModal({ pack, onClose }) {
       for (let i = 0; i < qty; i++) pulled.push(...openPack(pack));
       // deduct + record wagered
       await updateBalance(-totalCost, totalCost);
-      // persist owned cards
-      const saved = await base44.entities.CollectibleCard.bulkCreate(pulled);
-      const list = Array.isArray(saved) ? saved : (saved?.data || []);
+      // persist owned cards (mock fallback)
+      let saved;
+      try { saved = await base44.entities.CollectibleCard.bulkCreate(pulled); } catch { const withIds = pulled.map((c,i)=> ({...c, id: 'c_'+Date.now()+'_'+i})); addMockCollectibleCards(withIds); saved = withIds; }
+      const list = Array.isArray(saved) ? saved : (saved?.data || pulled);
       // broadcast to the live pulls ticker
       let user = null;
       try { user = await base44.auth.me(); } catch {}
@@ -95,7 +97,7 @@ export default function PackOpenModal({ pack, onClose }) {
                   const meta = RARITIES[r];
                   const c = meta.color;
                   return (
-                    <div key={r} className="rounded-xl border bg-[#111] p-2.5" style={{ borderColor: c + "66", boxShadow: `0 0 16px -8px ${c}` }}>
+                    <div key={r} className="rounded-xl border bg-[#121212] p-2.5" style={{ borderColor: c + "66", boxShadow: `0 0 16px -8px ${c}` }}>
                       <div className="text-xs font-black" style={{ color: c }}>{meta.label}</div>
                       <div className="text-[11px] text-white/80 tabular-nums mt-0.5">${meta.min.toLocaleString()} – ${meta.max.toLocaleString()}</div>
                       <div className="text-[10px] text-white/40 mt-0.5">{meta.weight}% drop</div>

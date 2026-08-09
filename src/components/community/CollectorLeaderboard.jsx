@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Trophy, Gem, Layers, Crown } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { COLLECTION_NAMES, collectionCardList, rarityColor } from "@/lib/packs";
 
 // Community collector leaderboard — ranks the top users by total card value
@@ -73,7 +73,7 @@ export default function CollectorLeaderboard() {
   }, [cards, users]);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
       <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
         <Trophy className="w-4 h-4 text-lime" />
         <span className="text-sm font-black text-white">Top Collectors</span>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { X, ChevronRight, ChevronLeft, Wallet, ShieldCheck, Crown, Sparkles, ArrowDownToLine } from "lucide-react";
 
 const STEPS = [
@@ -64,7 +64,7 @@ export default function OnboardingTour() {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={close} />
-      <div className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#111] shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-md rounded-2xl border border-white/[0.06] bg-[#121212] shadow-2xl overflow-hidden">
         {/* glow header */}
         <div className="h-1.5 w-full" style={{ backgroundColor: s.color, boxShadow: `0 0 24px ${s.color}` }} />
         <button onClick={close} className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition">

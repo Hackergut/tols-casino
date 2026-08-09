@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 
@@ -136,14 +137,18 @@ export default function BaccaratGame() {
             <div className="text-center">
               <div className="text-xs font-bold uppercase tracking-widest text-white/60 mb-3">Banker · {result ? result.bVal : "—"}</div>
               <div className="flex justify-center gap-2 min-h-[120px]">
-                {banker.map((c, i) => <Card key={i} card={c} delay={i * 0.1} />)}
+                <AnimatePresence>
+                {banker.map((c, i) => <motion.div key={c.r+c.s+i} initial={{ y: -20, opacity: 0, rotate: -5 }} animate={{ y: 0, opacity: 1, rotate: 0 }} transition={{ delay: i*0.1, type: "spring", stiffness: 400, damping: 25 }}><Card card={c} delay={i * 0.1} /></motion.div>)}
+                </AnimatePresence>
               </div>
             </div>
             {/* Player */}
             <div className="text-center">
               <div className="text-xs font-bold uppercase tracking-widest text-white/60 mb-3">Player · {result ? result.pVal : "—"}</div>
               <div className="flex justify-center gap-2 min-h-[120px]">
-                {player.map((c, i) => <Card key={i} card={c} delay={i * 0.1} />)}
+                <AnimatePresence>
+                {player.map((c, i) => <motion.div key={c.r+c.s+i} initial={{ y: -20, opacity: 0, rotate: -5 }} animate={{ y: 0, opacity: 1, rotate: 0 }} transition={{ delay: i*0.1+0.2, type: "spring", stiffness: 400, damping: 25 }}><Card card={c} delay={i * 0.1} /></motion.div>)}
+                </AnimatePresence>
               </div>
             </div>
           </div>
@@ -165,7 +170,7 @@ export default function BaccaratGame() {
         </div>
 
         {/* History */}
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-4">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-4">
           <div className="text-xs font-semibold text-white/50 mb-2">Hand history</div>
           <div className="flex gap-1.5 flex-wrap">
             {history.length === 0 && <span className="text-xs text-white/30">No hands played</span>}
@@ -213,6 +218,7 @@ export default function BaccaratGame() {
 }
 
 function Card({ card, delay }) {
+  // Framer motion for fluid deal
   return (
     <div className="w-16 h-24 rounded-lg shadow-xl" style={{ perspective: 600 }}>
       <div

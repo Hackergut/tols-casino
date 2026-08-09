@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Check, Lock, ChevronDown, Search, Trophy } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockCollectibleCards } from "@/lib/mockAdmin";
 import { Image } from "@/components/ui/image";
 import CardDetailModal from "@/components/cards/CardDetailModal";
 import CardThumb from "@/components/cards/CardThumb";
@@ -17,7 +18,8 @@ export default function Collection() {
 
   useEffect(() => {
     base44.entities.CollectibleCard.list("-created_date", 500)
-      .then((l) => setCards(l || []))
+      .then((l) => setCards((l && l.length ? l : getMockCollectibleCards())))
+      .catch(()=> setCards(getMockCollectibleCards()))
       .finally(() => setLoading(false));
   }, []);
 
@@ -96,7 +98,7 @@ export default function Collection() {
         </div>
 
         {loading ? (
-          <div className="space-y-4">{[0, 1, 2].map((i) => <div key={i} className="h-40 rounded-2xl border border-white/10 bg-[#111] animate-pulse" />)}</div>
+          <div className="space-y-4">{[0, 1, 2].map((i) => <div key={i} className="h-40 rounded-2xl border border-white/[0.06] bg-[#121212] animate-pulse" />)}</div>
         ) : (
           <div className="space-y-3">
             {sets.map((s) => <SetCard key={s.name} set={s} onOpen={setOpen} />)}
@@ -121,7 +123,7 @@ function Stat({ label, value }) {
 function SetCard({ set, onOpen }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
       <button onClick={() => setExpanded((v) => !v)} className="w-full flex items-center gap-4 p-4 text-left">
         <div className="w-12 h-12 rounded-xl grid place-items-center border-2 text-xl font-display" style={{ borderColor: set.accent, color: set.accent, background: set.accent + "12" }}>
           {String(set.name).charAt(0).toUpperCase()}

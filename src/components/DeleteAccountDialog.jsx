@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 
 export default function DeleteAccountDialog({ open, onClose }) {
   const [busy, setBusy] = useState(false);

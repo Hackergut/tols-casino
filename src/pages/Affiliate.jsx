@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import ReferralLink from "@/components/affiliate/ReferralLink";
+import BonusGrid from "@/components/bonus/BonusGrid";
+import RedeemPanel from "@/components/bonus/RedeemPanel";
 import AffiliateStats from "@/components/affiliate/AffiliateStats";
 import CommissionPlan from "@/components/affiliate/CommissionPlan";
 import ReferralTable from "@/components/affiliate/ReferralTable";
@@ -23,6 +25,7 @@ function genCode() {
 }
 
 export default function Affiliate() {
+  const [tab, setTab] = useState("affiliate"); // affiliate | bonus | redeem
   const [affiliate, setAffiliate] = useState(null);
   const [referrals, setReferrals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -136,20 +139,20 @@ export default function Affiliate() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0d0d0d] flex items-center justify-center">
+      <div className="min-h-screen bg-[#080808] flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-white/10 border-t-lime rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
+    <div className="min-h-screen bg-[#080808]">
+      <main className="mx-auto max-w-7xl px-3 sm:px-4 py-6 space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-            TOLS <span className="text-lime">Affiliates</span>
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-3">
+            TOLS <span className="text-lime">Rewards</span> <span className="text-xs font-bold tracking-widest px-2 py-1 rounded-full bg-lime text-black">TOLS STYLE</span>
           </h1>
-          <p className="text-sm text-white/40 mt-1">Track referrals, players and commissions in real time</p>
+          <p className="text-sm text-white/40 mt-1">Affiliate · Bonus · Redeem — all TOLS lime system</p>
           <div className="flex items-center gap-3 mt-2">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-lime/10 border border-lime/30 text-[11px] font-bold text-lime">
               <span className="w-1.5 h-1.5 rounded-full bg-lime animate-pulse" /> LIVE
@@ -160,21 +163,30 @@ export default function Affiliate() {
           </div>
         </div>
 
-        <AffiliateStats affiliate={affiliate} referrals={referrals} />
-
-        <div className="grid lg:grid-cols-[1fr_2fr] gap-6">
-          <ReferralLink code={affiliate.referral_code} />
-          <CommissionPlan affiliate={affiliate} onPlanChange={changePlan} />
+        <div className="flex gap-1.5 p-1 rounded-xl bg-[#121212] border border-white/[0.06] w-fit">
+          {[["affiliate","Affiliate"],["bonus","Bonus"],["redeem","Redeem Code"]].map(([id,label])=> (
+            <button key={id} onClick={()=> setTab(id)} className={`px-5 h-9 rounded-lg text-sm font-black transition ${tab===id?"bg-white text-black":"text-white/50 hover:text-white"}`}>{label}</button>
+          ))}
         </div>
 
-        <ReferralTable
-          referrals={referrals}
-          plan={affiliate.commission_plan}
-          commission_rate={affiliate.commission_rate}
-          cpa_amount={affiliate.cpa_amount}
-        />
-
-        <PayoutPanel affiliate={affiliate} />
+        {tab==="affiliate" && (
+          <>
+            <AffiliateStats affiliate={affiliate} referrals={referrals} />
+            <div className="grid lg:grid-cols-[1fr_2fr] gap-6">
+              <ReferralLink code={affiliate.referral_code} />
+              <CommissionPlan affiliate={affiliate} onPlanChange={changePlan} />
+            </div>
+            <ReferralTable referrals={referrals} plan={affiliate.commission_plan} commission_rate={affiliate.commission_rate} cpa_amount={affiliate.cpa_amount} />
+            <PayoutPanel affiliate={affiliate} />
+          </>
+        )}
+        {tab==="bonus" && (
+          <div className="space-y-4">
+            <div className="rounded-xl bg-lime/10 border border-lime/20 px-4 py-3 text-sm text-lime font-bold">🎁 TOLS Bonus System — claim instantly, wager x30 for withdraw (Shuffle-style rakeback & cashback included)</div>
+            <BonusGrid />
+          </div>
+        )}
+        {tab==="redeem" && <RedeemPanel />}
       </main>
     </div>
   );
@@ -182,18 +194,18 @@ export default function Affiliate() {
 
 function PayoutPanel({ affiliate }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-5 sm:p-6">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5 sm:p-6">
       <h3 className="font-bold text-white mb-4">Payout request</h3>
       <div className="grid sm:grid-cols-3 gap-4">
-        <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
+        <div className="rounded-xl bg-[#080808] border border-white/10 p-4">
           <p className="text-xs text-white/40">Total commissions</p>
           <p className="text-2xl font-black text-white mt-1">${(affiliate.total_commission ?? 0).toFixed(2)}</p>
         </div>
-        <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
+        <div className="rounded-xl bg-[#080808] border border-white/10 p-4">
           <p className="text-xs text-white/40">Pending</p>
           <p className="text-2xl font-black text-lime mt-1">${(affiliate.pending_commission ?? 0).toFixed(2)}</p>
         </div>
-        <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
+        <div className="rounded-xl bg-[#080808] border border-white/10 p-4">
           <p className="text-xs text-white/40">Already paid</p>
           <p className="text-2xl font-black text-white/70 mt-1">${(affiliate.paid_commission ?? 0).toFixed(2)}</p>
         </div>
@@ -201,7 +213,7 @@ function PayoutPanel({ affiliate }) {
       <div className="mt-4 flex flex-col sm:flex-row gap-3">
         <input
           placeholder="Crypto wallet address (ETH/SOL/MATIC)"
-          className="flex-1 h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-4 text-sm text-white outline-none focus:border-lime/40 placeholder-white/30"
+          className="flex-1 h-12 rounded-xl bg-[#080808] border border-white/10 px-4 text-sm text-white outline-none focus:border-lime/40 placeholder-white/30"
         />
         <button className="h-12 px-8 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40" disabled={(affiliate.pending_commission ?? 0) < 50}>
           Request payout

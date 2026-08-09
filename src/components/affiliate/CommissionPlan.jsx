@@ -10,7 +10,7 @@ export default function CommissionPlan({ affiliate, onPlanChange }) {
   ];
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
       <h3 className="font-bold text-white mb-1">Commission plan</h3>
       <p className="text-xs text-white/40 mb-4">Select your earning model</p>
       <div className="grid sm:grid-cols-3 gap-3">
@@ -21,7 +21,7 @@ export default function CommissionPlan({ affiliate, onPlanChange }) {
               key={p.id}
               onClick={() => onPlanChange(p.id)}
               className={`text-left rounded-xl border p-4 transition ${
-                active ? "border-lime bg-lime/5" : "border-white/10 bg-[#0d0d0d] hover:border-white/20"
+                active ? "border-lime bg-lime/5" : "border-white/[0.06] bg-[#080808] hover:border-white/20"
               }`}
             >
               <div className="flex items-center justify-between">
