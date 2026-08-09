@@ -18,6 +18,7 @@ import KenoGame from "@/components/games/KenoGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
 import SlotMachine from "@/components/games/SlotMachine";
+import ShootGame from "@/components/games/ShootGame";
 import { RTP_ORIGINALS } from "@/lib/gameEngine";
 import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 
@@ -33,6 +34,7 @@ const GAMES_MAP = {
   roulette: RouletteGame,
   baccarat: BaccaratGame,
   "neon-vault": SlotMachine,
+  shoot: ShootGame,
 };
 
 export default function GamePlay({ slug }) {
