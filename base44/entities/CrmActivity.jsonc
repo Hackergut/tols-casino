@@ -1,0 +1,18 @@
+{
+  "name": "CrmActivity",
+  "type": "object",
+  "properties": {
+    "member_id": { "type": "string", "default": "" },
+    "action": { "type": "string" },
+    "entity_type": { "type": "string", "default": "" },
+    "entity_id": { "type": "string", "default": "" },
+    "details": { "type": "string", "default": "", "maxLength": 2000 }
+  },
+  "required": ["action"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

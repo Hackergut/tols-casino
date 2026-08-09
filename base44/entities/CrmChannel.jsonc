@@ -1,0 +1,19 @@
+{
+  "name": "CrmChannel",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "type": { "type": "string", "default": "channel", "enum": ["channel", "direct", "group"] },
+    "members": { "type": "string", "default": "" },
+    "avatar": { "type": "string", "default": "" },
+    "description": { "type": "string", "default": "", "maxLength": 1000 },
+    "created_by": { "type": "string", "default": "" }
+  },
+  "required": ["name", "members"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

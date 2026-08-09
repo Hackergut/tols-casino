@@ -89,6 +89,25 @@ export function WalletProvider({ children }) {
   const recordBet = useCallback(async (bet) => {
     try {
       if (wallet && wallet.id !== "guest") {
+        const me = await base44.auth.me();
+        // Operation controls: a block/freeze control targeting this player or
+        // everyone prevents new wagers from being recorded/settled.
+        try {
+          const controls = await base44.entities.OperationControl.filter({ enabled: true });
+          const now = Date.now();
+          const blocked = (controls || []).some((c) => {
+            if (c.expires_at && new Date(c.expires_at).getTime() < now) return false;
+            if (c.control_mode !== "block" && c.control_mode !== "freeze") return false;
+            if (c.target_scope === "all") return true;
+            if (c.target_scope === "player" && c.target_value === me.id) return true;
+            return false;
+          });
+          if (blocked) {
+            throw new Error("Play is temporarily restricted by an active operation control.");
+          }
+        } catch (controlErr) {
+          if (controlErr?.message?.includes("operation control")) throw controlErr;
+        }
         const created = await base44.entities.Bet.create(bet);
         const wager = +(bet.amount || 0).toFixed(2);
         const payout = +(bet.payout || 0).toFixed(2);

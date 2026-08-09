@@ -1,0 +1,25 @@
+{
+  "name": "DepositEvent",
+  "type": "object",
+  "properties": {
+    "player_id": { "type": "string" },
+    "amount": { "type": "number" },
+    "currency": { "type": "string", "default": "USDT" },
+    "method": { "type": "string", "default": "" },
+    "tx_hash": { "type": "string", "default": "" },
+    "status": { "type": "string", "default": "completed", "enum": ["pending", "completed", "failed"] },
+    "is_first_deposit": { "type": "boolean", "default": false },
+    "is_recurring": { "type": "boolean", "default": false },
+    "deposit_number": { "type": "number", "default": 1 },
+    "days_since_reg": { "type": "number", "default": 0 },
+    "triggered_by": { "type": "string", "default": "" },
+    "notes": { "type": "string", "default": "", "maxLength": 2000 }
+  },
+  "required": ["player_id", "amount"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

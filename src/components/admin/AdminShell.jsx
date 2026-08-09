@@ -5,6 +5,8 @@ import {
   Dice5, LineChart, Trophy, Users2, Gift, CreditCard, Layers, Package,
   Sparkles, Store, Shield, MessageSquare, Bell, Settings, BarChart3,
   RefreshCw,
+  UserCog, ListChecks, Mail, Activity,
+  UserSearch, MonitorPlay, SlidersHorizontal, Receipt,
 } from "lucide-react";
 import EntityPanel from "@/components/admin/EntityPanel";
 import WithdrawalReview from "@/components/admin/WithdrawalReview";
@@ -54,7 +56,18 @@ const SECTIONS = [
   { id: "referrals", label: "Referrals", icon: Users2, group: "Growth" },
   { id: "commissions", label: "Commissions", icon: CreditCard, group: "Growth" },
 
-  { id: "chat", label: "Chat", icon: MessageSquare, group: "Ops" },
+  { id: "team", label: "Team", icon: UserCog, group: "CRM" },
+  { id: "crm-tasks", label: "Tasks", icon: ListChecks, group: "CRM" },
+  { id: "crm-chat", label: "CRM chat", icon: MessageSquare, group: "CRM" },
+  { id: "crm-email", label: "Email", icon: Mail, group: "CRM" },
+  { id: "crm-activity", label: "Activity log", icon: Activity, group: "CRM" },
+
+  { id: "player-profiles", label: "Player profiles", icon: UserSearch, group: "Ops" },
+  { id: "player-sessions", label: "Player sessions", icon: MonitorPlay, group: "Ops" },
+  { id: "operation-controls", label: "Operation controls", icon: SlidersHorizontal, group: "Ops" },
+  { id: "deposit-events", label: "Deposit events", icon: Receipt, group: "Ops" },
+  { id: "telegram-rules", label: "Telegram rules", icon: Bell, group: "Ops" },
+  { id: "chat", label: "Community chat", icon: MessageSquare, group: "Ops" },
   { id: "telegram", label: "Telegram alerts", icon: Bell, group: "Ops" },
   { id: "demo", label: "Demo sessions", icon: BarChart3, group: "Ops" },
   { id: "limits", label: "Responsible limits", icon: Shield, group: "Ops" },
@@ -158,6 +171,35 @@ function Dashboard({ data, onNavigate }) {
       </div>
 
       <HouseMargin earnings={data.earnings} />
+    </div>
+  );
+}
+
+function SyncButton({ label, description, fn, onDone }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+  const run = async () => {
+    setBusy(true); setMsg(null);
+    try {
+      const res = await base44.functions.invoke(fn, {});
+      const d = res.data || {};
+      setMsg({ ok: !d.error, text: d.error || (d.created != null ? `${d.created} created · ${d.updated} updated` : "Done") });
+      onDone && onDone(d);
+    } catch (e) {
+      setMsg({ ok: false, text: e?.response?.data?.error || e.message || "Failed" });
+    } finally { setBusy(false); }
+  };
+  return (
+    <div className="rounded-2xl border border-white/10 bg-[#111] p-4 flex items-center gap-4 flex-wrap">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-bold text-white">{label}</p>
+        {description && <p className="text-xs text-white/40 mt-0.5">{description}</p>}
+        {msg && <p className={`text-xs mt-1 ${msg.ok ? "text-lime" : "text-red-300"}`}>{msg.text}</p>}
+      </div>
+      <button onClick={run} disabled={busy}
+        className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-lime text-black text-sm font-black hover:brightness-110 disabled:opacity-50">
+        {busy ? <RefreshCw className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} Sync now
+      </button>
     </div>
   );
 }
@@ -358,6 +400,267 @@ export default function AdminShell() {
             { key: "commission", label: "commission", render: (v) => <span className="text-lime font-bold">{Number(v || 0).toFixed(2)}</span> },
             { key: "plan", label: "plan" },
           ]} icon={CreditCard} />;
+
+      case "team":
+        return <EntityPanel entityName="TeamMember" title="CRM team" searchFields={["name", "email", "role", "department"]}
+          columns={[
+            { key: "name", label: "name" }, { key: "email", label: "email" },
+            { key: "role", label: "role" }, { key: "department", label: "dept" },
+            { key: "status", label: "status", render: (v) => <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v === "active" ? "bg-lime/10 text-lime" : "bg-white/10 text-white/60"}`}>{v}</span> },
+          ]}
+          canCreate createFields={[
+            { key: "name", label: "name" }, { key: "email", label: "email" },
+            { key: "role", label: "role", default: "agent" },
+            { key: "department", label: "department", default: "general" },
+            { key: "phone", label: "phone" }, { key: "status", label: "status", options: ["active", "away", "offline"], default: "active" },
+          ]}
+          canEdit editFields={[
+            { key: "name", label: "name" }, { key: "email", label: "email" },
+            { key: "role", label: "role" }, { key: "department", label: "department" },
+            { key: "phone", label: "phone" }, { key: "status", label: "status", options: ["active", "away", "offline"] },
+            { key: "bio", label: "bio" },
+          ]} icon={UserCog} />;
+
+      case "crm-tasks":
+        return <EntityPanel entityName="CrmTask" title="CRM tasks" searchFields={["title", "status", "priority", "assignee_id"]}
+          columns={[
+            { key: "title", label: "title" },
+            { key: "status", label: "status", render: (v) => {
+              const colors = { todo: "bg-white/10 text-white/70", in_progress: "bg-blue-500/10 text-blue-300", blocked: "bg-red-500/10 text-red-300", done: "bg-lime/10 text-lime", cancelled: "bg-white/5 text-white/40" };
+              return <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${colors[v] || colors.todo}`}>{v?.replace("_", " ")}</span>;
+            } },
+            { key: "priority", label: "priority", render: (v) => {
+              const colors = { low: "text-white/50", medium: "text-blue-300", high: "text-amber-300", urgent: "text-red-300" };
+              return <span className={`text-xs font-bold ${colors[v] || ""}`}>{v}</span>;
+            } },
+            { key: "due_date", label: "due", render: (v) => v ? new Date(v).toLocaleDateString() : "—" },
+          ]}
+          canCreate createFields={[
+            { key: "title", label: "title" }, { key: "description", label: "description" },
+            { key: "status", label: "status", options: ["todo", "in_progress", "blocked", "done", "cancelled"], default: "todo" },
+            { key: "priority", label: "priority", options: ["low", "medium", "high", "urgent"], default: "medium" },
+            { key: "assignee_id", label: "assignee id" }, { key: "due_date", type: "datetime", label: "due date" },
+            { key: "tags", label: "tags" }, { key: "order", type: "number", label: "order" },
+          ]}
+          canEdit editFields={[
+            { key: "title", label: "title" }, { key: "description", label: "description" },
+            { key: "status", label: "status", options: ["todo", "in_progress", "blocked", "done", "cancelled"] },
+            { key: "priority", label: "priority", options: ["low", "medium", "high", "urgent"] },
+            { key: "assignee_id", label: "assignee id" }, { key: "due_date", type: "datetime", label: "due date" },
+            { key: "tags", label: "tags" }, { key: "order", type: "number", label: "order" },
+          ]} icon={ListChecks} />;
+
+      case "crm-chat":
+        return <EntityPanel entityName="CrmChannel" title="CRM chat channels" searchFields={["name", "type", "members"]}
+          columns={[
+            { key: "name", label: "name" }, { key: "type", label: "type" },
+            { key: "members", label: "members", render: (v) => <span className="font-mono text-[11px] text-white/55">{String(v || "").split(",").filter(Boolean).length} member(s)</span> },
+          ]}
+          canCreate createFields={[
+            { key: "name", label: "name" },
+            { key: "type", label: "type", options: ["channel", "direct", "group"], default: "channel" },
+            { key: "members", label: "members (comma-separated ids)" },
+            { key: "description", label: "description" }, { key: "created_by", label: "created by" },
+          ]}
+          canEdit editFields={[
+            { key: "name", label: "name" }, { key: "type", label: "type", options: ["channel", "direct", "group"] },
+            { key: "members", label: "members" }, { key: "description", label: "description" },
+          ]} icon={MessageSquare} />;
+
+      case "crm-email":
+        return <EntityPanel entityName="CrmEmail" title="CRM email" searchFields={["subject", "from_address", "to_addresses", "status"]}
+          columns={[
+            { key: "from_address", label: "from", render: (v) => <span className="font-mono text-[11px]">{v}</span> },
+            { key: "to_addresses", label: "to", render: (v) => <span className="font-mono text-[11px] text-white/60">{v}</span> },
+            { key: "subject", label: "subject" },
+            statusCol("status"),
+            { key: "starred", label: "★", render: (v) => v ? <span className="text-amber-300">★</span> : <span className="text-white/20">☆</span> },
+          ]}
+          canCreate createFields={[
+            { key: "from_address", label: "from" }, { key: "to_addresses", label: "to" },
+            { key: "cc_addresses", label: "cc" }, { key: "bcc_addresses", label: "bcc" },
+            { key: "subject", label: "subject" }, { key: "plain_body", label: "body" },
+            { key: "status", label: "status", options: ["inbox", "sent", "draft", "archived", "scheduled", "sending"], default: "draft" },
+            { key: "folder", label: "folder", default: "inbox" },
+            { key: "starred", type: "boolean", label: "starred" },
+            { key: "important", type: "boolean", label: "important" },
+          ]}
+          canEdit editFields={[
+            { key: "subject", label: "subject" }, { key: "plain_body", label: "body" },
+            { key: "status", label: "status", options: ["inbox", "sent", "draft", "archived", "scheduled", "sending"] },
+            { key: "folder", label: "folder" }, { key: "starred", type: "boolean", label: "starred" },
+            { key: "important", type: "boolean", label: "important" },
+          ]} icon={Mail} />;
+
+      case "crm-activity":
+        return <EntityPanel entityName="CrmActivity" title="CRM activity log" searchFields={["action", "entity_type", "member_id", "details"]}
+          columns={[
+            { key: "member_id", label: "member", render: (v) => <span className="font-mono text-[11px] text-white/55">{v ? String(v).slice(0, 8) : "—"}</span> },
+            { key: "action", label: "action" }, { key: "entity_type", label: "entity" },
+            { key: "entity_id", label: "entity id", render: (v) => <span className="font-mono text-[11px] text-white/45">{v ? String(v).slice(0, 8) : "—"}</span> },
+            { key: "created_date", label: "when", render: (v) => v ? new Date(v).toLocaleString() : "—" },
+          ]} icon={Activity} />;
+
+      case "player-profiles":
+        return (
+          <div className="space-y-4">
+            <SyncButton
+              label="Sync profiles from ledger"
+              description="Recomputes risk level, segment, deposits and net profit from users, bets, deposits and withdrawals."
+              fn="syncPlayerProfiles"
+              onDone={data.reload}
+            />
+            <EntityPanel entityName="PlayerProfile" title="Player profiles" searchFields={["username", "email", "external_id", "segment", "risk_level"]}
+          columns={[
+            { key: "username", label: "player" }, { key: "email", label: "email" },
+            { key: "risk_level", label: "risk", render: (v) => {
+              const colors = { low: "text-lime", normal: "text-white/70", high: "text-amber-300", vip: "text-purple-300", problem: "text-red-300" };
+              return <span className={`text-xs font-bold ${colors[v] || ""}`}>{v}</span>;
+            } },
+            { key: "segment", label: "segment" },
+            { key: "net_profit", label: "net", render: (v) => <span className={`font-bold tabular-nums ${v >= 0 ? "text-lime" : "text-red-300"}`}>{Number(v || 0).toFixed(2)}</span> },
+            { key: "total_bets", label: "bets" },
+          ]}
+          canCreate createFields={[
+            { key: "external_id", label: "external id" }, { key: "username", label: "username" },
+            { key: "email", label: "email" }, { key: "avatar", label: "avatar url" },
+            { key: "risk_level", label: "risk", options: ["low", "normal", "high", "vip", "problem"], default: "normal" },
+            { key: "segment", label: "segment", options: ["standard", "new", "active", "dormant", "vip", "whale", "at_risk"], default: "standard" },
+            { key: "notes", label: "notes" },
+          ]}
+          canEdit editFields={[
+            { key: "username", label: "username" }, { key: "email", label: "email" },
+            { key: "risk_level", label: "risk", options: ["low", "normal", "high", "vip", "problem"] },
+            { key: "segment", label: "segment", options: ["standard", "new", "active", "dormant", "vip", "whale", "at_risk"] },
+            { key: "total_deposits", type: "number", label: "total deposits" },
+            { key: "total_withdrawals", type: "number", label: "total withdrawals" },
+            { key: "notes", label: "notes" },
+          ]} icon={UserSearch} />
+          </div>
+        );
+
+      case "player-sessions":
+        return <EntityPanel entityName="PlayerSession" title="Player sessions" searchFields={["player_id", "game_name", "game_type", "outcome", "ip_address"]}
+          columns={[
+            { key: "player_id", label: "player", render: (v) => <span className="font-mono text-[11px]">{v ? String(v).slice(0, 10) : "—"}</span> },
+            { key: "game_name", label: "game" },
+            { key: "bet_amount", label: "bet", render: (v) => Number(v || 0).toFixed(2) },
+            { key: "win_amount", label: "win", render: (v) => <span className="text-lime tabular-nums">{Number(v || 0).toFixed(2)}</span> },
+            { key: "outcome", label: "outcome", render: (v) => <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v === "win" ? "bg-lime/10 text-lime" : v === "push" ? "bg-white/10 text-white/70" : "bg-red-500/10 text-red-300"}`}>{v}</span> },
+            { key: "duration", label: "dur (s)" },
+          ]}
+          canCreate createFields={[
+            { key: "player_id", label: "player id" }, { key: "session_id", label: "session id" },
+            { key: "game_type", label: "game type" }, { key: "game_id", label: "game id" },
+            { key: "game_name", label: "game name" },
+            { key: "bet_amount", type: "number", label: "bet amount" },
+            { key: "win_amount", type: "number", label: "win amount" },
+            { key: "outcome", label: "outcome", options: ["win", "loss", "push", "pending"], default: "loss" },
+            { key: "spins", type: "number", label: "spins" }, { key: "duration", type: "number", label: "duration seconds" },
+            { key: "ip_address", label: "ip address" }, { key: "user_agent", label: "user agent" },
+            { key: "controlled", type: "boolean", label: "controlled" },
+            { key: "control_type", label: "control type" },
+          ]}
+          canEdit editFields={[
+            { key: "game_name", label: "game name" },
+            { key: "bet_amount", type: "number", label: "bet" },
+            { key: "win_amount", type: "number", label: "win" },
+            { key: "outcome", label: "outcome", options: ["win", "loss", "push", "pending"] },
+            { key: "controlled", type: "boolean", label: "controlled" },
+            { key: "control_type", label: "control type" },
+          ]} icon={MonitorPlay} />;
+
+      case "operation-controls":
+        return <EntityPanel entityName="OperationControl" title="Operation controls" searchFields={["name", "target_scope", "control_mode", "enabled"]}
+          columns={[
+            { key: "name", label: "control" },
+            { key: "target_scope", label: "scope" },
+            { key: "control_mode", label: "mode" },
+            { key: "priority", label: "priority" },
+            { key: "enabled", label: "on", render: (v) => v ? <span className="text-lime">● on</span> : <span className="text-white/30">○ off</span> },
+            { key: "expires_at", label: "expires", render: (v) => v ? new Date(v).toLocaleString() : "—" },
+          ]}
+          canCreate createFields={[
+            { key: "name", label: "name" }, { key: "description", label: "description" },
+            { key: "target_scope", label: "scope", options: ["all", "player", "game", "segment", "provider"], default: "all" },
+            { key: "target_value", label: "target value" },
+            { key: "control_mode", label: "mode", options: ["normal", "limit", "block", "boost", "freeze"], default: "normal" },
+            { key: "rtp_target", type: "number", label: "rtp target" },
+            { key: "max_win_amount", type: "number", label: "max win" },
+            { key: "max_loss_amount", type: "number", label: "max loss" },
+            { key: "streak_threshold", type: "number", label: "streak threshold" },
+            { key: "priority", type: "number", label: "priority" },
+            { key: "enabled", type: "boolean", label: "enabled" },
+            { key: "expires_at", type: "datetime", label: "expires at" },
+          ]}
+          canEdit editFields={[
+            { key: "name", label: "name" }, { key: "description", label: "description" },
+            { key: "target_scope", label: "scope", options: ["all", "player", "game", "segment", "provider"] },
+            { key: "target_value", label: "target value" },
+            { key: "control_mode", label: "mode", options: ["normal", "limit", "block", "boost", "freeze"] },
+            { key: "rtp_target", type: "number", label: "rtp target" },
+            { key: "max_win_amount", type: "number", label: "max win" },
+            { key: "max_loss_amount", type: "number", label: "max loss" },
+            { key: "priority", type: "number", label: "priority" },
+            { key: "enabled", type: "boolean", label: "enabled" },
+            { key: "expires_at", type: "datetime", label: "expires at" },
+          ]} icon={SlidersHorizontal} />;
+
+      case "deposit-events":
+        return <EntityPanel entityName="DepositEvent" title="Deposit events" searchFields={["player_id", "tx_hash", "method", "status"]}
+          columns={[
+            { key: "player_id", label: "player", render: (v) => <span className="font-mono text-[11px]">{v ? String(v).slice(0, 10) : "—"}</span> },
+            { key: "amount", label: "amount", render: (v) => <span className="font-bold text-lime tabular-nums">{Number(v || 0).toFixed(2)}</span> },
+            { key: "currency", label: "currency" }, { key: "method", label: "method" },
+            statusCol("status"),
+            { key: "is_first_deposit", label: "1st", render: (v) => v ? <span className="text-lime">●</span> : "" },
+            { key: "created_date", label: "when", render: (v) => v ? new Date(v).toLocaleString() : "—" },
+          ]}
+          canCreate createFields={[
+            { key: "player_id", label: "player id" },
+            { key: "amount", type: "number", label: "amount" },
+            { key: "currency", label: "currency", default: "USDT" },
+            { key: "method", label: "method" }, { key: "tx_hash", label: "tx hash" },
+            { key: "status", label: "status", options: ["pending", "completed", "failed"], default: "completed" },
+            { key: "is_first_deposit", type: "boolean", label: "first deposit" },
+            { key: "is_recurring", type: "boolean", label: "recurring" },
+            { key: "deposit_number", type: "number", label: "deposit number" },
+            { key: "notes", label: "notes" },
+          ]}
+          canEdit editFields={[
+            { key: "amount", type: "number", label: "amount" },
+            { key: "status", label: "status", options: ["pending", "completed", "failed"] },
+            { key: "is_first_deposit", type: "boolean", label: "first deposit" },
+            { key: "notes", label: "notes" },
+          ]} icon={Receipt} />;
+
+      case "telegram-rules":
+        return <EntityPanel entityName="TelegramAlertRule" title="Telegram alert rules" searchFields={["name", "event_type", "telegram_chat_id"]}
+          columns={[
+            { key: "name", label: "rule" }, { key: "event_type", label: "event" },
+            { key: "telegram_chat_id", label: "chat", render: (v) => <span className="font-mono text-[11px] text-white/55">{v}</span> },
+            { key: "cooldown_minutes", label: "cooldown" },
+            { key: "enabled", label: "on", render: (v) => v ? <span className="text-lime">● on</span> : <span className="text-white/30">○ off</span> },
+          ]}
+          canCreate createFields={[
+            { key: "name", label: "name" },
+            { key: "event_type", label: "event type", options: ["registration", "login", "deposit", "withdrawal", "deposit_pending", "big_win", "system"] },
+            { key: "condition", label: "condition" },
+            { key: "telegram_chat_id", label: "telegram chat id" },
+            { key: "telegram_thread_id", label: "thread id" },
+            { key: "message_template", label: "message template" },
+            { key: "cooldown_minutes", type: "number", label: "cooldown minutes", default: 5 },
+            { key: "enabled", type: "boolean", label: "enabled", default: true },
+          ]}
+          canEdit editFields={[
+            { key: "name", label: "name" }, { key: "event_type", label: "event type", options: ["registration", "login", "deposit", "withdrawal", "deposit_pending", "big_win", "system"] },
+            { key: "condition", label: "condition" },
+            { key: "telegram_chat_id", label: "telegram chat id" },
+            { key: "telegram_thread_id", label: "thread id" },
+            { key: "message_template", label: "message template" },
+            { key: "cooldown_minutes", type: "number", label: "cooldown minutes" },
+            { key: "enabled", type: "boolean", label: "enabled" },
+          ]} icon={Bell} />;
       case "chat":
         return <EntityPanel entityName="ChatMessage" title="Chat messages" searchFields={["username", "message"]}
           columns={[

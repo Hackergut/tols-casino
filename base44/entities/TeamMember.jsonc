@@ -1,0 +1,24 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "email": { "type": "string" },
+    "role": { "type": "string", "default": "agent" },
+    "department": { "type": "string", "default": "general" },
+    "avatar": { "type": "string", "default": "" },
+    "phone": { "type": "string", "default": "" },
+    "status": { "type": "string", "default": "active" },
+    "bio": { "type": "string", "default": "", "maxLength": 1000 },
+    "join_date": { "type": "string", "format": "date-time" },
+    "last_seen": { "type": "string", "format": "date-time" },
+    "description": { "type": "string", "default": "", "maxLength": 1000 }
+  },
+  "required": ["name", "email"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
