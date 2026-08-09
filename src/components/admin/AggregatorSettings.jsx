@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockPlatformSettings, setMockPlatformSetting } from "@/lib/mockAdmin";
 import { Server, Save, Loader2, Check, AlertCircle, Eye, EyeOff } from "lucide-react";
 
 const FIELDS = [
@@ -24,9 +25,18 @@ export default function AggregatorSettings() {
       const v = {};
       const idm = {};
       (list || []).forEach((s) => { v[s.key] = s.value || ""; idm[s.key] = s.id; });
-      setValues(v);
+      if (!list?.length) {
+        const mock = getMockPlatformSettings("aggregator");
+        mock.forEach((s)=> { v[s.key]=s.value; idm[s.key]=s.id; });
+        if (mock.length) setValues(v);
+      } else setValues(v);
       setIds(idm);
-    } catch { /* ignore */ }
+    } catch { 
+      const mock = getMockPlatformSettings("aggregator");
+      const v={}; const idm={};
+      mock.forEach((s)=> { v[s.key]=s.value; idm[s.key]=s.id; });
+      if (Object.keys(v).length) setValues(v);
+    }
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -37,13 +47,17 @@ export default function AggregatorSettings() {
     try {
       for (const f of FIELDS) {
         const val = (values[f.key] || "").trim();
-        if (ids[f.key]) {
-          await base44.entities.PlatformSetting.update(ids[f.key], { value: val });
-        } else if (val) {
-          const r = await base44.entities.PlatformSetting.create({ key: f.key, value: val, category: "aggregator" });
-          setIds((p) => ({ ...p, [f.key]: r.id }));
-        }
+        setMockPlatformSetting(f.key, val, "aggregator");
+        try {
+          if (ids[f.key] && !String(ids[f.key]).startsWith("mock_")) {
+            await base44.entities.PlatformSetting.update(ids[f.key], { value: val });
+          } else if (val) {
+            const r = await base44.entities.PlatformSetting.create({ key: f.key, value: val, category: "aggregator" });
+            setIds((p) => ({ ...p, [f.key]: r.id }));
+          }
+        } catch {}
       }
+      await load();
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -56,7 +70,7 @@ export default function AggregatorSettings() {
   const configured = Boolean((values.aggregator_api_base || "").trim() && (values.aggregator_api_key || "").trim());
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5 space-y-4">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-bold text-white flex items-center gap-2"><Server className="w-4 h-4 text-lime" /> Slot aggregator</h3>

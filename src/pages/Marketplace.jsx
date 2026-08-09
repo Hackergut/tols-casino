@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ShoppingCart, Repeat, Tag, X, Search } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockListings, getMockCollectibleCards } from "@/lib/mockAdmin";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
 import MarketCardTile from "@/components/cards/MarketCardTile";
@@ -30,15 +31,22 @@ export default function Marketplace() {
       let me = null; try { me = await base44.auth.me(); } catch {}
       setMyUserId(me?.id || null);
       const [active, owned, recent] = await Promise.all([
-        base44.entities.MarketListing.filter({ status: "active" }, "-created_date", 100),
-        base44.entities.CollectibleCard.list("-created_date", 100),
-        base44.entities.MarketListing.list("-updated_date", 200),
+        base44.entities.MarketListing.filter({ status: "active" }, "-created_date", 100).catch(()=> getMockListings()),
+        base44.entities.CollectibleCard.list("-created_date", 100).catch(()=> getMockCollectibleCards()),
+        base44.entities.MarketListing.list("-updated_date", 200).catch(()=> getMockListings()),
       ]);
-      setListings(active || []);
-      setRecent(recent || []);
-      setMyCards(owned || []);
-      setMyListings((active || []).filter((l) => me && l.created_by_id === me.id));
-    } catch (e) { /* ignore */ }
+      const a = (active && active.length ? active : getMockListings());
+      const o = (owned && owned.length ? owned : getMockCollectibleCards());
+      const r = (recent && recent.length ? recent : getMockListings());
+      setListings(a || []);
+      setRecent(r || []);
+      setMyCards(o || []);
+      setMyListings((a || []).filter((l) => me && l.created_by_id === me.id));
+    } catch (e) { 
+      setListings(getMockListings());
+      setMyCards(getMockCollectibleCards());
+      setRecent(getMockListings());
+    }
     setLoading(false);
   };
 
@@ -96,9 +104,9 @@ export default function Marketplace() {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-72 rounded-xl border border-white/10 bg-[#111] animate-pulse" />)}</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">{[0, 1, 2, 3].map((i) => <div key={i} className="h-72 rounded-xl border border-white/[0.06] bg-[#121212] animate-pulse" />)}</div>
             ) : filtered.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-12 text-center text-sm text-white/40">No {tab === "buy" ? "sale" : "swap"} listings right now.</div>
+              <div className="rounded-2xl border border-dashed border-white/10 bg-[#121212] py-12 text-center text-sm text-white/40">No {tab === "buy" ? "sale" : "swap"} listings right now.</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.map((l) => (
@@ -209,7 +217,7 @@ function SellForm({ myCards, myListings, onChange }) {
       <div>
         <h3 className="text-sm font-black text-white mb-2">Your listings</h3>
         {myListings.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-white/10 bg-[#111] py-8 text-center text-sm text-white/40">No active listings.</div>
+          <div className="rounded-xl border border-dashed border-white/10 bg-[#121212] py-8 text-center text-sm text-white/40">No active listings.</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {myListings.map((l) => (

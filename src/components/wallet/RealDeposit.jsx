@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWeb3Wallet } from "@/hooks/useWeb3Wallet";
 import { QRCodeSVG } from "qrcode.react";
@@ -106,30 +106,39 @@ export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
         </div>
       </div>
 
-      {/* Address + QR */}
+      {/* Shuffle logic: QR centered TOLS style */}
       {isGuest ? (
         <div className="rounded-2xl border border-lime/20 bg-lime/5 p-5 text-center space-y-3">
           <p className="text-sm text-white/70">Sign in to generate your unique deposit address and QR code.</p>
           <Link to="/login" onClick={onClose} className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-lime text-black text-sm font-black hover:opacity-90 transition">Sign in</Link>
         </div>
       ) : depositAddress ? (
-        <div className="rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 space-y-3">
-          <p className="text-[11px] font-semibold text-white/45 uppercase tracking-wide">Your {active.name} ({active.network}) deposit address</p>
-          <div className="flex flex-col items-center">
-            <div className="rounded-xl bg-white p-3">
-              <QRCodeSVG value={depositAddress} size={150} bgColor="#ffffff" fgColor="#0a0a0a" level="M" />
-            </div>
-            <span className="text-[10px] text-white/40 mt-2 uppercase tracking-wider">Scan to deposit</span>
+        <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-black tracking-widest uppercase text-white/40">Deposit Address — {active.network}</p>
+            <span className="text-[10px] px-2 py-1 rounded-full bg-lime text-black font-black">TOLS • SECURE</span>
           </div>
-          <div className="flex items-center gap-2 rounded-xl bg-[#0e0e0e] border border-white/10 p-3">
-            <code className="flex-1 text-xs sm:text-sm font-mono text-white/80 break-all">{depositAddress}</code>
-            <button onClick={copy} className="shrink-0 w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-lime hover:border-lime/30 transition">
-              {copied ? <Check className="w-4 h-4 text-lime" /> : <Copy className="w-4 h-4" />}
+          {/* Shuffle-style large QR with lime border */}
+          <div className="flex flex-col items-center py-2">
+            <div className="rounded-2xl bg-white p-4 border-4 border-lime shadow-[0_0_30px_rgba(204,255,0,0.15)]">
+              <QRCodeSVG value={depositAddress} size={168} bgColor="#ffffff" fgColor="#080808" level="M" />
+            </div>
+            <span className="text-[11px] font-bold tracking-widest uppercase text-lime mt-3">Scan QR to Deposit</span>
+            <span className="text-[10px] text-white/30 mt-1">Min: {active.min} {active.symbol} • Fee: {active.fee} {active.symbol}</span>
+          </div>
+          <div className="flex items-center gap-2 rounded-xl bg-[#080808] border border-white/10 p-3">
+            <code className="flex-1 text-xs sm:text-sm font-mono text-white break-all">{depositAddress}</code>
+            <button onClick={copy} className="shrink-0 w-9 h-9 rounded-xl bg-white text-black flex items-center justify-center hover:bg-lime transition">
+              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
-          <div className="flex items-start gap-2 text-xs text-lime/80">
-            <Info className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-            <p>Send only {active.symbol} to this address on the {active.name} ({active.network}) network. Your deposit is credited in USDT after on-chain confirmation.</p>
+          <div className="grid grid-cols-2 gap-2 text-[11px]">
+            <div className="rounded-xl bg-[#1a1a1a] border border-white/5 p-2.5"><p className="text-white/30 uppercase font-bold">Network</p><p className="text-white font-bold mt-0.5">{active.network}</p></div>
+            <div className="rounded-xl bg-[#1a1a1a] border border-white/5 p-2.5"><p className="text-white/30 uppercase font-bold">Currency</p><p className="text-white font-bold mt-0.5">{active.symbol} → USDT</p></div>
+          </div>
+          <div className="flex items-start gap-2 text-xs text-white/50 bg-lime/5 border border-lime/10 rounded-xl p-3">
+            <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-lime" />
+            <p>Shuffle logic: send only <b className="text-white">{active.symbol}</b> on <b className="text-white">{active.network}</b>. TOLS style: credited in USDT after 1 confirmation. Do not send other assets.</p>
           </div>
         </div>
       ) : (

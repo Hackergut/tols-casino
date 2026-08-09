@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
 import { contributeToJackpot } from "@/lib/jackpot";
 import { DEMO_START, DEMO_MAX_BET, DEMO_MAX_REFILLS_PER_DAY, DEMO_MAX_DAILY_WAGER, dayKey, demoLimitState } from "@/lib/demoLimits";
@@ -158,8 +158,8 @@ export function WalletProvider({ children }) {
     return record;
   }, [wallet, updateBalance]);
 
-  const vipTier = wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0];
-  const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier };
+  const vipTier = React.useMemo(() => wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0], [wallet?.total_wagered]);
+  const value = React.useMemo(() => ({ wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier }), [wallet, loading, updateBalance, recordBet, requestWithdrawal, loadWallet, vipTier]);
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 }
@@ -279,11 +279,11 @@ export function DemoWalletProvider({ children }) {
 
   const requestWithdrawal = useCallback(() => { throw new Error("Not available in demo mode"); }, []);
 
-  const limits = demoLimitState(demo);
-  const value = {
+  const limits = React.useMemo(() => demoLimitState(demo), [demo.dayWagered, demo.refills, demo.balance]);
+  const value = React.useMemo(() => ({
     wallet: demo, loading: false, updateBalance, recordBet, requestWithdrawal,
     reload: () => {}, vipTier: VIP_TIERS[0], isDemo: true, demoLimits: limits, maxBet: DEMO_MAX_BET,
-  };
+  }), [demo, limits, updateBalance, recordBet, requestWithdrawal]);
   return (
     <WalletContext.Provider value={value}>
       <DemoLimitBanner limits={limits} wallet={demo} />

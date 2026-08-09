@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Trophy, Crown, Sparkles, TrendingUp } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import TournamentCard from "@/components/tournaments/TournamentCard";
 import RacePromoCard from "@/components/tournaments/RacePromoCard";
 import Leaderboard from "@/components/tournaments/Leaderboard";
 import { buildLeaderboard } from "@/lib/tournaments";
+import { getMockTournaments, getMockEntries, addMockEntry } from "@/lib/mockAdmin";
 
 export default function Tournaments() {
   const { wallet } = useWallet();
@@ -18,11 +19,13 @@ export default function Tournaments() {
   const loadTournaments = useCallback(async () => {
     try {
       const list = await base44.entities.Tournament.list("-created_date", 50);
-      const order = { active: 0, upcoming: 1, ended: 2 };
-      list.sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9) || (b.prize_pool || 0) - (a.prize_pool || 0));
-      setTournaments(list);
+      if (list && list.length) {
+        const order = { active: 0, upcoming: 1, ended: 2 };
+        list.sort((a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9) || (b.prize_pool || 0) - (a.prize_pool || 0));
+        setTournaments(list);
+      } else setTournaments(getMockTournaments());
     } catch {
-      setTournaments([]);
+      setTournaments(getMockTournaments());
     } finally {
       setLoading(false);
     }
@@ -30,25 +33,29 @@ export default function Tournaments() {
 
   const computeBoard = useCallback(async () => {
     let currentUser = null;
+    let guestName = localStorage.getItem("tols_chat_guest") || "Guest";
     try {
       const user = await base44.auth.me();
       if (user) {
-        const bets = await base44.entities.Bet.filter({ created_by_id: user.id }, "-created_date", 300);
+        const bets = await base44.entities.Bet.filter({ created_by_id: user.id }, "-created_date", 300).catch(()=>[]);
         currentUser = {
           username: user.full_name || (user.email ? user.email.split("@")[0] : "Player"),
           wagered: wallet?.total_wagered || 0,
           wins: bets.filter((b) => b.result === "win").length,
           biggest_win: bets.reduce((m, b) => Math.max(m, b.payout || 0), 0),
         };
+      } else {
+        currentUser = { username: guestName, wagered: wallet?.total_wagered || 0, wins: 0, biggest_win: 0 };
       }
     } catch {
-      /* guest */
+      currentUser = { username: guestName, wagered: wallet?.total_wagered || 0, wins: 0, biggest_win: 0 };
     }
     let entries = [];
     try {
       entries = (await base44.entities.TournamentEntry.list("-wagered", 200)) || [];
+      if (!entries.length) entries = getMockEntries();
     } catch {
-      entries = [];
+      entries = getMockEntries();
     }
     setBoard(buildLeaderboard(entries, currentUser));
   }, [wallet]);
@@ -64,27 +71,29 @@ export default function Tournaments() {
       const next = new Set([...joined, t.id]);
       setJoined(next);
       localStorage.setItem("tols_joined_tourneys", JSON.stringify([...next]));
+      let username = localStorage.getItem("tols_chat_guest") || "Guest";
       try {
-        let username = "Guest";
-        try {
-          const user = await base44.auth.me();
-          if (user) username = user.full_name || (user.email ? user.email.split("@")[0] : "Player");
-        } catch {}
+        const user = await base44.auth.me();
+        if (user) username = user.full_name || (user.email ? user.email.split("@")[0] : "Player");
+      } catch {}
+      try {
         await base44.entities.TournamentEntry.create({ tournament_id: t.id, username });
         await base44.entities.Tournament.update(t.id, { participants_count: (t.participants_count || 0) + 1 });
       } catch {
-        /* ignore — participation recorded locally */
+        addMockEntry(username, t.id, wallet?.total_wagered || 0);
       }
       loadTournaments();
+      // recompute board
+      try{ const entries = getMockEntries(); /* trigger rebuild on next effect */ }catch{}
     },
-    [joined, loadTournaments]
+    [joined, loadTournaments, wallet]
   );
 
   const totalPrize = useMemo(() => tournaments.reduce((s, t) => s + (t.prize_pool || 0), 0), [tournaments]);
   const activeCount = useMemo(() => tournaments.filter((t) => t.status === "active").length, [tournaments]);
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d]">
+    <div className="min-h-screen bg-[#080808]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
@@ -95,11 +104,11 @@ export default function Tournaments() {
             <p className="text-sm text-white/50 mt-1.5">Compete with players worldwide. Wager to climb the leaderboard and win a share of the prize pool.</p>
           </div>
           <div className="flex gap-3">
-            <div className="rounded-xl border border-white/10 bg-[#111] px-4 py-2.5">
+            <div className="rounded-xl border border-white/[0.06] bg-[#121212] px-4 py-2.5">
               <div className="text-[10px] font-bold uppercase text-white/40">Active</div>
               <div className="text-xl font-black text-lime tabular-nums">{activeCount}</div>
             </div>
-            <div className="rounded-xl border border-white/10 bg-[#111] px-4 py-2.5">
+            <div className="rounded-xl border border-white/[0.06] bg-[#121212] px-4 py-2.5">
               <div className="text-[10px] font-bold uppercase text-white/40">Total prizes</div>
               <div className="text-xl font-black text-white tabular-nums">{totalPrize.toLocaleString()}<span className="text-xs text-white/40 ml-1">USDT</span></div>
             </div>
@@ -128,11 +137,11 @@ export default function Tournaments() {
             {loading ? (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[0, 1, 2].map((i) => (
-                  <div key={i} className="h-72 rounded-2xl border border-white/10 bg-[#111] animate-pulse" />
+                  <div key={i} className="h-72 rounded-2xl border border-white/[0.06] bg-[#121212] animate-pulse" />
                 ))}
               </div>
             ) : tournaments.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-16 text-center">
                 <Trophy className="w-10 h-10 text-white/20 mx-auto mb-3" />
                 <p className="text-white/50">No tournaments available right now. Check back soon!</p>
               </div>

@@ -53,7 +53,7 @@ export default function HouseMargin({ earnings = [] }) {
   }, [rows]);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
       <div className="flex items-center justify-between mb-1">
         <h3 className="font-bold text-white flex items-center gap-2">
           <Scale className="w-4 h-4 text-lime" /> House margin by game

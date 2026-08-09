@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { Shield, Clock, TrendingDown, Timer, DollarSign, Check, Ban, Trash2 } from "lucide-react";
 
 const EXCLUDE = [
@@ -99,12 +99,12 @@ export default function ResponsibleGaming() {
             <p className="text-xs text-white/50 mt-2">Self-exclusion cannot be lifted before it expires.</p>
           </div>
         ) : (
-          <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
             <h3 className="font-bold text-white flex items-center gap-2"><Ban className="w-4 h-4 text-lime" /> Self-exclusion</h3>
             <p className="text-sm text-white/50 mt-1 mb-4">Block yourself from playing for a chosen period. This cannot be reversed early.</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
               {EXCLUDE.map((p) => (
-                <button key={p.id} onClick={() => selfExclude(p.ms)} disabled={busy === "self_exclusion"} className="h-12 rounded-xl border border-white/10 bg-[#0d0d0d] text-sm font-bold text-white hover:border-lime/50 hover:text-lime transition disabled:opacity-50">
+                <button key={p.id} onClick={() => selfExclude(p.ms)} disabled={busy === "self_exclusion"} className="h-12 rounded-xl border border-white/10 bg-[#080808] text-sm font-bold text-white hover:border-lime/50 hover:text-lime transition disabled:opacity-50">
                   {busy === "self_exclusion" ? "…" : p.label}
                 </button>
               ))}
@@ -133,7 +133,7 @@ function LimitCard({ icon, title, desc, type, limit, busy, onSave, onRemove, ses
   const submit = (e) => { e.preventDefault(); onSave(type, value || 0, period); };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <span className="text-lime">{React.cloneElement(icon, { className: "w-4 h-4" })}</span>
@@ -143,16 +143,16 @@ function LimitCard({ icon, title, desc, type, limit, busy, onSave, onRemove, ses
       </div>
       <p className="text-sm text-white/50 mt-1 mb-3">{desc}</p>
       {limit && (
-        <div className="mb-3 rounded-lg bg-[#0d0d0d] border border-white/5 px-3 py-2 text-sm">
+        <div className="mb-3 rounded-lg bg-[#080808] border border-white/5 px-3 py-2 text-sm">
           <span className="text-white/40">Current: </span>
           <span className="font-bold text-lime">{limit.limit_value} {sessionMode ? "min" : "USDT"}</span>
           <span className="text-white/40 capitalize"> · {limit.period}</span>
         </div>
       )}
       <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2">
-        <input type="number" min="0" step={sessionMode ? "1" : "0.01"} value={value} onChange={(e) => setValue(e.target.value)} placeholder={sessionMode ? "Minutes" : "Amount USDT"} className="flex-1 h-10 px-3 rounded-lg bg-[#0d0d0d] border border-white/10 text-sm text-white outline-none focus:border-lime/40" />
+        <input type="number" min="0" step={sessionMode ? "1" : "0.01"} value={value} onChange={(e) => setValue(e.target.value)} placeholder={sessionMode ? "Minutes" : "Amount USDT"} className="flex-1 h-10 px-3 rounded-lg bg-[#080808] border border-white/10 text-sm text-white outline-none focus:border-lime/40" />
         {!sessionMode && (
-          <select value={period} onChange={(e) => setPeriod(e.target.value)} className="h-10 px-3 rounded-lg bg-[#0d0d0d] border border-white/10 text-sm text-white outline-none focus:border-lime/40">
+          <select value={period} onChange={(e) => setPeriod(e.target.value)} className="h-10 px-3 rounded-lg bg-[#080808] border border-white/10 text-sm text-white outline-none focus:border-lime/40">
             {PERIODS.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
           </select>
         )}

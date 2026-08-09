@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import { PLINKO_ROW_COUNT, PLINKO_MULTIPLIERS } from "@/lib/gameEngine";
@@ -102,18 +103,18 @@ export default function PlinkoGame() {
             })
           )}
           {/* ball */}
+          <AnimatePresence>
           {ball && (
-            <span
+            <motion.span
+              key={`${ball.x}-${ball.y}`}
+              initial={{ scale: 0 }}
+              animate={{ x: ball.x - 6, y: ball.y - 6, scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30, duration: 0.09 }}
               className="absolute w-3 h-3 rounded-full bg-lime"
-              style={{
-                left: ball.x - 6,
-                top: ball.y - 6,
-                transition: "left 0.09s linear, top 0.09s linear",
-                animation: dropping ? "flashGlow 0.4s infinite" : "none",
-                boxShadow: "0 0 10px rgba(204,255,0,0.7)",
-              }}
+              style={{ boxShadow: "0 0 10px rgba(204,255,0,0.7)" }}
             />
           )}
+          </AnimatePresence>
         </div>
         {/* buckets */}
         <div className="grid gap-1 mt-3 w-full" style={{ gridTemplateColumns: `repeat(${buckets}, 1fr)` }}>

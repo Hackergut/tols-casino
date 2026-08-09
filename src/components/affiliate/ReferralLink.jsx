@@ -12,7 +12,7 @@ export default function ReferralLink({ code }) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-5 sm:p-6">
+    <div className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-5 sm:p-6">
       <div className="flex items-center gap-2 mb-4">
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-lime/10 border border-lime/20">
           <Link2 className="w-4.5 h-4.5 text-lime" />
@@ -23,7 +23,7 @@ export default function ReferralLink({ code }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 h-11 sm:h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-3 sm:px-4">
+      <div className="flex items-center gap-2 h-11 sm:h-12 rounded-xl bg-[#080808] border border-white/[0.06] px-3 sm:px-4">
         <span className="text-xs sm:text-sm text-white/50 truncate flex-1 font-mono">{link}</span>
         <button onClick={copy} className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg bg-lime text-black text-xs font-bold hover:opacity-90 transition shrink-0">
           {copied ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy</>}
@@ -37,7 +37,7 @@ export default function ReferralLink({ code }) {
 
       <div className="grid grid-cols-3 gap-2 mt-4">
         {["Twitter", "Telegram", "Discord"].map((s) => (
-          <button key={s} className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 text-xs font-semibold text-white/70 hover:border-lime/40 hover:text-lime transition">
+          <button key={s} className="flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg bg-[#1a1a1a] border border-white/[0.06] text-xs font-semibold text-white/70 hover:border-lime/40 hover:text-lime transition">
             <Share2 className="w-3.5 h-3.5 shrink-0" /> <span className="truncate">{s}</span>
           </button>
         ))}

@@ -15,8 +15,11 @@ import SetLeaders from "@/components/home/SetLeaders";
 import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
 import TolsLogo from "@/components/TolsLogo";
+import TolsHero from "@/components/home/TolsHero";
 import SocialLinks from "@/components/SocialLinks";
 import { GAMES } from "@/lib/games";
+import { useHomeSync } from "@/hooks/useHomeSync";
+import { motion } from "framer-motion";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
 const SLOTS_EMPTY = "No slots synced yet — an admin can sync the catalog from the Admin panel.";
@@ -70,6 +73,8 @@ export default function Home() {
     setChip((current) => (current === id ? null : id));
   };
 
+  useHomeSync({ chip, query });
+
   const rails = [
     { id: "originals", title: "TOLS Originals", icon: Gamepad2, games: originals, to: "/games/category/originals", moreTile: true },
     { id: "featured", title: "Featured Games", icon: Star, games: [...originals.slice(0, 6), ...slotCards.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
@@ -83,18 +88,19 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
-        {/* Hero */}
-        <MegaPromoCards />
+      <main className="mx-auto max-w-[1600px] px-3 sm:px-4 lg:px-6 py-4 space-y-6 md:space-y-8">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.16,1,0.3,1] }}>
+          <TolsHero />
+        </motion.div>
 
-        {/* Collection feature */}
+        {/* Collection promo kept but compact */}
         <CollectionPromo />
 
-        {/* Sticky lobby toolbar: tabs on top, full-width search below */}
-        <div className="sticky top-16 z-30 -mx-4 sm:-mx-6 px-4 sm:px-6 py-3 bg-background/90 backdrop-blur-md border-y border-white/10 space-y-2">
+        {/* Sticky lobby toolbar — exact responsive: mobile bleed, tablet/desktop centered */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="sticky top-[56px] z-30 -mx-3 sm:-mx-4 lg:mx-0 px-3 sm:px-4 lg:px-0 py-3 bg-[#080808]/90 backdrop-blur-xl border-y border-white/[0.06] space-y-2">
           <CategoryChips active={chip} onSelect={onChip} />
           <LobbySearch value={query} onChange={setQuery} />
-        </div>
+        </motion.div>
 
         {results ? (
           <section className="space-y-3">
@@ -102,7 +108,7 @@ export default function Home() {
               {results.length} result{results.length === 1 ? "" : "s"} for “{query}”
             </h2>
             {results.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-12 text-center text-sm text-white/40">
+              <div className="rounded-2xl border border-dashed border-white/10 bg-[#121212] py-12 text-center text-sm text-white/40">
                 No game matches your search
               </div>
             ) : (
@@ -131,13 +137,16 @@ export default function Home() {
         <LiveWinsTicker />
       </main>
 
-      <footer className="border-t border-white/5 mt-12 py-8 pb-24 lg:pb-8 px-4 sm:px-6">
-        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-5">
+      <footer className="border-t border-white/[0.06] mt-10 py-8 pb-24 lg:pb-8 px-3 sm:px-4">
+        <div className="mx-auto max-w-[1600px] flex flex-col sm:flex-row items-center justify-between gap-5">
           <TolsLogo size="sm" />
-          <div className="flex items-center justify-center gap-5 text-xs text-white/40">
+          <div className="flex items-center justify-center gap-4 text-xs text-white/40 flex-wrap">
             <Link to="/about" className="hover:text-lime transition">About</Link>
-            <Link to="/contact" className="hover:text-lime transition">Contact</Link>
-            <Link to="/affiliate" className="hover:text-lime transition">Refer and Earn</Link>
+            <Link to="/terms" className="hover:text-lime transition">Terms</Link>
+            <Link to="/privacy" className="hover:text-lime transition">Privacy</Link>
+            <Link to="/license" className="hover:text-lime transition">License</Link>
+            <Link to="/responsible-gaming" className="hover:text-lime transition">Responsible</Link>
+            <Link to="/affiliate" className="hover:text-lime transition">Affiliate</Link>
           </div>
           <SocialLinks />
         </div>

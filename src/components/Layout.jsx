@@ -9,6 +9,7 @@ import CookieNotice from "@/components/CookieNotice";
 import OnboardingTour from "@/components/OnboardingTour";
 import BottomNav from "@/components/nav/BottomNav";
 import { useSwipe } from "@/hooks/useSwipe";
+import { useNavSync } from "@/hooks/useNavSync";
 
 export default function Layout() {
   const [mobileNav, setMobileNav] = useState(false);
@@ -22,6 +23,7 @@ export default function Layout() {
   const location = useLocation();
   const outlet = useOutlet();
   const routeKey = location.pathname.split("/")[1] || "root";
+  useNavSync(); // exact backend↔frontend sync for every route change
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
@@ -64,13 +66,14 @@ export default function Layout() {
         <Sidebar />
         <div className="flex-1 min-w-0 flex flex-col">
           <Header onMenu={() => setMobileNav(true)} />
-          <main className="flex-1 pb-16 lg:pb-0">
-            <AnimatePresence initial={false}>
+          <main className="flex-1 pb-16 md:pb-16 lg:pb-0">
+            <AnimatePresence initial={false} mode="wait">
               <motion.div
                 key={routeKey}
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               >
                 {outlet}
               </motion.div>
@@ -79,21 +82,30 @@ export default function Layout() {
         </div>
       </div>
 
-      {/* Mobile sidebar drawer a scomparsa */}
-      <div
-        className={`fixed inset-0 z-[60] lg:hidden transition-opacity duration-300 ${
-          mobileNav ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileNav(false)} />
-        <aside
-          className={`absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-background border-r border-white/10 overflow-y-auto scrollbar-hide transition-transform duration-300 ease-out ${
-            mobileNav ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <MobileNav onClose={() => setMobileNav(false)} />
-        </aside>
-      </div>
+      {/* Mobile/Tablet drawer — Framer motion, exact sync */}
+      <AnimatePresence>
+        {mobileNav && (
+          <motion.div
+            key="drawer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-[60] lg:hidden"
+          >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileNav(false)} />
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              className="absolute left-0 top-0 bottom-0 w-72 max-w-[85vw] bg-background border-r border-white/10 overflow-y-auto scrollbar-hide"
+            >
+              <MobileNav onClose={() => setMobileNav(false)} />
+            </motion.aside>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <BottomNav onMenu={() => setMobileNav(true)} />
 

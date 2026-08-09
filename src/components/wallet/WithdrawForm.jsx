@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import { AlertCircle, CheckCircle2, Loader2, Info, RefreshCw, History } from "lucide-react";
 import CoinSelect from "@/components/wallet/CoinSelect";

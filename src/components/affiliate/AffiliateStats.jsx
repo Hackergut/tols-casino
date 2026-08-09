@@ -20,7 +20,7 @@ export default function AffiliateStats({ affiliate, referrals }) {
       {cards.map((c) => {
         const Icon = c.icon;
         return (
-          <div key={c.label} className="rounded-xl border border-white/10 bg-[#111] p-3 sm:p-4">
+          <div key={c.label} className="rounded-xl border border-white/[0.06] bg-[#121212] p-3 sm:p-4">
             <Icon className={`w-5 h-5 ${c.accent} mb-1.5 sm:mb-2`} />
             <p className="text-lg sm:text-xl font-black text-white tabular-nums leading-tight">{c.value}</p>
             <p className="text-[11px] sm:text-xs text-white/40 font-medium mt-0.5 leading-tight">{c.label}</p>

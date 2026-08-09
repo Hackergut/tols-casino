@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { Sparkles, Zap, Gem, Crown, Star } from "lucide-react";
 
 const RARITY = {
@@ -53,7 +53,7 @@ export default function LivePullsTicker() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
       <div className="flex items-center gap-2 px-4 py-2 border-b border-white/5">
         <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
         <span className="text-[11px] font-black tracking-[0.18em] text-white/80 uppercase">Live card pulls</span>

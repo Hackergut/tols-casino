@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import { Loader2, AlertTriangle } from "lucide-react";
 

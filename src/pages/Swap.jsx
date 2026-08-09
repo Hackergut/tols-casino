@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Zap, Plus, Minus, Info, X, Check, ShieldCheck } from "lucide-react";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import TolsCard from "@/components/cards/TolsCard";
 import {
   RARITIES, RARITY_ORDER, COLLECTIONS, COLLECTION_NAMES,

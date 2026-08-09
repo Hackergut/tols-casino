@@ -141,7 +141,7 @@ export default function RouletteGame() {
         </div>
 
         {/* Bet board */}
-        <div className="rounded-2xl border border-white/10 bg-[#111] p-4 overflow-x-auto">
+        <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-4 overflow-x-auto">
           <div className="flex gap-1 min-w-[520px]">
             {/* Zero */}
             <button

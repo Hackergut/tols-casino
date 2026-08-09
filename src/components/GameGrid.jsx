@@ -36,7 +36,7 @@ export default function GameGrid({ title = "TOLS GAMES", filter }) {
       </div>
 
       {games.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/10 bg-[#111] py-14 text-center">
+        <div className="rounded-2xl border border-dashed border-white/10 bg-[#121212] py-14 text-center">
           <p className="font-bold text-white/60">No games here yet</p>
           <p className="text-xs text-white/40 mt-1">Slots are loaded from the synced catalog.</p>
         </div>

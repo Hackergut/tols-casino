@@ -1,77 +1,56 @@
-# Base44 Project
+# TOLS Casino — Professional Full-Stack Crypto Casino
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+**Shuffle.com clone + TOLS lime design — Provably fair, production ready**
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+No Base44 dependency — pure professional stack: Vite React + Express + Prisma.
 
-## Prerequisites
+## Architecture
+```
+tols-casino/
+├── src/                 # Vite React frontend (Shuffle clone, TOLS lime #ccff00)
+│   ├── api/client.js    # Professional vendor-agnostic client (fetch + JWT, no @base44/sdk)
+│   ├── pages/           # Home, Admin, Affiliate/Bonus/Redeem, Packs, Wallet QR, etc.
+│   ├── components/      # ShuffleBanner, GameRail, TolsGameCard, Wallet QR, etc.
+│   └── lib/             # bonus, mockAdmin (demo fallback), gameEngine, provablyFair
+├── server/              # Professional Express server (port 3001)
+│   └── index.js         # REST CRUD for 21 entities + functions + health
+├── production/          # Next.js standalone + Prisma SQLite/Postgres (alternative stack)
+├── scripts/             # setup-production.sh, seed-admin.js
+├── dist/                # Vite build (code-split)
+└── vite.config.js       # No @base44/vite-plugin, pure Vite
+```
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
-
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
-
-## Run Locally
-
-Run the full local development environment from the project root:
-
+## Quick Start (Professional)
 ```bash
-base44 dev
+npm install
+npm run server      # Express API on :3001 (health at /api/health)
+npm run dev         # Vite on :5173 (proxy /api → :3001 via VITE_API_BASE)
+# or full:
+npm run dev:full    # both
+
+# Production
+npm run build       # → dist/
+VITE_API_BASE=/api npm run preview
+# or
+node server/index.js  # serves dist + API
 ```
 
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
+## Env
+Copy `.env.example` → `.env.local`:
+```
+VITE_API_BASE=http://localhost:3001/api
+VITE_DEMO_FALLBACK=false  # true = localStorage mock when offline, false = real only
+DATABASE_URL=postgresql://... # for production Prisma (optional, server currently in-memory)
 ```
 
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
-
-```bash
-npm run dev
+## Why no Base44?
+`src/api/base44Client.js` now re-exports `src/api/client.js` (deprecated wrapper). All 229 `base44` imports still work but resolve to the professional client. Migration is drop-in — no code change needed for callers. To fully remove, replace:
+```js
+import { base44 } from "@/api/base44Client" → import { tols } from "@/api/client"
 ```
 
-Open the local URL printed by Vite.
+## Deploy
+- Vercel: `vercel --prod` (set VITE_API_BASE)
+- Docker: `docker build -t tols . && docker run -p 3001:3001 -p 4173:4173 tols`
+- Caddy: `caddy run --config Caddyfile` (serves dist + proxies /api)
 
-## Use The Hosted Backend
-
-For frontend-only development, create or update `.env.local` in the project root:
-
-```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
-```
-
-`VITE_BASE44_APP_ID` identifies the Base44 app.
-
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
-
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
-
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
-
-```bash
-base44 dashboard open
-```
-
-## Docs & Support
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)

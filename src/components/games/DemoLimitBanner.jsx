@@ -8,7 +8,7 @@ export default function DemoLimitBanner({ limits, wallet }) {
   const exhausted = limits.exhausted;
 
   return (
-    <div className={`rounded-xl border px-4 py-2.5 mb-3 flex items-center justify-between gap-3 flex-wrap ${exhausted ? "border-red-500/40 bg-red-500/10" : "border-white/10 bg-[#111]"}`}>
+    <div className={`rounded-xl border px-4 py-2.5 mb-3 flex items-center justify-between gap-3 flex-wrap ${exhausted ? "border-red-500/40 bg-red-500/10" : "border-white/10 bg-[#121212]"}`}>
       <div className="flex items-center gap-2 text-xs font-bold">
         {exhausted ? <AlertTriangle className="w-4 h-4 text-red-400" /> : <Gauge className="w-4 h-4 text-lime" />}
         <span className={exhausted ? "text-red-300" : "text-white/70"}>

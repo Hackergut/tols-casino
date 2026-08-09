@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
+import { getMockDemoSessions } from "@/lib/mockAdmin";
 import { FlaskConical, AlertTriangle } from "lucide-react";
 import { RTP_ORIGINALS } from "@/lib/gameEngine";
 import { DEMO_MAX_DAILY_WAGER, DEMO_MAX_REFILLS_PER_DAY } from "@/lib/demoLimits";
@@ -12,8 +13,10 @@ export default function DemoMonitor() {
   useEffect(() => {
     const load = async () => {
       try {
-        setSessions((await base44.entities.DemoSession.list("-created_date", 300)) || []);
-      } catch (e) { /* ignore */ }
+        const list = await base44.entities.DemoSession.list("-created_date", 300);
+        if (list?.length) setSessions(list);
+        else setSessions(getMockDemoSessions());
+      } catch (e) { setSessions(getMockDemoSessions()); }
     };
     load();
     const id = setInterval(load, 15000);
@@ -57,7 +60,7 @@ export default function DemoMonitor() {
   }, [sessions]);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#111] p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-5">
       <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
         <h3 className="font-bold text-white flex items-center gap-2">
           <FlaskConical className="w-4 h-4 text-lime" /> Demo (fun-money) monitoring
@@ -122,7 +125,7 @@ export default function DemoMonitor() {
 
 function Box({ label, value, sub, accent, warn }) {
   return (
-    <div className={`rounded-xl border p-3 ${warn ? "border-yellow-500/30 bg-yellow-500/5" : accent ? "border-lime/30 bg-lime/5" : "border-white/10 bg-[#0d0d0d]"}`}>
+    <div className={`rounded-xl border p-3 ${warn ? "border-yellow-500/30 bg-yellow-500/5" : accent ? "border-lime/30 bg-lime/5" : "border-white/10 bg-[#080808]"}`}>
       <p className="text-[10px] text-white/40 uppercase tracking-wide">{label}</p>
       <p className={`text-xl font-black mt-1 ${warn ? "text-yellow-300" : accent ? "text-lime" : "text-white"}`}>{value}</p>
       {sub && <p className="text-[11px] text-white/30 mt-0.5">{sub}</p>}

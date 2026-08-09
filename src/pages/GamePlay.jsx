@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, Lock, LogIn, Wallet } from "lucide-react";
 import { getGame } from "@/lib/games";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet, DemoWalletProvider } from "@/components/WalletProvider";
 import { useWalletModal } from "@/components/wallet/useWalletModal";
 import DemoSlotPlayer from "@/components/DemoSlotPlayer";
@@ -15,6 +15,12 @@ import LimboGame from "@/components/games/LimboGame";
 import WheelGame from "@/components/games/WheelGame";
 import CoinflipGame from "@/components/games/CoinflipGame";
 import KenoGame from "@/components/games/KenoGame";
+import HiloGame from "@/components/games/HiloGame";
+import BlackjackGame from "@/components/games/BlackjackGame";
+import SlideGame from "@/components/games/SlideGame";
+import BlitzGame from "@/components/games/BlitzGame";
+import TowerGame from "@/components/games/TowerGame";
+import ChickenGame from "@/components/games/ChickenGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
 import SlotMachine from "@/components/games/SlotMachine";
@@ -29,6 +35,12 @@ const GAMES_MAP = {
   wheel: WheelGame,
   coinflip: CoinflipGame,
   keno: KenoGame,
+  hilo: HiloGame,
+  blackjack: BlackjackGame,
+  slide: SlideGame,
+  blitz: BlitzGame,
+  tower: TowerGame,
+  chicken: ChickenGame,
   roulette: RouletteGame,
   baccarat: BaccaratGame,
   "neon-vault": SlotMachine,
@@ -134,7 +146,7 @@ export default function GamePlay({ slug }) {
                 </>
               )
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-[#111] p-16 text-center">
+              <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-16 text-center">
                 <h2 className="text-2xl font-black text-white">{game.name}</h2>
                 <p className="text-white/50 mt-2">This game will be added to the TOLS catalog soon.</p>
               </div>
@@ -180,7 +192,7 @@ export default function GamePlay({ slug }) {
               dbSlot.demo_url ? (
                 <DemoSlotPlayer slot={dbSlot} />
               ) : (
-                <div className="rounded-2xl border border-white/10 bg-[#111] p-12 text-center text-white/50">
+                <div className="rounded-2xl border border-white/[0.06] bg-[#121212] p-12 text-center text-white/50">
                   <p className="font-bold text-white">Demo not available</p>
                   <p className="text-sm mt-1">This provider hasn't supplied a demo URL. Try Real mode.</p>
                 </div>

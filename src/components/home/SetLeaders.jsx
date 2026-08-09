@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Trophy, Crown, Sparkles } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { COLLECTION_NAMES, collectionCardList, RARITY_ORDER, rarityColor, rarityVisual } from "@/lib/packs";
 
 // "Set Completion Leaders" — live leaderboard of the top collectors across the
@@ -85,7 +85,7 @@ export default function SetLeaders() {
         <span className="ml-2 text-xs text-white/40">Top collectors by completed sets</span>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-[#111] overflow-hidden">
+      <div className="rounded-2xl border border-white/[0.06] bg-[#121212] overflow-hidden">
         {loading ? (
           <div className="p-6 text-center text-sm text-white/40 animate-pulse">Loading leaderboard…</div>
         ) : leaders.length === 0 ? (

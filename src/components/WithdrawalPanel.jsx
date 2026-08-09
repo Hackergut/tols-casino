@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import { X, ArrowDownToLine, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
@@ -59,7 +59,7 @@ export default function WithdrawalPanel({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#0d0d0d] shadow-2xl overflow-hidden">
+      <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#080808] shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between p-5 border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-lime/10 flex items-center justify-center">
