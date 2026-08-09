@@ -6,7 +6,8 @@ import DeleteAccountDialog from "@/components/DeleteAccountDialog";
 import { base44 } from "@/api/client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWalletModal } from "@/components/wallet/useWalletModal";
-import { VipProgressBadge, VipProgressCard } from "@/components/VipProgress";
+import { VipProgressBadge } from "@/components/VipProgress";
+import ProfileMenu from "@/components/ProfileMenu";
 import TolsLogo from "@/components/TolsLogo";
 
 export default function Header({ onMenu }) {
@@ -75,10 +76,11 @@ export default function Header({ onMenu }) {
           {!user ? <><Link to="/login" className="hidden sm:flex h-9 px-4 items-center rounded-full bg-white/[0.08] border border-white/10 text-sm font-bold text-white">Log in</Link><Link to="/register" className="h-9 px-5 inline-flex items-center rounded-full bg-lime text-black text-sm font-black">Sign up</Link></> : <>
             <VipProgressBadge />
             <div className="flex items-center"><button onClick={() => openWallet({ tab: "deposit" })} className="flex items-center gap-1.5 h-9 px-2 sm:px-3 rounded-full sm:rounded-l-full bg-[#1a1a1a] border border-white/10 sm:border-r-0"><DollarSign className="w-4 h-4 text-lime" /><span className="text-sm font-bold tabular-nums text-white hidden xs:inline sm:inline">{wallet ? Number(wallet.balance).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—"}</span><span className="text-xs text-white/40 hidden sm:inline">USDT</span></button><button onClick={() => openWallet({ tab: "withdraw" })} className="hidden sm:grid place-items-center h-9 px-3 rounded-r-full bg-[#1a1a1a] border border-white/10 text-white/50" aria-label="Withdraw"><ArrowDownToLine className="w-4 h-4" /></button></div>
-            <div className="relative" ref={menuRef}><button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 h-9 px-2 sm:px-3 rounded-full bg-white/[0.06] border border-white/10"><span className="grid place-items-center w-7 h-7 rounded-full bg-lime text-black font-black text-xs">{(user.full_name||user.email||"P")[0].toUpperCase()}</span><ChevronDown className="hidden sm:block w-3.5 h-3.5 text-white/40" /></button>{open && <div className="absolute right-0 top-11 w-64 rounded-2xl border border-white/10 bg-[#141414] shadow-2xl py-2"><VipProgressCard /><div className="border-t border-white/10 my-1" /><Link to="/wallet" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/75 hover:text-lime"><Wallet className="w-4 h-4" /> Wallet</Link>{user.role === "admin" && <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-lime"><Shield className="w-4 h-4" /> Admin</Link>}<button onClick={() => base44.auth.logout("/")} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/60"><LogOut className="w-4 h-4" /> Sign out</button><div className="border-t border-white/10 my-1" /><button onClick={() => { setOpen(false); setDelOpen(true); }} className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400"><Trash2 className="w-4 h-4" /> Delete Account</button></div>}</div>
+            <div className="relative" ref={menuRef}><button onClick={() => setOpen((v) => !v)} className="flex items-center gap-2 h-9 px-2 sm:px-3 rounded-full bg-white/[0.06] border border-white/10"><span className="grid place-items-center w-7 h-7 rounded-full bg-lime text-black font-black text-xs">{(user.full_name||user.email||"P")[0].toUpperCase()}</span><ChevronDown className="hidden sm:block w-3.5 h-3.5 text-white/40" /></button></div>
           </>}
         </div>
       </div>
+      <ProfileMenu open={open} onClose={() => setOpen(false)} user={user} onLogout={() => base44.auth.logout("/")} onDelete={() => setDelOpen(true)} />
       <DeleteAccountDialog open={delOpen} onClose={() => setDelOpen(false)} />
     </motion.header>
   );
