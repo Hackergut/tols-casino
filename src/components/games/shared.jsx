@@ -4,7 +4,7 @@ import { randomSeed, rngFloat, sha256Hex } from "@/lib/provablyFair";
 
 // Shared bet panel styled like the TOLS reference: Manual/Auto tabs,
 // Wager + Profit fields, quick amount chips, full-width lime PLAY button.
-export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet", extra, profit }) {
+export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet", extra = null, profit = null }) {
   const { wallet } = useWallet();
   const balance = wallet ? wallet.balance : 0;
   const [mode, setMode] = useState("manual"); // manual | auto (UI only — auto coming soon)

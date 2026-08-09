@@ -1,4 +1,10 @@
-# Base44 Project
+# TOLS Casino
+
+TOLS is an integration-ready crypto casino-style entertainment platform built on Base44. It includes a polished lobby, demo originals, collectible cards, tournaments, affiliates, VIP/rewards, wallet flows, admin analytics, provider catalog sync, and backend stubs for payments and third-party game sessions.
+
+The default runtime is **sandbox/demo mode**: live deposits, withdrawals, and real-money slot sessions are wired but disabled until an administrator explicitly enables them after legal, compliance, custody, fraud, and security review.
+
+See `DESIGN_SYSTEM.md` for the product and technical design.
 
 Use this repository to run and edit the app locally, then publish changes back through Base44.
 

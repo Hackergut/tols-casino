@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 import PaymentSettings from "@/components/admin/PaymentSettings";
 import CatalogSettings from "@/components/admin/CatalogSettings";
 import AggregatorSettings from "@/components/admin/AggregatorSettings";
+import IntegrationSettings from "@/components/admin/IntegrationSettings";
 import HouseMargin from "@/components/admin/HouseMargin";
 import DemoMonitor from "@/components/admin/DemoMonitor";
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
+import { Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
   const [authed, setAuthed] = useState(null);
@@ -380,7 +381,8 @@ export default function Admin() {
             </table>
           </div>
         </div>
-        <PaymentSettings />
+        <IntegrationSettings />
+        <div className="mt-4"><PaymentSettings /></div>
         <div className="mt-4"><CatalogSettings /></div>
         <div className="mt-4"><AggregatorSettings /></div>
       </main>

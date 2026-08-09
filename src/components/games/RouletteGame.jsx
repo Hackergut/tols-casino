@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
-import { RotateCw, Coins } from "lucide-react";
+import { RotateCw } from "lucide-react";
 
 const RED = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
 // European single-zero wheel order

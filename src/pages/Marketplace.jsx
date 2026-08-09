@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ShoppingCart, Repeat, Tag, X, Search } from "lucide-react";
+import { ShoppingCart, Repeat, Tag, Search } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useToast } from "@/components/ui/use-toast";
 import MarketCardTile from "@/components/cards/MarketCardTile";
-import { COLLECTION_NAMES, rarityColor, rarityLabel } from "@/lib/packs";
+import { COLLECTION_NAMES, rarityLabel } from "@/lib/packs";
 
 const TABS = [
   { id: "buy", label: "Buy", icon: ShoppingCart },
@@ -42,7 +42,7 @@ export default function Marketplace() {
     setLoading(false);
   };
 
-  useEffect(() => { loadAll(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => { loadAll();   }, []);
 
   // Trades in the last 24h per card name — drives the dynamic "Hot" badge.
   const trades24h = useMemo(() => {

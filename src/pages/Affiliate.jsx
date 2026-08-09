@@ -4,7 +4,6 @@ import ReferralLink from "@/components/affiliate/ReferralLink";
 import AffiliateStats from "@/components/affiliate/AffiliateStats";
 import CommissionPlan from "@/components/affiliate/CommissionPlan";
 import ReferralTable from "@/components/affiliate/ReferralTable";
-import { WalletProvider } from "@/components/WalletProvider";
 import { computeCommission } from "@/lib/affiliate";
 
 const SAMPLE_REFERRALS = [

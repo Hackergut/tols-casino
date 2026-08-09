@@ -13,7 +13,7 @@ const TABS = [
   { id: "tip", label: "Tip" },
 ];
 
-export default function WalletDrawer({ initialTab = "deposit", initialCoin = "solana", onClose }) {
+export default function WalletDrawer({ initialTab = "deposit", initialCoin = "solana", onClose = () => {} }) {
   const [tab, setTab] = useState(initialTab);
   const [coin, setCoin] = useState(initialCoin);
 

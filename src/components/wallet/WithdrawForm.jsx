@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { AlertCircle, CheckCircle2, Loader2, Info, RefreshCw, History } from "lucide-react";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 import CoinSelect from "@/components/wallet/CoinSelect";
 import { coinById } from "@/components/wallet/coins";
 
 export default function WithdrawForm({ coin = "solana", setCoin, onClose }) {
   const { wallet, requestWithdrawal } = useWallet();
+  const { mode } = useIntegrationMode();
   const [amount, setAmount] = useState("");
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
@@ -53,6 +55,15 @@ export default function WithdrawForm({ coin = "solana", setCoin, onClose }) {
 
   return (
     <div className="space-y-4">
+      {!mode.livePaymentsEnabled && (
+        <div className="rounded-2xl border border-blue-400/30 bg-blue-500/10 p-4 flex gap-3 text-sm text-blue-100">
+          <Info className="w-4 h-4 mt-0.5 shrink-0 text-blue-300" />
+          <p>
+            <b>Sandbox mode:</b> the withdrawal form is integration-ready, but live payouts are disabled.
+            Enable live payments only after compliance, custody, fraud, and operations review.
+          </p>
+        </div>
+      )}
       {error && (
         <div className="flex items-start gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-300">
           <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" /> <span>{error}</span>
@@ -135,7 +146,7 @@ export default function WithdrawForm({ coin = "solana", setCoin, onClose }) {
       </div>
 
       <button
-        onClick={submit} disabled={busy || !amount || !address}
+        onClick={submit} disabled={busy || !amount || !address || !mode.livePaymentsEnabled}
         className="w-full h-14 rounded-xl bg-lime text-black font-black text-lg uppercase tracking-wide hover:brightness-110 active:scale-[0.98] transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 glow-lime"
       >
         {busy ? <><Loader2 className="w-5 h-5 animate-spin" /> Processing...</> : "Withdraw"}

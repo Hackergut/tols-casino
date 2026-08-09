@@ -3,7 +3,7 @@ import { ShieldCheck } from "lucide-react";
 
 // Professional game arena: consistent depth, header and footer stat row
 // shared by every TOLS original. Purely presentational.
-export default function GameFrame({ title, badge, children, stats, className = "", minH = "min-h-[300px] sm:min-h-[360px]" }) {
+export default function GameFrame({ title, badge = null, children, stats, className = "", minH = "min-h-[300px] sm:min-h-[360px]" }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0c1024] overflow-hidden shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
       {(title || badge) && (

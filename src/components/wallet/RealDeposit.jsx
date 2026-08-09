@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
 import { useWeb3Wallet } from "@/hooks/useWeb3Wallet";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 import { QRCodeSVG } from "qrcode.react";
 import {
   Copy, Check, Loader2, AlertCircle, CheckCircle2,
@@ -13,6 +14,7 @@ import { coinById } from "@/components/wallet/coins";
 
 export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
   const { wallet, reload } = useWallet();
+  const { mode } = useIntegrationMode();
   const w3 = useWeb3Wallet();
   const [copied, setCopied] = useState(false);
   const [txHash, setTxHash] = useState("");
@@ -56,6 +58,7 @@ export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
 
   const verify = async () => {
     setError(""); setResult(null);
+    if (!mode.livePaymentsEnabled) { setError("Live deposits are disabled in sandbox mode."); return; }
     if (!txHash.trim()) { setError("Paste the transaction hash after sending"); return; }
     if (!connected) { setError("Connect your wallet first"); return; }
     setBusy(true);
@@ -72,6 +75,16 @@ export default function RealDeposit({ coin = "solana", setCoin, onClose }) {
 
   return (
     <div className="space-y-4">
+      {!mode.livePaymentsEnabled && (
+        <div className="rounded-2xl border border-blue-400/30 bg-blue-500/10 p-4 flex gap-3 text-sm text-blue-100">
+          <Info className="w-4 h-4 mt-0.5 shrink-0 text-blue-300" />
+          <p>
+            <b>Sandbox mode:</b> deposit addresses and verification UI are integration-ready, but live on-chain crediting is disabled.
+            An administrator can enable live payments after legal, KYC/AML, custody, and payment-provider review.
+          </p>
+        </div>
+      )}
+
       {/* Connect wallet */}
       <div className="flex items-center justify-between gap-3 rounded-xl bg-[#1a1a1a] border border-white/10 px-4 py-3">
         <div className="min-w-0">

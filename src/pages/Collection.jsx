@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Check, Lock, ChevronDown, Search, Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { Image } from "@/components/ui/image";
 import CardDetailModal from "@/components/cards/CardDetailModal";
 import CardThumb from "@/components/cards/CardThumb";
 import { COLLECTION_NAMES, collectionCardList, collectionAccent } from "@/lib/packs";

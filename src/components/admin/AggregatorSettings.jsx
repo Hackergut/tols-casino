@@ -11,7 +11,7 @@ const FIELDS = [
 ];
 
 export default function AggregatorSettings() {
-  const [values, setValues] = useState({});
+  const [values, setValues] = useState(/** @type {Record<string, string>} */({}));
   const [ids, setIds] = useState({});
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);

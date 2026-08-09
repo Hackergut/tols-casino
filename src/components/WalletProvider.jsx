@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { base44 } from "@/api/base44Client";
 import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
 import { contributeToJackpot } from "@/lib/jackpot";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 import { DEMO_START, DEMO_MAX_BET, DEMO_MAX_REFILLS_PER_DAY, DEMO_MAX_DAILY_WAGER, dayKey, demoLimitState } from "@/lib/demoLimits";
 import DemoLimitBanner from "@/components/games/DemoLimitBanner";
 
@@ -10,6 +11,7 @@ export const WalletContext = createContext(null);
 export function WalletProvider({ children }) {
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { mode } = useIntegrationMode();
 
   const ensureDepositAddresses = useCallback(async (w) => {
     if (w.deposit_addresses) return w;
@@ -125,6 +127,9 @@ export function WalletProvider({ children }) {
 
   const requestWithdrawal = useCallback(async ({ amount, wallet_address, chain }) => {
     if (!wallet) throw new Error("Wallet unavailable");
+    if (!mode.livePaymentsEnabled) {
+      throw new Error("Withdrawals are disabled in sandbox mode. The flow is integration-ready for production after compliance and custody review.");
+    }
     const amt = +Number(amount).toFixed(2);
     if (!amt || amt <= 0) throw new Error("Invalid amount");
     if (!wallet_address || wallet_address.length < 8) throw new Error("Invalid wallet address");
@@ -156,7 +161,7 @@ export function WalletProvider({ children }) {
     await updateBalance(-amt, 0);
 
     return record;
-  }, [wallet, updateBalance]);
+  }, [wallet, updateBalance, mode.livePaymentsEnabled]);
 
   const vipTier = wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0];
   const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier };

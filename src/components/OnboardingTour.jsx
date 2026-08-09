@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { X, ChevronRight, ChevronLeft, Wallet, ShieldCheck, Crown, Sparkles, ArrowDownToLine } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, Wallet, ShieldCheck, Crown, Sparkles } from "lucide-react";
 
 const STEPS = [
   {

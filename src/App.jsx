@@ -24,6 +24,7 @@ import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
+import OAuthConsent from '@/pages/OAuthConsent';
 import Community from '@/pages/Community';
 import Wallet from '@/pages/Wallet';
 import Tournaments from '@/pages/Tournaments';
@@ -70,6 +71,7 @@ const AuthenticatedApp = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/oauth/consent" element={<OAuthConsent />} />
         {/* App routes (con layout) */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />

@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { upsertSupabaseDeposit } from '../../shared/supabaseDeposits.ts';
+import { getIntegrationSettings } from '../../shared/integrations.ts';
 
 const CHAINS = {
   ethereum: { rpc: "https://eth.llamarpc.com", cg: "ethereum", rateKey: "rate_ethereum", opKey: "operator_address_ethereum", decimals: 18, kind: "evm" },
@@ -35,6 +36,13 @@ export default async function(req) {
     const referralCode = String(body.referral_code || "").trim();
     const cfg = CHAINS[chain];
     if (!cfg || !txHash) return Response.json({ error: "Invalid request" }, { status: 400 });
+
+    const integrations = await getIntegrationSettings(base44);
+    if (!integrations.livePaymentsEnabled) {
+      return Response.json({
+        error: "Live deposits are disabled in sandbox mode. This UI is integration-ready; enable live payments only after legal, KYC/AML, custody, and payment-provider review."
+      }, { status: 503 });
+    }
 
     const settings = await base44.asServiceRole.entities.PlatformSetting.filter({ category: "payments" });
     const get = (k) => { const s = settings.find(x => x.key === k); return s ? s.value : ""; };

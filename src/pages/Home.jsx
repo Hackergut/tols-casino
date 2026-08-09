@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sparkles, Spade, Flame, Star, Gamepad2, Radio } from "lucide-react";
+import { Spade, Flame, Star, Gamepad2, Radio } from "lucide-react";
 import LiveWinsTicker from "@/components/LiveWinsTicker";
 import LivePullsTicker from "@/components/LivePullsTicker";
 import GameRail from "@/components/home/GameRail";
@@ -16,6 +16,7 @@ import LobbySkeleton from "@/components/home/LobbySkeleton";
 import GameCard from "@/components/GameCard";
 import TolsLogo from "@/components/TolsLogo";
 import SocialLinks from "@/components/SocialLinks";
+import SandboxNotice from "@/components/SandboxNotice";
 import { GAMES } from "@/lib/games";
 import { useSlotCatalog } from "@/hooks/useSlotCatalog";
 
@@ -84,6 +85,8 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-5 space-y-7">
+        <SandboxNotice />
+
         {/* Hero */}
         <MegaPromoCards />
 
