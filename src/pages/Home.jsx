@@ -76,9 +76,10 @@ export default function Home() {
   useHomeSync({ chip, query });
 
   const rails = [
+    // Preview exact: Featured Originals with 6 as in image (LIMBO, PLINKO, MINES, DICE, KENO, WHEEL)
+    { id: "featured", title: "Featured Originals", icon: Sparkles, games: originals.filter(g=> ["limbo","plinko","mines","dice","keno","wheel"].includes(g.slug)), to: "/games/category/originals", empty: SLOTS_EMPTY },
+    { id: "slots", title: "Slots", icon: Flame, games: slotCards.slice(0, 7), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "originals", title: "TOLS Originals", icon: Gamepad2, games: originals, to: "/games/category/originals", moreTile: true },
-    { id: "featured", title: "Featured Games", icon: Star, games: [...originals.slice(0, 6), ...slotCards.slice(0, 6)], to: "/games/category/slots", empty: SLOTS_EMPTY },
-    { id: "slots", title: "Slots", icon: Flame, games: slotCards.slice(0, 12), to: "/games/category/slots", empty: SLOTS_EMPTY },
     { id: "table", title: "Table Games", icon: Spade, games: table, to: "/games/category/table" },
     { id: "live", title: "Live Casino", icon: Radio, games: [], to: "/games/category/live", empty: "Live casino coming soon to TOLS.", lazy: true },
   ];

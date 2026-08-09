@@ -11,7 +11,7 @@ const CARDS = [
     cta: "Claim Bonus",
     to: "/vip",
     accent: "#ccff00",
-    image: "https://images.unsplash.com/photo-1511919884226-fd3ec7956d6e?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=600&h=400&fit=crop", // F1 race car green
     dark: "from-black/90 via-black/40 to-transparent",
   },
   {
@@ -22,7 +22,7 @@ const CARDS = [
     cta: "Learn More",
     to: "/vip",
     accent: "#ccff00",
-    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&h=400&fit=crop", // abstract dark
     dark: "from-black/90 via-black/50 to-transparent",
   },
   {
@@ -33,7 +33,7 @@ const CARDS = [
     cta: "Join Now",
     to: "/tournaments",
     accent: "#ccff00",
-    image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=600&h=400&fit=crop", // trophy
     dark: "from-black/90 via-black/40 to-transparent",
   },
   {
@@ -44,14 +44,15 @@ const CARDS = [
     cta: "Claim Now",
     to: "/vip",
     accent: "#ccff00",
-    image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop",
+    image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=600&h=400&fit=crop", // safe/vault
     dark: "from-black/90 via-black/40 to-transparent",
   },
 ];
 
 export default function TolsHero() {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ staggerChildren: 0.06 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3">
+    <div className="relative">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ staggerChildren: 0.06 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
       {CARDS.map((c, i) => (
         <motion.div key={c.kicker} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, duration: 0.3, ease: [0.16,1,0.3,1] }} className="snap-start shrink-0 w-[85vw] sm:w-auto">
           <Link
@@ -71,6 +72,18 @@ export default function TolsHero() {
         </Link>
         </motion.div>
       ))}
-    </motion.div>
+      </motion.div>
+      {/* Dots like preview */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        <span className="w-3 h-1.5 rounded-full bg-lime" />
+        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+        <span className="w-1.5 h-1.5 rounded-full bg-white/20" />
+      </div>
+      {/* Arrows like preview */}
+      <button className="hidden lg:grid place-items-center absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-black/60 border border-white/10 text-white/60 hover:bg-white hover:text-black transition"><span>‹</span></button>
+      <button className="hidden lg:grid place-items-center absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-8 h-8 rounded-full bg-black/60 border border-white/10 text-white/60 hover:bg-white hover:text-black transition"><span>›</span></button>
+    </div>
   );
 }
