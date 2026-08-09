@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { useWallet } from "@/components/WalletProvider";
+import { useResponsibleLimits } from "@/hooks/useResponsibleLimits";
 import { randomSeed, rngFloat, sha256Hex } from "@/lib/provablyFair";
 
 // Shared bet panel styled like the TOLS reference: Manual/Auto tabs,
 // Wager + Profit fields, quick amount chips, full-width lime PLAY button.
 export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet", extra = null, profit = null }) {
-  const { wallet } = useWallet();
+  const { wallet, isDemo } = useWallet();
+  const limits = useResponsibleLimits();
   const balance = wallet ? wallet.balance : 0;
+  const check = limits.canBet(amount);
+  const blocked = !check.ok || disabled;
+  const insufficient = !isDemo && amount > balance;
   const [mode, setMode] = useState("manual"); // manual | auto (UI only — auto coming soon)
 
   const setHalf = () => setAmount(+(balance / 2).toFixed(2));
@@ -73,9 +78,20 @@ export function BetPanel({ amount, setAmount, onBet, disabled, betLabel = "Bet",
 
       {extra}
 
+      {!check.ok && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-[11px] text-red-200">
+          {check.reason}
+        </div>
+      )}
+      {insufficient && check.ok && (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200">
+          Insufficient balance for this wager.
+        </div>
+      )}
+
       <button
         onClick={onBet}
-        disabled={disabled}
+        disabled={blocked || insufficient}
         className="w-full h-14 rounded-xl bg-lime text-black font-black text-lg uppercase tracking-wide hover:brightness-110 active:scale-[0.98] transition disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 glow-lime"
       >
         {betLabel}

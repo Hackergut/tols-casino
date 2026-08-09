@@ -8,6 +8,7 @@ import AggregatorSettings from "@/components/admin/AggregatorSettings";
 import IntegrationSettings from "@/components/admin/IntegrationSettings";
 import HouseMargin from "@/components/admin/HouseMargin";
 import DemoMonitor from "@/components/admin/DemoMonitor";
+import WithdrawalReview from "@/components/admin/WithdrawalReview";
 import { Line, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, BarChart, Bar } from "recharts";
 
 export default function Admin() {
@@ -381,6 +382,8 @@ export default function Admin() {
             </table>
           </div>
         </div>
+        <WithdrawalReview />
+
         <IntegrationSettings />
         <div className="mt-4"><PaymentSettings /></div>
         <div className="mt-4"><CatalogSettings /></div>
