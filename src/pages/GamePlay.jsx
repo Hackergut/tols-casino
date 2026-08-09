@@ -18,7 +18,9 @@ import KenoGame from "@/components/games/KenoGame";
 import RouletteGame from "@/components/games/RouletteGame";
 import BaccaratGame from "@/components/games/BaccaratGame";
 import SlotMachine from "@/components/games/SlotMachine";
+import ShootGame from "@/components/games/ShootGame";
 import { RTP_ORIGINALS } from "@/lib/gameEngine";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 
 const GAMES_MAP = {
   dice: DiceGame,
@@ -32,6 +34,7 @@ const GAMES_MAP = {
   roulette: RouletteGame,
   baccarat: BaccaratGame,
   "neon-vault": SlotMachine,
+  shoot: ShootGame,
 };
 
 export default function GamePlay({ slug }) {
@@ -39,6 +42,7 @@ export default function GamePlay({ slug }) {
   const Game = game && GAMES_MAP[game.slug];
   const { wallet } = useWallet();
   const { openWallet } = useWalletModal();
+  const { mode: integrationMode } = useIntegrationMode();
   const isGuest = !wallet || wallet.id === "guest";
   const realReady = !isGuest && !!wallet && wallet.balance > 0;
 
@@ -118,7 +122,7 @@ export default function GamePlay({ slug }) {
 
             {Game ? (
               origMode === "real" && !realReady ? (
-                <RealPlayPrompt name={game.name} openWallet={openWallet} />
+                <RealPlayPrompt name={game.name} liveEnabled={integrationMode.liveSlotsEnabled && integrationMode.livePaymentsEnabled} openWallet={openWallet} />
               ) : (
                 <>
                   {origMode === "demo" && (
@@ -185,14 +189,24 @@ export default function GamePlay({ slug }) {
                   <p className="text-sm mt-1">This provider hasn't supplied a demo URL. Try Real mode.</p>
                 </div>
               )
+            ) : !integrationMode.liveSlotsEnabled ? (
+              <div className="max-w-md mx-auto rounded-2xl border border-blue-400/30 bg-blue-500/10 p-8 text-center">
+                <div className="w-14 h-14 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center mx-auto mb-4">
+                  <Lock className="w-7 h-7 text-blue-300" />
+                </div>
+                <h2 className="text-2xl font-black text-white">Provider sessions paused</h2>
+                <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
+                  {dbSlot.name} is connected through the launch backend, but live slot mode is disabled in sandbox. Demo remains available where the provider supplies it.
+                </p>
+              </div>
             ) : isGuest ? (
               <div className="max-w-md mx-auto rounded-2xl border border-lime/30 bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-8 text-center">
                 <div className="w-14 h-14 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center mx-auto mb-4">
                   <Lock className="w-7 h-7 text-lime" />
                 </div>
-                <h2 className="text-2xl font-black text-white">Real money play</h2>
+                <h2 className="text-2xl font-black text-white">Real play is unavailable</h2>
                 <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
-                  Log in and deposit crypto to play {dbSlot.name} for real. Every session is launched through the secured aggregator backend.
+                  {dbSlot.name} is integrated for provider sessions, but live play is disabled in sandbox mode. Try demo mode or ask an administrator to enable live slots after production review.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center mt-5">
                   <Link
@@ -222,25 +236,29 @@ export default function GamePlay({ slug }) {
   );
 }
 
-function RealPlayPrompt({ name, openWallet }) {
+function RealPlayPrompt({ name, liveEnabled, openWallet }) {
   return (
     <div className="max-w-md mx-auto rounded-2xl border border-lime/30 bg-gradient-to-b from-[#161616] to-[#0d0d0d] p-8 text-center">
       <div className="w-14 h-14 rounded-full bg-lime/10 border border-lime/30 flex items-center justify-center mx-auto mb-4">
         <Lock className="w-7 h-7 text-lime" />
       </div>
-      <h2 className="text-2xl font-black text-white">Real money play</h2>
+      <h2 className="text-2xl font-black text-white">{liveEnabled ? "Log in to play" : "Sandbox mode enabled"}</h2>
       <p className="text-sm text-white/55 mt-2 max-w-sm mx-auto">
-        Log in and deposit crypto to play {name} for real. Every bet is provably fair and settled on your wallet.
+        {liveEnabled
+          ? `Log in and open your wallet to play ${name} for real. Every original uses the provably-fair seed panel and settles against your wallet.`
+          : `${name} supports real play at the integration layer, but live payments and provider sessions are disabled until an administrator completes production review.`}
       </p>
       <div className="flex flex-col sm:flex-row gap-2 justify-center mt-5">
         <Link to="/login" className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition">
           <LogIn className="w-4 h-4" /> Log in
         </Link>
-        <button onClick={() => openWallet({ tab: "deposit" })} className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-lime text-black font-black hover:opacity-90 transition glow-lime">
-          <Wallet className="w-4 h-4" /> Deposit
-        </button>
+        {liveEnabled && (
+          <button onClick={() => openWallet({ tab: "deposit" })} className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-lime text-black font-black hover:opacity-90 transition glow-lime">
+            <Wallet className="w-4 h-4" /> Deposit
+          </button>
+        )}
       </div>
-      <p className="text-xs text-white/30 mt-4">Or switch to <span className="text-blue-400 font-bold">DEMO</span> to play with fun money.</p>
+      <p className="text-xs text-white/30 mt-4">Switch to <span className="text-blue-400 font-bold">DEMO</span> to play with fun money.</p>
     </div>
   );
 }

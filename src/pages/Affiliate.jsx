@@ -4,7 +4,6 @@ import ReferralLink from "@/components/affiliate/ReferralLink";
 import AffiliateStats from "@/components/affiliate/AffiliateStats";
 import CommissionPlan from "@/components/affiliate/CommissionPlan";
 import ReferralTable from "@/components/affiliate/ReferralTable";
-import { WalletProvider } from "@/components/WalletProvider";
 import { computeCommission } from "@/lib/affiliate";
 
 const SAMPLE_REFERRALS = [
@@ -174,13 +173,45 @@ export default function Affiliate() {
           cpa_amount={affiliate.cpa_amount}
         />
 
-        <PayoutPanel affiliate={affiliate} />
+        <PayoutPanel affiliate={affiliate} onRequested={load} />
       </main>
     </div>
   );
 }
 
-function PayoutPanel({ affiliate }) {
+function PayoutPanel({ affiliate, onRequested }) {
+  const [address, setAddress] = useState(affiliate?.payout_address || "");
+  const [chain, setChain] = useState("solana");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState(null);
+
+  const pending = Number(affiliate?.pending_commission ?? 0);
+
+  const submit = async () => {
+    setBusy(true); setMsg(null);
+    try {
+      const res = await base44.functions.invoke("requestAffiliatePayout", { address, chain });
+      const d = res.data || {};
+      if (d.success) {
+        setMsg({ ok: true, text: `Payout of $${d.amount.toFixed(2)} requested and queued for review.` });
+        setAddress("");
+        onRequested && onRequested();
+      } else {
+        setMsg({ ok: false, text: d.error || "Request failed" });
+      }
+    } catch (e) {
+      setMsg({ ok: false, text: e?.response?.data?.error || e.message || "Request failed" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const chains = [
+    { id: "solana", label: "Solana" },
+    { id: "ethereum", label: "Ethereum" },
+    { id: "polygon", label: "Polygon" },
+  ];
+
   return (
     <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#161616] to-[#0d0d0d] p-5 sm:p-6">
       <h3 className="font-bold text-white mb-4">Payout request</h3>
@@ -191,23 +222,39 @@ function PayoutPanel({ affiliate }) {
         </div>
         <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
           <p className="text-xs text-white/40">Pending</p>
-          <p className="text-2xl font-black text-lime mt-1">${(affiliate.pending_commission ?? 0).toFixed(2)}</p>
+          <p className="text-2xl font-black text-lime mt-1">${pending.toFixed(2)}</p>
         </div>
         <div className="rounded-xl bg-[#0d0d0d] border border-white/10 p-4">
           <p className="text-xs text-white/40">Already paid</p>
           <p className="text-2xl font-black text-white/70 mt-1">${(affiliate.paid_commission ?? 0).toFixed(2)}</p>
         </div>
       </div>
-      <div className="mt-4 flex flex-col sm:flex-row gap-3">
+
+      <div className="grid grid-cols-3 gap-2 mt-4">
+        {chains.map((c) => (
+          <button key={c.id} onClick={() => setChain(c.id)}
+            className={`h-10 rounded-lg border text-xs font-bold transition ${chain === c.id ? "bg-lime/10 border-lime/40 text-lime" : "bg-[#0d0d0d] border-white/10 text-white/60 hover:text-white"}`}>
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-col sm:flex-row gap-3">
         <input
-          placeholder="Crypto wallet address (ETH/SOL/MATIC)"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder={chain === "solana" ? "Solana wallet address" : "0x EVM wallet address"}
           className="flex-1 h-12 rounded-xl bg-[#0d0d0d] border border-white/10 px-4 text-sm text-white outline-none focus:border-lime/40 placeholder-white/30"
         />
-        <button className="h-12 px-8 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40" disabled={(affiliate.pending_commission ?? 0) < 50}>
-          Request payout
+        <button onClick={submit} disabled={busy || pending < 50 || !address.trim()}
+          className="h-12 px-8 rounded-xl bg-lime text-black font-black hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap">
+          {busy ? "Requesting..." : "Request payout"}
         </button>
       </div>
-      <p className="text-xs text-white/30 mt-3">Minimum payout threshold: $50 · Crypto payouts within 48h</p>
+      {msg && (
+        <p className={`text-xs mt-3 ${msg.ok ? "text-lime" : "text-red-300"}`}>{msg.text}</p>
+      )}
+      <p className="text-xs text-white/30 mt-3">Minimum payout threshold: $50 · Requests are routed to the admin withdrawal review queue.</p>
     </div>
   );
 }

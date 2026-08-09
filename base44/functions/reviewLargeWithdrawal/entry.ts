@@ -1,9 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
 import { requireInternalCaller } from '../../shared/internalAuth.ts';
+import { getIntegrationSettings } from '../../shared/integrations.ts';
 
 export default async function(req) {
   try {
     const base44 = createClientFromRequest(req);
+    const integrations = await getIntegrationSettings(base44);
+    if (!integrations.livePaymentsEnabled) {
+      return Response.json({ flagged: false, reason: 'sandbox_mode', status: 'sandbox' });
+    }
 
     const body = await req.json().catch(() => ({}));
 

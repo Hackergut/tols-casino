@@ -120,7 +120,7 @@ export default function DemoMonitor() {
   );
 }
 
-function Box({ label, value, sub, accent, warn }) {
+function Box({ label, value, sub = "", accent = false, warn = false }) {
   return (
     <div className={`rounded-xl border p-3 ${warn ? "border-yellow-500/30 bg-yellow-500/5" : accent ? "border-lime/30 bg-lime/5" : "border-white/10 bg-[#0d0d0d]"}`}>
       <p className="text-[10px] text-white/40 uppercase tracking-wide">{label}</p>

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Crown, TrendingUp, Gift, Percent, ChevronLeft, Sparkles } from "lucide-react";
 import { useWallet } from "@/components/WalletProvider";
 import { VIP_TIERS, tierForWagered, nextTier } from "@/lib/vipTiers";
+import AchievementsPanel from "@/components/AchievementsPanel";
 
 export default function Vip() {
   const { wallet } = useWallet();
@@ -115,6 +116,10 @@ export default function Vip() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-8">
+          <AchievementsPanel />
         </div>
 
         <p className="text-xs text-white/40 mt-6 leading-relaxed">

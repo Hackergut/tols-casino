@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Trophy, Crown, Sparkles } from "lucide-react";
 import { base44 } from "@/api/base44Client";
-import { COLLECTION_NAMES, collectionCardList, RARITY_ORDER, rarityColor, rarityVisual } from "@/lib/packs";
+import { COLLECTION_NAMES, collectionCardList, RARITY_ORDER, rarityColor } from "@/lib/packs";
 
 // "Set Completion Leaders" — live leaderboard of the top collectors across the
 // platform. Ranks players by completed thematic sets, with a rarity score

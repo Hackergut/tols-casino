@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
+import { Loader2, AlertTriangle, FlaskConical } from "lucide-react";
 
 export default function RealSlotPlayer({ game, mode }) {
   const [launchUrl, setLaunchUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { wallet } = useWallet();
+  const { mode: integrationMode } = useIntegrationMode();
 
   useEffect(() => {
     let active = true;
     setLoading(true);
     setError(null);
     setLaunchUrl(null);
+    if (mode === "real" && !integrationMode.liveSlotsEnabled) {
+      setLoading(false);
+      setError("Live slot sessions are disabled in sandbox mode. The backend launch endpoint is ready for production after aggregator and compliance review.");
+      return () => { active = false; };
+    }
     base44.functions
       .invoke("launchSlotGame", { slug: game.slug, mode })
       .then((res) => {
@@ -30,7 +37,7 @@ export default function RealSlotPlayer({ game, mode }) {
     return () => {
       active = false;
     };
-  }, [game.slug, mode]);
+  }, [game.slug, mode, integrationMode.liveSlotsEnabled]);
 
   return (
     <div className="rounded-2xl border border-white/10 bg-black overflow-hidden">
@@ -43,6 +50,7 @@ export default function RealSlotPlayer({ game, mode }) {
         ) : error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 gap-3">
             <AlertTriangle className="w-8 h-8 text-amber-400" />
+            {mode === "real" && !integrationMode.liveSlotsEnabled && <FlaskConical className="w-5 h-5 text-blue-300 -mt-2" />}
             <p className="text-sm font-bold text-white">Slot reale non disponibile</p>
             <p className="text-xs text-white/50 max-w-md">{error}</p>
             <p className="text-[11px] text-white/30 max-w-md mt-2">

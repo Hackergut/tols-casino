@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { base44 } from "@/api/base44Client";
 import { VIP_TIERS, tierForWagered } from "@/lib/vipTiers";
 import { contributeToJackpot } from "@/lib/jackpot";
+import { useIntegrationMode } from "@/hooks/useIntegrationMode";
 import { DEMO_START, DEMO_MAX_BET, DEMO_MAX_REFILLS_PER_DAY, DEMO_MAX_DAILY_WAGER, dayKey, demoLimitState } from "@/lib/demoLimits";
 import DemoLimitBanner from "@/components/games/DemoLimitBanner";
 
@@ -10,6 +11,7 @@ export const WalletContext = createContext(null);
 export function WalletProvider({ children }) {
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { mode } = useIntegrationMode();
 
   const ensureDepositAddresses = useCallback(async (w) => {
     if (w.deposit_addresses) return w;
@@ -87,6 +89,25 @@ export function WalletProvider({ children }) {
   const recordBet = useCallback(async (bet) => {
     try {
       if (wallet && wallet.id !== "guest") {
+        const me = await base44.auth.me();
+        // Operation controls: a block/freeze control targeting this player or
+        // everyone prevents new wagers from being recorded/settled.
+        try {
+          const controls = await base44.entities.OperationControl.filter({ enabled: true });
+          const now = Date.now();
+          const blocked = (controls || []).some((c) => {
+            if (c.expires_at && new Date(c.expires_at).getTime() < now) return false;
+            if (c.control_mode !== "block" && c.control_mode !== "freeze") return false;
+            if (c.target_scope === "all") return true;
+            if (c.target_scope === "player" && c.target_value === me.id) return true;
+            return false;
+          });
+          if (blocked) {
+            throw new Error("Play is temporarily restricted by an active operation control.");
+          }
+        } catch (controlErr) {
+          if (controlErr?.message?.includes("operation control")) throw controlErr;
+        }
         const created = await base44.entities.Bet.create(bet);
         const wager = +(bet.amount || 0).toFixed(2);
         const payout = +(bet.payout || 0).toFixed(2);
@@ -102,6 +123,17 @@ export function WalletProvider({ children }) {
         // every real wager feeds the global progressive pot (and can hit it)
         const jp = await contributeToJackpot(wager);
         if (jp.won && jp.prize > 0) await updateBalance(jp.prize, 0);
+
+        // Surface notable wins in the notification bell.
+        if (bet.result === "win" && Number(bet.payout || 0) >= 5) {
+          base44.entities.AppNotification.create({
+            type: "win",
+            title: "Big win",
+            message: `${bet.game_name || bet.game_id || "Game"} paid ${Number(bet.multiplier || 0).toFixed(2)}×`,
+            amount: Number(bet.payout || 0),
+            link: `/game/${bet.game_id || ""}`,
+          }).catch(() => {});
+        }
 
         // Sync the player's real stats into every tournament they joined so
         // the leaderboard reflects live, account-based wagering.
@@ -125,38 +157,39 @@ export function WalletProvider({ children }) {
 
   const requestWithdrawal = useCallback(async ({ amount, wallet_address, chain }) => {
     if (!wallet) throw new Error("Wallet unavailable");
+    if (!mode.livePaymentsEnabled) {
+      throw new Error("Withdrawals are disabled in sandbox mode. The flow is integration-ready for production after compliance and custody review.");
+    }
     const amt = +Number(amount).toFixed(2);
     if (!amt || amt <= 0) throw new Error("Invalid amount");
     if (!wallet_address || wallet_address.length < 8) throw new Error("Invalid wallet address");
-    if (amt > wallet.balance) throw new Error(`Insufficient balance. Available: ${wallet.balance} ${wallet.currency}`);
 
-    const balanceBefore = +wallet.balance.toFixed(2);
-    const balanceAfter = +(balanceBefore - amt).toFixed(2);
-
-    // create withdrawal record (auth users) or local stub (guest)
-    let record;
+    // Authenticated users go through the server-authoritative function which
+    // validates the address/amount, holds the balance and fires the review
+    // workflow + Telegram alert. Guests keep a local stub.
     if (wallet.id !== "guest") {
-      record = await base44.entities.Withdrawal.create({
-        amount: amt,
-        currency: wallet.currency,
-        wallet_address,
-        chain,
-        status: "pending",
-        balance_before: balanceBefore,
-        balance_after: balanceAfter,
+      const res = await base44.functions.invoke("createWithdrawal", {
+        amount: amt, wallet_address, chain,
       });
-    } else {
-      record = { id: "local_" + Date.now(), amount: amt, currency: wallet.currency, wallet_address, chain, status: "pending", balance_before: balanceBefore, balance_after: balanceAfter, created_date: new Date().toISOString() };
-      const hist = JSON.parse(localStorage.getItem("tols_withdrawals") || "[]");
-      hist.unshift(record);
-      localStorage.setItem("tols_withdrawals", JSON.stringify(hist));
+      const d = res.data || {};
+      if (!d.success) throw new Error(d.error || "Withdrawal failed");
+      setWallet((prev) => prev ? { ...prev, balance: d.balance } : prev);
+      return d.withdrawal;
     }
 
-    // deduct balance immediately (held until processed)
+    if (amt > wallet.balance) throw new Error(`Insufficient balance. Available: ${wallet.balance} ${wallet.currency}`);
+    const record = {
+      id: "local_" + Date.now(), amount: amt, currency: wallet.currency,
+      wallet_address, chain, status: "pending",
+      balance_before: wallet.balance, balance_after: +(wallet.balance - amt).toFixed(2),
+      created_date: new Date().toISOString(),
+    };
+    const hist = JSON.parse(localStorage.getItem("tols_withdrawals") || "[]");
+    hist.unshift(record);
+    localStorage.setItem("tols_withdrawals", JSON.stringify(hist));
     await updateBalance(-amt, 0);
-
     return record;
-  }, [wallet, updateBalance]);
+  }, [wallet, updateBalance, mode.livePaymentsEnabled]);
 
   const vipTier = wallet ? tierForWagered(wallet.total_wagered) : VIP_TIERS[0];
   const value = { wallet, loading, updateBalance, recordBet, requestWithdrawal, reload: loadWallet, vipTier };

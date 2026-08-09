@@ -1,5 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.40';
-import { getAggregatorConfig, isConfigured } from '../../shared/aggregator.ts';
+import { getAggregatorConfig, isConfigured, liveSlotsEnabled } from '../../shared/aggregator.ts';
 
 export default async function(req) {
   try {
@@ -18,6 +18,11 @@ export default async function(req) {
     }
 
     const cfg = await getAggregatorConfig(base44);
+    if (mode === 'real' && !liveSlotsEnabled(cfg)) {
+      return Response.json({
+        error: 'Real-money slot sessions are disabled in sandbox mode. An administrator can enable live slot mode after production aggregator and compliance review.'
+      }, { status: 503 });
+    }
     if (!isConfigured(cfg)) {
       return Response.json({
         error: 'Slot aggregator not configured. An admin must add the aggregator credentials in the Admin panel.'

@@ -1,0 +1,31 @@
+{
+  "name": "PlayerProfile",
+  "type": "object",
+  "properties": {
+    "external_id": { "type": "string" },
+    "username": { "type": "string" },
+    "email": { "type": "string", "default": "" },
+    "avatar": { "type": "string", "default": "" },
+    "registered_at": { "type": "string", "format": "date-time" },
+    "last_login_at": { "type": "string", "format": "date-time" },
+    "total_deposits": { "type": "number", "default": 0 },
+    "total_withdrawals": { "type": "number", "default": 0 },
+    "total_bets": { "type": "number", "default": 0 },
+    "total_wins": { "type": "number", "default": 0 },
+    "total_losses": { "type": "number", "default": 0 },
+    "net_profit": { "type": "number", "default": 0 },
+    "current_streak": { "type": "number", "default": 0 },
+    "max_win_streak": { "type": "number", "default": 0 },
+    "max_lose_streak": { "type": "number", "default": 0 },
+    "risk_level": { "type": "string", "default": "normal", "enum": ["low", "normal", "high", "vip", "problem"] },
+    "segment": { "type": "string", "default": "standard", "enum": ["standard", "new", "active", "dormant", "vip", "whale", "at_risk"] },
+    "notes": { "type": "string", "default": "", "maxLength": 4000 }
+  },
+  "required": ["external_id", "username"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

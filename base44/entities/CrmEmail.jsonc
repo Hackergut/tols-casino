@@ -1,0 +1,28 @@
+{
+  "name": "CrmEmail",
+  "type": "object",
+  "properties": {
+    "from_address": { "type": "string" },
+    "to_addresses": { "type": "string" },
+    "cc_addresses": { "type": "string", "default": "" },
+    "bcc_addresses": { "type": "string", "default": "" },
+    "subject": { "type": "string" },
+    "body": { "type": "string", "default": "", "maxLength": 20000 },
+    "plain_body": { "type": "string", "default": "", "maxLength": 20000 },
+    "status": { "type": "string", "default": "inbox", "enum": ["inbox", "sent", "draft", "archived", "scheduled", "sending"] },
+    "starred": { "type": "boolean", "default": false },
+    "important": { "type": "boolean", "default": false },
+    "folder": { "type": "string", "default": "inbox" },
+    "task_id": { "type": "string", "default": "" },
+    "member_id": { "type": "string", "default": "" },
+    "reply_to_id": { "type": "string", "default": "" },
+    "attachments": { "type": "string", "default": "" }
+  },
+  "required": ["from_address", "to_addresses", "subject"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

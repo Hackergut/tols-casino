@@ -1,0 +1,25 @@
+{
+  "name": "OperationControl",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string" },
+    "description": { "type": "string", "default": "", "maxLength": 2000 },
+    "target_scope": { "type": "string", "default": "all", "enum": ["all", "player", "game", "segment", "provider"] },
+    "target_value": { "type": "string", "default": "" },
+    "control_mode": { "type": "string", "default": "normal", "enum": ["normal", "limit", "block", "boost", "freeze"] },
+    "rtp_target": { "type": "number", "default": 0 },
+    "max_win_amount": { "type": "number", "default": 0 },
+    "max_loss_amount": { "type": "number", "default": 0 },
+    "streak_threshold": { "type": "number", "default": 0 },
+    "enabled": { "type": "boolean", "default": false },
+    "priority": { "type": "number", "default": 0 },
+    "expires_at": { "type": "string", "format": "date-time" }
+  },
+  "required": ["name"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

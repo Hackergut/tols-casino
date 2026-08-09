@@ -4,19 +4,25 @@
 // role client, which bypasses RLS.
 export async function getAggregatorConfig(base44) {
   const list = await base44.asServiceRole.entities.PlatformSetting.filter({ category: "aggregator" });
-  const get = (k) => {
-    const s = (list || []).find((x) => x.key === k);
+  const integrationRows = await base44.asServiceRole.entities.PlatformSetting.filter({ category: "integrations" }).catch(() => []);
+  const get = (rows, k) => {
+    const s = (rows || []).find((x) => x.key === k);
     return s ? s.value || "" : "";
   };
   return {
-    baseUrl: get("aggregator_api_base").replace(/\/$/, ""),
-    apiKey: get("aggregator_api_key"),
-    operatorId: get("aggregator_operator_id"),
-    apiSecret: get("aggregator_api_secret"),
-    callbackUrl: get("aggregator_callback_url"),
+    baseUrl: get(list, "aggregator_api_base").replace(/\/$/, ""),
+    apiKey: get(list, "aggregator_api_key"),
+    operatorId: get(list, "aggregator_operator_id"),
+    apiSecret: get(list, "aggregator_api_secret"),
+    callbackUrl: get(list, "aggregator_callback_url"),
+    slotsMode: get(integrationRows, "slots_mode") || "sandbox",
   };
 }
 
 export function isConfigured(cfg) {
   return Boolean(cfg.baseUrl && cfg.apiKey);
+}
+
+export function liveSlotsEnabled(cfg) {
+  return cfg?.slotsMode === "live";
 }

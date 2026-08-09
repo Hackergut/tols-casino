@@ -19,6 +19,7 @@ export const RTP_ORIGINALS = {
   roulette: 0.973, // European single-zero
   baccarat: 0.986, // banker bet
   "neon-vault": RTP, // Neon Vault slot
+  shoot: RTP,
 };
 
 // ── Dice / Limbo / Coinflip payout formulas (all derived from RTP) ───────────

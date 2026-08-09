@@ -1,0 +1,28 @@
+{
+  "name": "TelegramAlert",
+  "type": "object",
+  "properties": {
+    "event_type": {
+      "type": "string",
+      "enum": ["registration", "login", "deposit", "withdrawal", "deposit_pending", "system"],
+      "default": "system"
+    },
+    "title": { "type": "string" },
+    "message": { "type": "string", "default": "" },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "sent", "failed", "unconfigured"],
+      "default": "pending"
+    },
+    "error_message": { "type": "string", "default": "" },
+    "chat_id": { "type": "string", "default": "" },
+    "sent_at": { "type": "string", "format": "date-time" }
+  },
+  "required": ["event_type", "title"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

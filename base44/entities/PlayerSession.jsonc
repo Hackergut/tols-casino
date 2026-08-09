@@ -1,0 +1,28 @@
+{
+  "name": "PlayerSession",
+  "type": "object",
+  "properties": {
+    "player_id": { "type": "string" },
+    "session_id": { "type": "string", "default": "" },
+    "game_type": { "type": "string", "default": "" },
+    "game_id": { "type": "string", "default": "" },
+    "game_name": { "type": "string", "default": "" },
+    "bet_amount": { "type": "number", "default": 0 },
+    "win_amount": { "type": "number", "default": 0 },
+    "outcome": { "type": "string", "default": "loss", "enum": ["win", "loss", "push", "pending"] },
+    "result_rtp": { "type": "number", "default": 0 },
+    "duration": { "type": "number", "default": 0 },
+    "spins": { "type": "number", "default": 0 },
+    "ip_address": { "type": "string", "default": "" },
+    "user_agent": { "type": "string", "default": "" },
+    "controlled": { "type": "boolean", "default": false },
+    "control_type": { "type": "string", "default": "" }
+  },
+  "required": ["player_id"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

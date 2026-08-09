@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ArrowLeft, X, Sparkles, Check, Loader2, Eye, Minus, Plus, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWallet } from "@/components/WalletProvider";
-import { openPack, rarityColor, rarityLabel, RARITIES, RARITY_ORDER, COLLECTION_IMAGES } from "@/lib/packs";
+import { openPack, RARITIES, RARITY_ORDER, COLLECTION_IMAGES } from "@/lib/packs";
 import { Image } from "@/components/ui/image";
 import TolsCard from "@/components/cards/TolsCard";
 import CardDetailModal from "@/components/cards/CardDetailModal";
