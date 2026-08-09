@@ -59,6 +59,12 @@ export default function Header({ onMenu }) {
           <Link to="/" className={`h-8 px-4 rounded-full text-sm font-bold ${pathname==="/"?"bg-white text-black":"bg-white/[0.06] text-white/70 hover:bg-white/10"}`}>Casino</Link>
           <Link to="/tournaments" className={`h-8 px-4 rounded-full text-sm font-bold ${pathname.startsWith("/tournaments")?"bg-white text-black":"bg-white/[0.06] text-white/70 hover:bg-white/10"}`}>Sports</Link>
         </nav>
+        <div className="hidden lg:flex items-center gap-1.5 ml-2 px-2.5 h-8 rounded-full bg-white/[0.06] border border-white/10">
+          <span className="w-4 h-4 rounded-full bg-lime grid place-items-center text-[8px] font-black text-black">◈</span>
+          <span className="text-xs font-bold text-white">SHFL</span>
+          <span className="text-xs font-bold text-white/60">$0.2979</span>
+          <span className="text-xs font-bold text-lime">+2.09%</span>
+        </div>
         <form onSubmit={submitSearch} className="hidden md:flex flex-1 max-w-[320px] lg:max-w-[420px] mx-6 items-center gap-2 px-3 h-9 rounded-full bg-white/[0.06] border border-white/[0.06] focus-within:border-white/20 focus-within:bg-white/[0.08]">
           <Search className="w-4 h-4 text-white/30" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search games" className="bg-transparent outline-none text-sm text-white placeholder-white/30 w-full" />
