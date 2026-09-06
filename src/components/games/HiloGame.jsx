@@ -1,85 +1,293 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import { ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { useWallet } from "@/components/WalletProvider";
 import { BetPanel, useProvablyFair } from "@/components/games/shared";
 import GameFrame from "@/components/games/GameFrame";
-import { ArrowUp, ArrowDown } from "lucide-react";
 
-const CARDS = [2,3,4,5,6,7,8,9,10,11,12,13,14]; // 11=J,12=Q,13=K,14=A
-function cardLabel(v){ if(v===11) return "J"; if(v===12) return "Q"; if(v===13) return "K"; if(v===14) return "A"; return String(v); }
+const RTP = 0.99;
+const RANKS = [
+  { id: 1, label: "A" },
+  { id: 2, label: "2" },
+  { id: 3, label: "3" },
+  { id: 4, label: "4" },
+  { id: 5, label: "5" },
+  { id: 6, label: "6" },
+  { id: 7, label: "7" },
+  { id: 8, label: "8" },
+  { id: 9, label: "9" },
+  { id: 10, label: "10" },
+  { id: 11, label: "J" },
+  { id: 12, label: "Q" },
+  { id: 13, label: "K" },
+];
+const SUITS = [
+  { symbol: "♠", color: "#F4F2FA" },
+  { symbol: "♣", color: "#F4F2FA" },
+  { symbol: "♥", color: "#E31B23" },
+  { symbol: "♦", color: "#E31B23" },
+];
+
+function oddsFor(rank) {
+  const higherOrSame = (13 - rank + 1) / 13;
+  const lowerOrSame = rank / 13;
+  return {
+    higherP: higherOrSame,
+    lowerP: lowerOrSame,
+    higherMult: higherOrSame > 0 ? RTP / higherOrSame : 0,
+    lowerMult: lowerOrSame > 0 ? RTP / lowerOrSame : 0,
+  };
+}
+
+function fmtPct(n) {
+  return (n * 100).toFixed(2) + "%";
+}
 
 export default function HiloGame() {
   const { wallet, updateBalance, recordBet } = useWallet();
   const pf = useProvablyFair();
   const [amount, setAmount] = useState(1);
-  const [current, setCurrent] = useState(7);
-  const [next, setNext] = useState(null);
-  const [streak, setStreak] = useState(0);
+  const [active, setActive] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState(null);
+  const [current, setCurrent] = useState(null);
+  const [nextCard, setNextCard] = useState(null);
+  const [chainMult, setChainMult] = useState(1);
+  const [flash, setFlash] = useState(null);
+  const [history, setHistory] = useState([]);
 
-  const play = async (dir) => {
-    if (busy || !wallet || amount > wallet.balance) return;
-    setBusy(true);
+  const odds = useMemo(() => (current ? oddsFor(current.rank) : oddsFor(3)), [current]);
+  const profit = Math.max(0, amount * chainMult - amount);
+
+  const draw = async () => {
     const r = await pf.roll();
-    const idx = Math.floor(r * CARDS.length);
-    const nxt = CARDS[idx];
-    setNext(nxt);
-    const won = dir === "higher" ? nxt > current : nxt < current;
-    const isTie = nxt === current;
-    const finalWon = isTie ? false : won;
-    const mul = finalWon ? 1.9 : 0;
-    const payout = finalWon ? amount * mul : 0;
-    setResult({ won: finalWon, mul, payout, dir, tie: isTie });
-    if (finalWon) {
-      setStreak((s)=> s+1);
+    const rank = RANKS[Math.floor(r * RANKS.length)];
+    const s = SUITS[Math.floor(((r * 1000) % 1) * SUITS.length)] || SUITS[0];
+    return { rank: rank.id, label: rank.label, symbol: s.symbol, color: s.color };
+  };
+
+  const start = async () => {
+    if (!wallet || amount > wallet.balance || amount <= 0 || busy) return;
+    setBusy(true);
+    const card = await draw();
+    setCurrent(card);
+    setNextCard(null);
+    setHistory([card]);
+    setChainMult(1);
+    setFlash(null);
+    setActive(true);
+    setBusy(false);
+  };
+
+  const guess = async (dir) => {
+    if (!active || !current || busy) return;
+    setBusy(true);
+    const nxt = await draw();
+    const step = dir === "higher" ? odds.higherMult : odds.lowerMult;
+    const won = step > 0 && (dir === "higher" ? nxt.rank >= current.rank : nxt.rank <= current.rank);
+    setNextCard(nxt);
+    setHistory((h) => [...h, { ...nxt, dir, won }]);
+    if (!won) {
+      setFlash("lose");
+      setActive(false);
+      setChainMult(1);
+      updateBalance(-amount, amount);
+      recordBet({
+        game_id: "hilo",
+        game_name: "Hilo",
+        amount,
+        multiplier: 0,
+        payout: 0,
+        result: "lose",
+        client_seed: pf.clientSeed,
+        server_seed_hash: pf.serverHash,
+        nonce: pf.nonce,
+      });
       setCurrent(nxt);
-      updateBalance(payout - amount, amount);
-    } else {
-      setStreak(0);
-      if (!isTie) updateBalance(-amount, amount);
+      setBusy(false);
+      return;
     }
-    recordBet({ game_id: "hilo", game_name: "Hilo", amount, multiplier: mul, payout, result: finalWon ? "win" : "lose", client_seed: pf.clientSeed, server_seed_hash: pf.serverHash, nonce: pf.nonce });
-    setTimeout(()=> setBusy(false), 600);
+    setFlash("win");
+    setChainMult((m) => m * step);
+    setCurrent(nxt);
+    setBusy(false);
+  };
+
+  const skip = async () => {
+    if (!active || busy) return;
+    setBusy(true);
+    const nxt = await draw();
+    setCurrent(nxt);
+    setNextCard(null);
+    setHistory((h) => [...h, { ...nxt, skipped: true }]);
+    setFlash(null);
+    setBusy(false);
   };
 
   const cashout = () => {
-    if (streak===0) return;
-    const payout = amount * (1 + streak * 0.5);
-    updateBalance(payout, amount);
-    recordBet({ game_id: "hilo", game_name: "Hilo", amount: 0, multiplier: 1 + streak*0.5, payout, result: "win", client_seed: pf.clientSeed, server_seed_hash: pf.serverHash, nonce: pf.nonce });
-    setStreak(0);
+    if (!active || chainMult <= 1) return;
+    const payout = amount * chainMult;
+    setActive(false);
+    updateBalance(payout - amount, amount);
+    recordBet({
+      game_id: "hilo",
+      game_name: "Hilo",
+      amount,
+      multiplier: chainMult,
+      payout,
+      result: "win",
+      client_seed: pf.clientSeed,
+      server_seed_hash: pf.serverHash,
+      nonce: pf.nonce,
+    });
   };
 
   return (
     <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-      <GameFrame title="Hilo" stats={[{label:"Current", value: cardLabel(current), tone:"default"}, {label:"Streak", value: `${streak}x`}, {label:"Next", value: next? cardLabel(next): "—"}]}>
-        <div className="flex flex-col items-center gap-6">
-          <div className="flex gap-4">
-            <motion.div key={current} initial={{ scale: 0.8, y: 10 }} animate={{ scale: 1, y: 0 }} transition={{ type:"spring", stiffness:400, damping:25 }} className="w-28 h-40 rounded-2xl bg-white border-4 border-white/10 flex flex-col items-center justify-center shadow-xl">
-              <span className="text-4xl font-black text-black">{cardLabel(current)}</span>
-              <span className="text-xs font-bold text-black/40">Current</span>
-            </motion.div>
-            <AnimatePresence>
-              {next && (
-                <motion.div key={next+result?.dir} initial={{ x: 40, opacity: 0, rotate: 5 }} animate={{ x: 0, opacity: 1, rotate: 0 }} exit={{ x: -40, opacity: 0 }} transition={{ type:"spring", stiffness:400, damping:25 }} className={`w-28 h-40 rounded-2xl border-4 flex flex-col items-center justify-center shadow-xl ${result?.won ? "bg-lime border-lime" : result?.tie ? "bg-yellow-400 border-yellow-400" : "bg-red-500 border-red-500"}`}>
-                  <span className="text-4xl font-black text-black">{cardLabel(next)}</span>
-                  <span className="text-xs font-bold text-black/60">{result?.won ? "WIN" : result?.tie ? "TIE" : "LOSE"}</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+      <GameFrame
+        title="Hilo"
+        stats={[
+          { label: "Multiplier", value: `${chainMult.toFixed(2)}x` },
+          { label: "Higher", value: fmtPct(odds.higherP), tone: "muted" },
+          { label: "Lower", value: fmtPct(odds.lowerP), tone: "muted" },
+        ]}
+      >
+        <div className="max-w-md mx-auto w-full space-y-4">
+          <div className="rounded-2xl bg-[#16122A] p-4">
+            <div className="flex gap-3 items-stretch">
+              <div className="relative shrink-0">
+                <CardFace card={current} flash={flash} idleIcon />
+                <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 bg-[#3A1F78] text-[#C6FF00] text-[8px] font-black tracking-wider px-1.5 py-0.5 rounded whitespace-nowrap">
+                  CURRENT CARD
+                </div>
+              </div>
+              <div className="flex-1 flex flex-col gap-2">
+                <OddsBtn
+                  title="HIGHER / SAME"
+                  pct={odds.higherP}
+                  up
+                  disabled={!active || busy || odds.higherMult <= 0}
+                  onClick={() => guess("higher")}
+                />
+                <OddsBtn
+                  title="LOWER / SAME"
+                  pct={odds.lowerP}
+                  disabled={!active || busy || odds.lowerMult <= 0}
+                  onClick={() => guess("lower")}
+                />
+              </div>
+            </div>
+            {active && (
+              <div className="mt-4 flex justify-between text-[11px] text-white/40">
+                <span>Next step {odds.higherMult.toFixed(2)}x / {odds.lowerMult.toFixed(2)}x</span>
+                <button onClick={skip} disabled={busy} className="text-[#C6FF00] font-bold">
+                  Skip card
+                </button>
+              </div>
+            )}
           </div>
-          <div className="flex gap-3">
-            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={()=> play("higher")} disabled={busy} className="h-14 px-8 rounded-xl bg-lime text-black font-black flex items-center gap-2 disabled:opacity-40"><ArrowUp className="w-5 h-5" /> Higher</motion.button>
-            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={()=> play("lower")} disabled={busy} className="h-14 px-8 rounded-xl bg-white text-black font-black flex items-center gap-2 disabled:opacity-40"><ArrowDown className="w-5 h-5" /> Lower</motion.button>
+
+          <div className="rounded-2xl bg-gradient-to-b from-[#1A1433] to-[#0C0A18] p-4 min-h-[160px] flex items-center gap-4">
+            <CardFace card={nextCard} mystery={!nextCard} flash={flash} />
+            <p className="text-sm text-white/45">
+              {!active && chainMult <= 1 && "Press Bet to draw the first card."}
+              {active && "Will the next card be higher or lower?"}
+              {!active && flash === "lose" && "Wrong call. Bet again."}
+              {!active && flash === "win" && `Cashed ${(amount * chainMult).toFixed(2)} USD.`}
+            </p>
           </div>
-          {streak>0 && <button onClick={cashout} className="text-sm font-bold text-lime underline">Cashout streak x{(1+streak*0.5).toFixed(2)}</button>}
+
+          {history.length > 0 && (
+            <div className="flex gap-1.5 overflow-x-auto pb-1">
+              {history.slice(-12).map((c, i) => (
+                <div
+                  key={i}
+                  className={`w-8 h-10 rounded-md border flex flex-col items-center justify-center text-[10px] font-black ${
+                    c.won === false
+                      ? "border-red-500/50 bg-red-500/10"
+                      : c.won
+                      ? "border-lime/40 bg-lime/10"
+                      : "border-white/10 bg-white/5"
+                  }`}
+                  style={{ color: c.color }}
+                >
+                  <span>{c.label}</span>
+                  <span className="text-[9px] leading-none">{c.symbol}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </GameFrame>
+
       <div className="space-y-4">
-        <BetPanel amount={amount} setAmount={setAmount} onBet={()=>{}} disabled={true} betLabel={`Streak ${streak}`} />
-        <p className="text-xs text-white/40 text-center">Guess if next card is higher or lower. Tie loses. Build streak to cashout.</p>
+        <BetPanel
+          amount={amount}
+          setAmount={setAmount}
+          onBet={active && chainMult > 1 ? cashout : start}
+          disabled={busy || (active && chainMult <= 1)}
+          betLabel={
+            !active
+              ? "Bet"
+              : chainMult > 1
+              ? `Cashout ${(amount * chainMult).toFixed(2)}`
+              : "Pick higher or lower"
+          }
+          profit={profit}
+        />
+        <p className="text-xs text-white/40 text-center">
+          Ace is low, King is high. Same rank wins on both sides. Multiplier compounds. RTP 99%.
+        </p>
       </div>
     </div>
+  );
+}
+
+function CardFace({ card, mystery, idleIcon, flash }) {
+  const border =
+    flash === "win" ? "#C6FF00" : flash === "lose" ? "#E31B23" : "#C6FF00";
+  return (
+    <motion.div
+      key={card ? card.label + card.symbol : mystery ? "?" : "idle"}
+      initial={{ scale: 0.92, opacity: 0.6 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="w-[86px] h-[118px] rounded-[14px] bg-[#05040A] flex items-center justify-center shrink-0"
+      style={{
+        border: `2px solid ${border}`,
+        boxShadow: flash === "win" ? "0 0 18px rgba(198,255,0,0.35)" : "none",
+      }}
+    >
+      {card && !mystery ? (
+        <div className="text-center" style={{ color: card.color }}>
+          <div className="text-2xl font-black leading-none">{card.label}</div>
+          <div className="text-2xl leading-tight">{card.symbol}</div>
+        </div>
+      ) : idleIcon && !card ? (
+        <ArrowUpDown className="w-7 h-7 text-[#C6FF00]" />
+      ) : (
+        <span className="text-4xl font-black text-[#C6FF00] font-mono">?</span>
+      )}
+    </motion.div>
+  );
+}
+
+function OddsBtn({ title, pct, up, disabled, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="flex-1 text-left rounded-xl bg-[#1C1733] px-3 py-2.5 flex items-center justify-between disabled:opacity-50"
+    >
+      <div>
+        <div className="text-[11px] font-black tracking-wide text-white">{title}</div>
+        <div className="text-xs font-bold text-[#C6FF00] mt-0.5">
+          {up ? "↑" : "↓"} {fmtPct(pct)}
+        </div>
+      </div>
+      {up ? (
+        <ArrowUp className="w-5 h-5 text-[#C6FF00]" />
+      ) : (
+        <ArrowDown className="w-5 h-5 text-[#E31B23]" />
+      )}
+    </button>
   );
 }
